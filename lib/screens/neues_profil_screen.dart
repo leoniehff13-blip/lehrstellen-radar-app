@@ -13,8 +13,10 @@ class NeuesProfilScreenState extends State<NeuesProfilScreen> {
   final _formKey = GlobalKey<FormState>();
   String? _selectedCountry;
   String? _selectedGewerk;
+  String? _selectedProfilTyp;
   final List<String> _countries = ['Deutschland'];
   final List<String> _gewerke = ['Elektriker', 'Zimmerer'];
+  final List<String> _profilTypen = ['Azubi', 'Unternehmen'];
 
   final _nameController = TextEditingController();
   final _vornameController = TextEditingController();
@@ -63,18 +65,37 @@ class NeuesProfilScreenState extends State<NeuesProfilScreen> {
           key: _formKey,
           child: ListView(
             children: <Widget>[
-              TextFormField(
-                controller: _nameController,
-                decoration: const InputDecoration(labelText: 'Name'),
+              DropdownButtonFormField<String>(
+                value: _selectedProfilTyp,
+                decoration: const InputDecoration(labelText: 'Profil-Typ'),
+                items: _profilTypen.map((String typ) {
+                  return DropdownMenuItem<String>(
+                    value: typ,
+                    child: Text(typ),
+                  );
+                }).toList(),
+                onChanged: (newValue) {
+                  setState(() {
+                    _selectedProfilTyp = newValue;
+                  });
+                },
+                validator: (value) => value == null ? 'Bitte einen Profil-Typ auswählen' : null,
               ),
-              TextFormField(
-                controller: _vornameController,
-                decoration: const InputDecoration(labelText: 'Vorname'),
-              ),
-              TextFormField(
-                controller: _betriebController,
-                decoration: const InputDecoration(labelText: 'Betrieb'),
-              ),
+              if (_selectedProfilTyp == 'Azubi') ...[
+                TextFormField(
+                  controller: _nameController,
+                  decoration: const InputDecoration(labelText: 'Name'),
+                ),
+                TextFormField(
+                  controller: _vornameController,
+                  decoration: const InputDecoration(labelText: 'Vorname'),
+                ),
+              ] else if (_selectedProfilTyp == 'Unternehmen') ...[
+                TextFormField(
+                  controller: _betriebController,
+                  decoration: const InputDecoration(labelText: 'Betrieb'),
+                ),
+              ],
               TextFormField(
                 controller: _strasseController,
                 decoration: const InputDecoration(labelText: 'Straße'),
@@ -132,9 +153,10 @@ class NeuesProfilScreenState extends State<NeuesProfilScreen> {
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
                     final newProfile = Profil(
-                      name: _nameController.text,
-                      vorname: _vornameController.text,
-                      betrieb: _betriebController.text,
+                      profilTyp: _selectedProfilTyp,
+                      name: _selectedProfilTyp == 'Azubi' ? _nameController.text : null,
+                      vorname: _selectedProfilTyp == 'Azubi' ? _vornameController.text : null,
+                      betrieb: _selectedProfilTyp == 'Unternehmen' ? _betriebController.text : null,
                       strasse: _strasseController.text,
                       hausnummer: _hausnummerController.text,
                       plz: _plzController.text,
