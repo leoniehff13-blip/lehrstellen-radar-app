@@ -6,7 +6,10 @@ class Betrieb {
   final String beschreibung;
   final List<String> aufgabenbereiche;
   final String webseite;
-  final String adresse; // Neues Feld
+  final String adresse;
+  final String ansprechpartner;
+  final String email;
+  final String telefon;
 
   Betrieb({
     required this.name,
@@ -16,6 +19,9 @@ class Betrieb {
     required this.beschreibung,
     required this.aufgabenbereiche,
     required this.webseite,
-    required this.adresse, // Im Konstruktor hinzugefügt
+    required this.adresse,
+    required this.ansprechpartner,
+    required this.email,
+    required this.telefon,
   });
 }
