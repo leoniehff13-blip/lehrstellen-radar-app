@@ -29,6 +29,8 @@ class NeuesProfilScreenState extends State<NeuesProfilScreen> {
   final _stadtController = TextEditingController();
   final _unternehmenController = TextEditingController();
   final _handwerkskammerController = TextEditingController();
+  final _faehigkeitenController = TextEditingController();
+  final _ansprechpersonController = TextEditingController();
 
   @override
   void initState() {
@@ -136,27 +138,32 @@ class NeuesProfilScreenState extends State<NeuesProfilScreen> {
                     });
                   },
                 ),
+                if (_selectedProfilTyp == 'Unternehmen')
+                  TextFormField(
+                    controller: _ansprechpersonController,
+                    decoration: const InputDecoration(labelText: 'Ansprechperson'),
+                  ),
+                const SizedBox(height: 20),
+                const Text(
+                  'Dieses Programm befindet sich in einer Testphase - komm später noch einmal wieder, um zu schauen, ob nun auch dein Gewerk mitmacht :)',
+                  style: TextStyle(fontStyle: FontStyle.italic),
+                ),
+                DropdownButtonFormField<String>(
+                  initialValue: _selectedGewerk,
+                  decoration: const InputDecoration(labelText: 'Gewerk'),
+                  items: _gewerke.map((String gewerk) {
+                    return DropdownMenuItem<String>(
+                      value: gewerk,
+                      child: Text(gewerk),
+                    );
+                  }).toList(),
+                  onChanged: (newValue) {
+                    setState(() {
+                      _selectedGewerk = newValue;
+                    });
+                  },
+                ),
               ],
-              const SizedBox(height: 20),
-              const Text(
-                'Dieses Programm befindet sich in einer Testphase - komm später noch einmal wieder, um zu schauen, ob nun auch dein Gewerk mitmacht :)',
-                style: TextStyle(fontStyle: FontStyle.italic),
-              ),
-              DropdownButtonFormField<String>(
-                initialValue: _selectedGewerk,
-                decoration: const InputDecoration(labelText: 'Gewerk'),
-                items: _gewerke.map((String gewerk) {
-                  return DropdownMenuItem<String>(
-                    value: gewerk,
-                    child: Text(gewerk),
-                  );
-                }).toList(),
-                onChanged: (newValue) {
-                  setState(() {
-                    _selectedGewerk = newValue;
-                  });
-                },
-              ),
               if (_selectedProfilTyp == 'Azubi') ...[
                 TextFormField(
                   controller: _unternehmenController,
@@ -181,26 +188,31 @@ class NeuesProfilScreenState extends State<NeuesProfilScreen> {
                   },
                   validator: (value) => value == null ? 'Bitte das Lehrjahr auswählen' : null,
                 ),
+                TextFormField(
+                  controller: _faehigkeitenController,
+                  decoration: const InputDecoration(labelText: 'Fähigkeiten'),
+                ),
               ],
               const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
                     final newProfile = Profil(
-                      profilTyp: _selectedProfilTyp,
-                      name: _selectedProfilTyp == 'Azubi' ? _nameController.text : null,
-                      vorname: _selectedProfilTyp == 'Azubi' ? _vornameController.text : null,
-                      betrieb: _selectedProfilTyp == 'Unternehmen' ? _betriebController.text : null,
-                      strasse: _selectedProfilTyp == 'Unternehmen' ? _strasseController.text : null,
-                      hausnummer: _selectedProfilTyp == 'Unternehmen' ? _hausnummerController.text : null,
-                      plz: _selectedProfilTyp == 'Unternehmen' ? _plzController.text : null,
-                      stadt: _stadtController.text,
-                      land: _selectedCountry,
-                      gewerk: _selectedGewerk,
-                      unternehmen: _selectedProfilTyp == 'Azubi' ? _unternehmenController.text : null,
-                      handwerkskammer: _selectedProfilTyp == 'Azubi' ? _handwerkskammerController.text : null,
-                      lehrjahr: _selectedLehrjahr,
-                    );
+                        profilTyp: _selectedProfilTyp,
+                        name: _selectedProfilTyp == 'Azubi' ? _nameController.text : null,
+                        vorname: _selectedProfilTyp == 'Azubi' ? _vornameController.text : null,
+                        betrieb: _selectedProfilTyp == 'Unternehmen' ? _betriebController.text : null,
+                        strasse: _selectedProfilTyp == 'Unternehmen' ? _strasseController.text : null,
+                        hausnummer: _selectedProfilTyp == 'Unternehmen' ? _hausnummerController.text : null,
+                        plz: _selectedProfilTyp == 'Unternehmen' ? _plzController.text : null,
+                        stadt: _stadtController.text,
+                        land: _selectedCountry,
+                        ansprechperson: _selectedProfilTyp == 'Unternehmen' ? _ansprechpersonController.text : null,
+                        gewerk: _selectedGewerk,
+                        unternehmen: _selectedProfilTyp == 'Azubi' ? _unternehmenController.text : null,
+                        handwerkskammer: _selectedProfilTyp == 'Azubi' ? _handwerkskammerController.text : null,
+                        lehrjahr: _selectedLehrjahr,
+                        faehigkeiten: _selectedProfilTyp == 'Azubi' ? _faehigkeitenController.text : null);
                     Navigator.of(context).pop(newProfile);
                   }
                 },

@@ -7,11 +7,13 @@ class Profil {
   final String? plz;
   final String? stadt;
   final String? land;
+  final String? ansprechperson;
   final String? gewerk;
   final String? profilTyp;
   final int? lehrjahr;
   final String? unternehmen;
   final String? handwerkskammer;
+  final String? faehigkeiten;
 
   Profil({
     this.name,
@@ -22,10 +24,12 @@ class Profil {
     this.plz,
     this.stadt,
     this.land,
+    this.ansprechperson,
     this.gewerk,
     this.profilTyp,
     this.lehrjahr,
     this.unternehmen,
     this.handwerkskammer,
+    this.faehigkeiten,
   });
 }
