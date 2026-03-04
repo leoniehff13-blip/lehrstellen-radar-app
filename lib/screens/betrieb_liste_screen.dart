@@ -7,21 +7,23 @@ class BetriebListeScreen extends StatelessWidget {
 
   final List<Betrieb> betriebAngebote = [
     Betrieb(
-      name: 'Muster GmbH & Co. KG',
-      branche: 'Maschinenbau',
-      ort: 'Stuttgart',
-      logo:
-          'https://images.unsplash.com/photo-1556761175-5973dc0f32e7?q=80&w=100&auto=format&fit=crop',
-      beschreibung:
-          'Wir sind ein führender Hersteller von Spezialmaschinen und bieten eine erstklassige Ausbildung in einem innovativen Umfeld.',
-      aufgabenbereiche: [
-        'Montage von Baugruppen',
-        'Wartung und Instandhaltung',
-        'Qualitätssicherung'
-      ],
-      webseite: 'www.muster-gmbh.de',
-      adresse: 'Mercedesstraße 137, 70327 Stuttgart',
-    ),
+        name: 'Muster GmbH & Co. KG',
+        branche: 'Maschinenbau',
+        ort: 'Stuttgart',
+        logo:
+            'https://images.unsplash.com/photo-1556761175-5973dc0f32e7?q=80&w=100&auto=format&fit=crop',
+        beschreibung:
+            'Wir sind ein führender Hersteller von Spezialmaschinen und bieten eine erstklassige Ausbildung in einem innovativen Umfeld.',
+        aufgabenbereiche: [
+          'Montage von Baugruppen',
+          'Wartung und Instandhaltung',
+          'Qualitätssicherung'
+        ],
+        webseite: 'www.muster-gmbh.de',
+        adresse: 'Mercedesstraße 137, 70327 Stuttgart',
+        ansprechpartner: 'Frau Dr. Schneider',
+        email: 'bewerbung@muster-gmbh.de',
+        telefon: '+49 711 123456'),
     Betrieb(
         name: 'Holzbau Schmidt',
         branche: 'Handwerk & Bau',
@@ -36,7 +38,10 @@ class BetriebListeScreen extends StatelessWidget {
           'Montage vor Ort'
         ],
         webseite: 'www.holzbau-schmidt.de',
-        adresse: 'Hans-Bunte-Straße 8, 79108 Freiburg'),
+        adresse: 'Hans-Bunte-Straße 8, 79108 Freiburg',
+        ansprechpartner: 'Herr Meier',
+        email: 'info@holzbau-schmidt.de',
+        telefon: '+49 761 987654'),
     Betrieb(
         name: 'Kreativ-Software AG',
         branche: 'IT & Softwareentwicklung',
@@ -51,7 +56,10 @@ class BetriebListeScreen extends StatelessWidget {
           'UI/UX-Design'
         ],
         webseite: 'www.kreativ-ag.de',
-        adresse: 'Friedrichstraße 100, 10117 Berlin'),
+        adresse: 'Friedrichstraße 100, 10117 Berlin',
+        ansprechpartner: 'Herr Schulze',
+        email: 'karriere@kreativ-ag.de',
+        telefon: '+49 30 1122334'),
   ];
 
   @override
