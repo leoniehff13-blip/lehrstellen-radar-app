@@ -1,19 +1,19 @@
 class Azubi {
   final String name;
   final String beruf;
-  final int lehrjahr;
-  final List<String> gelernteFaehigkeiten;
-  final List<String> offeneAusbildungsinhalte;
-  final double lat;
-  final double lng;
+  final String lehrjahr;
+  final String profilbild;
+  final List<String> faehigkeiten;
+  final List<String> lernziele;
+  final String email;
 
   Azubi({
     required this.name,
     required this.beruf,
     required this.lehrjahr,
-    required this.gelernteFaehigkeiten,
-    required this.offeneAusbildungsinhalte,
-    required this.lat,
-    required this.lng,
+    required this.profilbild,
+    required this.faehigkeiten,
+    required this.lernziele,
+    required this.email,
   });
 }

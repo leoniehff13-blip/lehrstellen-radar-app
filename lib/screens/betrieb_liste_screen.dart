@@ -1,47 +1,87 @@
 import 'package:flutter/material.dart';
 import '../models/betrieb.dart';
+import 'betrieb_detail_screen.dart';
 
 class BetriebListeScreen extends StatelessWidget {
-  const BetriebListeScreen({super.key});
+  BetriebListeScreen({super.key});
+
+  final List<Betrieb> betriebAngebote = [
+    Betrieb(
+      name: 'Muster GmbH & Co. KG',
+      branche: 'Maschinenbau',
+      ort: 'Stuttgart',
+      logo:
+          'https://images.unsplash.com/photo-1556761175-5973dc0f32e7?q=80&w=100&auto=format&fit=crop',
+      beschreibung:
+          'Wir sind ein führender Hersteller von Spezialmaschinen und bieten eine erstklassige Ausbildung in einem innovativen Umfeld.',
+      aufgabenbereiche: [
+        'Montage von Baugruppen',
+        'Wartung und Instandhaltung',
+        'Qualitätssicherung'
+      ],
+      webseite: 'www.muster-gmbh.de',
+      adresse: 'Mercedesstraße 137, 70327 Stuttgart',
+    ),
+    Betrieb(
+        name: 'Holzbau Schmidt',
+        branche: 'Handwerk & Bau',
+        ort: 'Freiburg',
+        logo:
+            'https://images.unsplash.com/photo-1497366811353-6870744d04b2?q=80&w=100&auto=format&fit=crop',
+        beschreibung:
+            'Traditionelles Handwerk trifft auf moderne Technik. Bei uns lernst du den Umgang mit dem Werkstoff Holz von Grund auf.',
+        aufgabenbereiche: [
+          'Herstellung von Möbeln',
+          'Innenausbau',
+          'Montage vor Ort'
+        ],
+        webseite: 'www.holzbau-schmidt.de',
+        adresse: 'Hans-Bunte-Straße 8, 79108 Freiburg'),
+    Betrieb(
+        name: 'Kreativ-Software AG',
+        branche: 'IT & Softwareentwicklung',
+        ort: 'Berlin',
+        logo:
+            'https://images.unsplash.com/photo-1552664730-d307ca884978?q=80&w=100&auto=format&fit=crop',
+        beschreibung:
+            'Wir entwickeln die Apps von morgen. Werde Teil unseres agilen Teams und gestalte die digitale Zukunft mit.',
+        aufgabenbereiche: [
+          'App-Entwicklung mit Flutter',
+          'Backend-Anbindung mit Firebase',
+          'UI/UX-Design'
+        ],
+        webseite: 'www.kreativ-ag.de',
+        adresse: 'Friedrichstraße 100, 10117 Berlin'),
+  ];
 
   @override
   Widget build(BuildContext context) {
-    final List<Betrieb> betriebe = [
-      Betrieb(
-        name: 'Elektro-Service GmbH',
-        gewerk: 'Elektrotechnik',
-        spezialisierung: 'Gebäudeautomation',
-        aufgaben: [
-          'Installation von Smart-Home-Systemen',
-          'Wartung von elektrischen Anlagen',
-        ],
-        lat: 52.5211,
-        lng: 13.4061,
-      ),
-      Betrieb(
-        name: 'Tischlerei Holzdesign',
-        gewerk: 'Tischler',
-        spezialisierung: 'Individueller Möbelbau',
-        aufgaben: [
-          'Anfertigung von Maßmöbeln',
-          'Restauration von alten Möbeln',
-        ],
-        lat: 53.5522,
-        lng: 9.9948,
-      ),
-    ];
-
     return ListView.builder(
-      itemCount: betriebe.length,
+      itemCount: betriebAngebote.length,
       itemBuilder: (context, index) {
-        final betrieb = betriebe[index];
+        final betrieb = betriebAngebote[index];
         return Card(
-          margin: const EdgeInsets.all(8.0),
+          margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          elevation: 4,
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           child: ListTile(
-            title: Text(betrieb.name),
-            subtitle: Text(betrieb.gewerk),
+            leading: CircleAvatar(
+              radius: 30,
+              backgroundImage: NetworkImage(betrieb.logo),
+              backgroundColor: Colors.grey[200],
+            ),
+            title: Text(betrieb.name,
+                style: const TextStyle(fontWeight: FontWeight.bold)),
+            subtitle: Text('${betrieb.branche}\n${betrieb.ort}'),
+            trailing: const Icon(Icons.chevron_right),
             onTap: () {
-              // Navigate to detail screen
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => BetriebDetailScreen(betrieb: betrieb),
+                ),
+              );
             },
           ),
         );

@@ -11,24 +11,33 @@ class AngeboteScreen extends StatelessWidget {
       length: 2,
       child: Scaffold(
         appBar: AppBar(
-          backgroundColor: Theme.of(context).primaryColor,
+          flexibleSpace: Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Colors.blue, Colors.purple],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+            ),
+          ),
           title: const Text('Angebote'),
           titleTextStyle: const TextStyle(
             color: Colors.white,
-            fontSize: 20,
+            fontSize: 22,
             fontWeight: FontWeight.bold,
           ),
           bottom: const TabBar(
             tabs: [
-              Tab(text: 'Azubis'),
-              Tab(text: 'Betriebe'),
+              Tab(icon: Icon(Icons.person), text: 'Azubis'),
+              Tab(icon: Icon(Icons.business), text: 'Betriebe'),
             ],
             labelColor: Colors.white,
             unselectedLabelColor: Colors.white70,
             indicatorColor: Colors.white,
+            indicatorWeight: 3.0,
           ),
         ),
-        body: const TabBarView(
+        body: TabBarView(
           children: [
             AzubiListeScreen(),
             BetriebListeScreen(),

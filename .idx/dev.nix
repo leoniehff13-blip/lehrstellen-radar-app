@@ -2,11 +2,11 @@
 # see: https://firebase.google.com/docs/studio/customize-workspace
 { pkgs, ... }: {
   # Which nixpkgs channel to use.
-  channel = "unstable"; # or "unstable"
+  channel = "unstable";
 
   # Use https://search.nixos.org/packages to find packages
   packages = [
-    pkgs.gh 
+    pkgs.gh
     pkgs.jdk21
     pkgs.unzip
   ];

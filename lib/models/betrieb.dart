@@ -1,17 +1,21 @@
 class Betrieb {
   final String name;
-  final String gewerk;
-  final String spezialisierung;
-  final List<String> aufgaben;
-  final double lat;
-  final double lng;
+  final String branche;
+  final String ort;
+  final String logo;
+  final String beschreibung;
+  final List<String> aufgabenbereiche;
+  final String webseite;
+  final String adresse; // Neues Feld
 
   Betrieb({
     required this.name,
-    required this.gewerk,
-    required this.spezialisierung,
-    required this.aufgaben,
-    required this.lat,
-    required this.lng,
+    required this.branche,
+    required this.ort,
+    required this.logo,
+    required this.beschreibung,
+    required this.aufgabenbereiche,
+    required this.webseite,
+    required this.adresse, // Im Konstruktor hinzugefügt
   });
 }
