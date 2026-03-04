@@ -43,7 +43,7 @@ class AzubiDetailScreen extends StatelessWidget {
             const SizedBox(height: 8),
             Center(
               child: Text(
-                '${azubi.beruf} - ${azubi.lehrjahr}',
+                '${azubi.beruf} - ${azubi.lehrjahr}. Lehrjahr',
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Colors.grey[600]),
               ),
             ),

@@ -9,6 +9,9 @@ class Profil {
   final String? land;
   final String? gewerk;
   final String? profilTyp;
+  final int? lehrjahr;
+  final String? unternehmen;
+  final String? handwerkskammer;
 
   Profil({
     this.name,
@@ -21,5 +24,8 @@ class Profil {
     this.land,
     this.gewerk,
     this.profilTyp,
+    this.lehrjahr,
+    this.unternehmen,
+    this.handwerkskammer,
   });
 }

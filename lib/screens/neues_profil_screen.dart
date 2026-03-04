@@ -14,9 +14,11 @@ class NeuesProfilScreenState extends State<NeuesProfilScreen> {
   String? _selectedCountry;
   String? _selectedGewerk;
   String? _selectedProfilTyp;
+  int? _selectedLehrjahr;
   final List<String> _countries = ['Deutschland'];
   final List<String> _gewerke = ['Elektriker', 'Zimmerer'];
   final List<String> _profilTypen = ['Azubi', 'Unternehmen'];
+  final List<int> _lehrjahre = [1, 2, 3, 4];
 
   final _nameController = TextEditingController();
   final _vornameController = TextEditingController();
@@ -25,6 +27,8 @@ class NeuesProfilScreenState extends State<NeuesProfilScreen> {
   final _hausnummerController = TextEditingController();
   final _plzController = TextEditingController();
   final _stadtController = TextEditingController();
+  final _unternehmenController = TextEditingController();
+  final _handwerkskammerController = TextEditingController();
 
   @override
   void initState() {
@@ -66,7 +70,7 @@ class NeuesProfilScreenState extends State<NeuesProfilScreen> {
           child: ListView(
             children: <Widget>[
               DropdownButtonFormField<String>(
-                value: _selectedProfilTyp,
+                initialValue: _selectedProfilTyp,
                 decoration: const InputDecoration(labelText: 'Profil-Typ'),
                 items: _profilTypen.map((String typ) {
                   return DropdownMenuItem<String>(
@@ -85,49 +89,54 @@ class NeuesProfilScreenState extends State<NeuesProfilScreen> {
                 TextFormField(
                   controller: _nameController,
                   decoration: const InputDecoration(labelText: 'Name'),
+                  validator: (value) => (value == null || value.isEmpty) ? 'Bitte einen Namen eingeben' : null,
                 ),
                 TextFormField(
                   controller: _vornameController,
                   decoration: const InputDecoration(labelText: 'Vorname'),
+                  validator: (value) => (value == null || value.isEmpty) ? 'Bitte einen Vornamen eingeben' : null,
                 ),
               ] else if (_selectedProfilTyp == 'Unternehmen') ...[
                 TextFormField(
                   controller: _betriebController,
                   decoration: const InputDecoration(labelText: 'Betrieb'),
+                  validator: (value) => (value == null || value.isEmpty) ? 'Bitte einen Betriebsnamen eingeben' : null,
+                ),
+                TextFormField(
+                  controller: _strasseController,
+                  decoration: const InputDecoration(labelText: 'Straße'),
+                ),
+                TextFormField(
+                  controller: _hausnummerController,
+                  decoration: const InputDecoration(labelText: 'Hausnummer'),
+                ),
+                TextFormField(
+                  controller: _plzController,
+                  decoration: const InputDecoration(labelText: 'Postleitzahl'),
                 ),
               ],
-              TextFormField(
-                controller: _strasseController,
-                decoration: const InputDecoration(labelText: 'Straße'),
-              ),
-              TextFormField(
-                controller: _hausnummerController,
-                decoration: const InputDecoration(labelText: 'Hausnummer'),
-              ),
-              TextFormField(
-                controller: _plzController,
-                decoration: const InputDecoration(labelText: 'Postleitzahl'),
-              ),
-              TextFormField(
-                controller: _stadtController,
-                decoration: const InputDecoration(labelText: 'Stadt'),
-              ),
-              DropdownButtonFormField<String>(
-                initialValue: _selectedCountry,
-                decoration: const InputDecoration(labelText: 'Land'),
-                items: _countries.map((String country) {
-                  return DropdownMenuItem<String>(
-                    value: country,
-                    child: Text(country),
-                  );
-                }).toList(),
-                onChanged: (newValue) {
-                  setState(() {
-                    _selectedCountry = newValue;
-                    _checkLand();
-                  });
-                },
-              ),
+              if (_selectedProfilTyp != null) ...[
+                TextFormField(
+                  controller: _stadtController,
+                  decoration: const InputDecoration(labelText: 'Ort'),
+                ),
+                DropdownButtonFormField<String>(
+                  initialValue: _selectedCountry,
+                  decoration: const InputDecoration(labelText: 'Land'),
+                  items: _countries.map((String country) {
+                    return DropdownMenuItem<String>(
+                      value: country,
+                      child: Text(country),
+                    );
+                  }).toList(),
+                  onChanged: (newValue) {
+                    setState(() {
+                      _selectedCountry = newValue;
+                      _checkLand();
+                    });
+                  },
+                ),
+              ],
               const SizedBox(height: 20),
               const Text(
                 'Dieses Programm befindet sich in einer Testphase - komm später noch einmal wieder, um zu schauen, ob nun auch dein Gewerk mitmacht :)',
@@ -148,6 +157,31 @@ class NeuesProfilScreenState extends State<NeuesProfilScreen> {
                   });
                 },
               ),
+              if (_selectedProfilTyp == 'Azubi') ...[
+                TextFormField(
+                  controller: _unternehmenController,
+                  decoration: const InputDecoration(labelText: 'Unternehmen'),
+                ),
+                TextFormField(
+                  controller: _handwerkskammerController,
+                  decoration: const InputDecoration(labelText: 'Handwerkskammer'),
+                ),
+                DropdownButtonFormField<int>(
+                  decoration: const InputDecoration(labelText: 'Lehrjahr'),
+                  items: _lehrjahre.map((int lehrjahr) {
+                    return DropdownMenuItem<int>(
+                      value: lehrjahr,
+                      child: Text('$lehrjahr. Lehrjahr'),
+                    );
+                  }).toList(),
+                  onChanged: (newValue) {
+                    setState(() {
+                      _selectedLehrjahr = newValue;
+                    });
+                  },
+                  validator: (value) => value == null ? 'Bitte das Lehrjahr auswählen' : null,
+                ),
+              ],
               const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () {
@@ -157,12 +191,15 @@ class NeuesProfilScreenState extends State<NeuesProfilScreen> {
                       name: _selectedProfilTyp == 'Azubi' ? _nameController.text : null,
                       vorname: _selectedProfilTyp == 'Azubi' ? _vornameController.text : null,
                       betrieb: _selectedProfilTyp == 'Unternehmen' ? _betriebController.text : null,
-                      strasse: _strasseController.text,
-                      hausnummer: _hausnummerController.text,
-                      plz: _plzController.text,
+                      strasse: _selectedProfilTyp == 'Unternehmen' ? _strasseController.text : null,
+                      hausnummer: _selectedProfilTyp == 'Unternehmen' ? _hausnummerController.text : null,
+                      plz: _selectedProfilTyp == 'Unternehmen' ? _plzController.text : null,
                       stadt: _stadtController.text,
                       land: _selectedCountry,
                       gewerk: _selectedGewerk,
+                      unternehmen: _selectedProfilTyp == 'Azubi' ? _unternehmenController.text : null,
+                      handwerkskammer: _selectedProfilTyp == 'Azubi' ? _handwerkskammerController.text : null,
+                      lehrjahr: _selectedLehrjahr,
                     );
                     Navigator.of(context).pop(newProfile);
                   }
