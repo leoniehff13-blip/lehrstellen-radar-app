@@ -39,66 +39,77 @@ class InfoScreenState extends State<InfoScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Padding(
-            padding: EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text(
-                  'Zentralverband des Deutschen Handwerks (ZDH)',
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Info'),
+        backgroundColor: const Color(0xFFD6DCE5),
+        titleTextStyle: const TextStyle(
+          color: Color(0xFF002C59),
+          fontSize: 22,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Padding(
+              padding: EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(
+                    'Zentralverband des Deutschen Handwerks (ZDH)',
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                ),
-                SizedBox(height: 8.0),
-                Text(
-                  'Der ZDH ist die Spitzenorganisation des Handwerks in Deutschland. Er vertritt die Interessen von rund 1 Million Handwerksbetrieben mit über 5,6 Millionen Beschäftigten.',
-                  style: TextStyle(fontSize: 16),
-                ),
-                SizedBox(height: 24.0),
-                Text(
-                  'Handwerkskammern',
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
+                  SizedBox(height: 8.0),
+                  Text(
+                    'Der ZDH ist die Spitzenorganisation des Handwerks in Deutschland. Er vertritt die Interessen von rund 1 Million Handwerksbetrieben mit über 5,6 Millionen Beschäftigten.',
+                    style: TextStyle(fontSize: 16),
                   ),
-                ),
-                SizedBox(height: 8.0),
-                Text(
-                  'In Deutschland gibt es 53 Handwerkskammern. Sie sind die regionalen Selbstverwaltungseinrichtungen des Handwerks und vertreten die Interessen ihrer Mitgliedsbetriebe.',
-                  style: TextStyle(fontSize: 16),
-                ),
-              ],
+                  SizedBox(height: 24.0),
+                  Text(
+                    'Handwerkskammern',
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(height: 8.0),
+                  Text(
+                    'In Deutschland gibt es 53 Handwerkskammern. Sie sind die regionalen Selbstverwaltungseinrichtungen des Handwerks und vertreten die Interessen ihrer Mitgliedsbetriebe.',
+                    style: TextStyle(fontSize: 16),
+                  ),
+                ],
+              ),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16.0, 0, 16.0, 16.0),
-            child: TextField(
-              controller: _searchController,
-              decoration: InputDecoration(
-                labelText: 'Suche',
-                hintText: 'Handwerkskammer suchen...',
-                prefixIcon: const Icon(Icons.search),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(25.0),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16.0, 0, 16.0, 16.0),
+              child: TextField(
+                controller: _searchController,
+                decoration: InputDecoration(
+                  labelText: 'Suche',
+                  hintText: 'Handwerkskammer suchen...',
+                  prefixIcon: const Icon(Icons.search),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(25.0),
+                  ),
                 ),
               ),
             ),
-          ),
-          ListView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: _filteredKammern.length,
-            itemBuilder: (context, index) {
-              return _buildKammerInfo(context, _filteredKammern[index]);
-            },
-          ),
-        ],
+            ListView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: _filteredKammern.length,
+              itemBuilder: (context, index) {
+                return _buildKammerInfo(context, _filteredKammern[index]);
+              },
+            ),
+          ],
+        ),
       ),
     );
   }

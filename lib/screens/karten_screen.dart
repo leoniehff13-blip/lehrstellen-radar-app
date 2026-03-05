@@ -218,36 +218,47 @@ class _KartenScreenState extends State<KartenScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        _buildFilterDropdown(),
-        Expanded(
-          child: Stack(
-            children: [
-              FlutterMap(
-                mapController: _mapController,
-                options: MapOptions(
-                  initialCenter: const LatLng(51.1657, 10.4515),
-                  initialZoom: 6.0,
-                ),
-                children: [
-                  TileLayer(
-                    urlTemplate:
-                        "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
-                    userAgentPackageName: 'com.example.myapp',
-                  ),
-                  MarkerLayer(markers: _markers),
-                ],
-              ),
-              if (_isLoading)
-                Container(
-                  color: Colors.black.withOpacity(0.5),
-                  child: const Center(child: CircularProgressIndicator()),
-                ),
-            ],
-          ),
+    return Scaffold(
+       appBar: AppBar(
+        title: const Text('Karte'),
+        backgroundColor: const Color(0xFFD6DCE5),
+        titleTextStyle: const TextStyle(
+          color: Color(0xFF002C59),
+          fontSize: 22,
+          fontWeight: FontWeight.bold,
         ),
-      ],
+      ),
+      body: Column(
+        children: [
+          _buildFilterDropdown(),
+          Expanded(
+            child: Stack(
+              children: [
+                FlutterMap(
+                  mapController: _mapController,
+                  options: MapOptions(
+                    initialCenter: const LatLng(51.1657, 10.4515),
+                    initialZoom: 6.0,
+                  ),
+                  children: [
+                    TileLayer(
+                      urlTemplate:
+                          "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+                      userAgentPackageName: 'com.example.myapp',
+                    ),
+                    MarkerLayer(markers: _markers),
+                  ],
+                ),
+                if (_isLoading)
+                  Container(
+                    color: Colors.black.withOpacity(0.5),
+                    child: const Center(child: CircularProgressIndicator()),
+                  ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 
