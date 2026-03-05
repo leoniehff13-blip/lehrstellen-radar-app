@@ -10,6 +10,7 @@ class Betrieb {
   final String ansprechpartner;
   final String email;
   final String telefon;
+  final String handwerkskammerId; // Added this line
 
   Betrieb({
     required this.name,
@@ -23,5 +24,6 @@ class Betrieb {
     required this.ansprechpartner,
     required this.email,
     required this.telefon,
+    required this.handwerkskammerId, // Added this line
   });
 }
