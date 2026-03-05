@@ -18,7 +18,8 @@ class _TalentListeScreenState extends State<TalentListeScreen> {
         gewerk: 'Elektroniker für Betriebstechnik',
         lehrjahr: 2,
         faehigkeiten: ['Löten', 'Schaltpläne lesen', 'VDE-Normen'],
-        profilTyp: 'Azubi'
+        profilTyp: 'Azubi',
+        profilbild: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=100&auto=format&fit=crop',
         ),
     Profil(
         name: 'Altkorn',
@@ -30,7 +31,8 @@ class _TalentListeScreenState extends State<TalentListeScreen> {
           'Heizungsanlagen installieren',
           'Kundendienst'
         ],
-        profilTyp: 'Azubi' 
+        profilTyp: 'Azubi',
+        profilbild: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=100&auto=format&fit=crop',
         ),
     Profil(
         name: 'Müller',
@@ -38,7 +40,8 @@ class _TalentListeScreenState extends State<TalentListeScreen> {
         gewerk: 'Zimmerer',
         lehrjahr: 1,
         faehigkeiten: ['Holzverbindungen', 'Oberflächenbehandlung'],
-        profilTyp: 'Azubi'
+        profilTyp: 'Azubi',
+        profilbild: 'https://images.unsplash.com/photo-1568602471122-7832951cc4c5?q=80&w=100&auto=format&fit=crop',
         ),
   ];
 
@@ -82,8 +85,7 @@ class _TalentListeScreenState extends State<TalentListeScreen> {
             itemCount: gefilterteTalente.length,
             itemBuilder: (context, index) {
               final talent = gefilterteTalente[index];
-              const profilbildPlaceholder = 
-                  'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=100&auto=format&fit=crop';
+              final profilbild = talent.profilbild ?? 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=100&auto=format&fit=crop';
 
               return Card(
                 margin:
@@ -94,7 +96,7 @@ class _TalentListeScreenState extends State<TalentListeScreen> {
                 child: ListTile(
                   leading: CircleAvatar(
                     radius: 30,
-                    backgroundImage: const NetworkImage(profilbildPlaceholder),
+                    backgroundImage: NetworkImage(profilbild),
                     backgroundColor: Colors.grey[200],
                   ),
                   title: Text('${talent.vorname ?? ''} ${talent.name ?? ''}',
