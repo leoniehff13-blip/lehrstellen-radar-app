@@ -48,6 +48,7 @@ class MainScreen extends StatefulWidget {
 class MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
   Profil? _profil;
+  final List<Profil> _ausgelieheneTalente = [];
 
   void _onItemTapped(int index) {
     setState(() {
@@ -58,19 +59,40 @@ class MainScreenState extends State<MainScreen> {
   void _updateProfil(Profil profil) {
     setState(() {
       _profil = profil;
-      // After updating profile, navigate to the Konto screen to show it
-      _selectedIndex = 4;
+      _selectedIndex = 4; // Navigate to Konto screen
     });
+  }
+
+  void _handleNewTalentOffer(BuildContext context) async {
+    if (_profil != null) {
+      final neuesAngebot = await Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => NeueTalentleiheScreen(userProfile: _profil),
+        ),
+      );
+
+      if (neuesAngebot != null && neuesAngebot is Profil) {
+        setState(() {
+          _ausgelieheneTalente.add(neuesAngebot);
+        });
+      }
+    } else {
+      // Optional: Handle case where user profile is not set
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Bitte zuerst ein Profil anlegen.')),
+      );
+      setState(() {
+        _selectedIndex = 4; // Redirect to account screen
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    // Define the list of widgets directly in the build method
-    // This ensures they are rebuilt with the latest state (_profil)
-    // when setState is called.
     final List<Widget> widgetOptions = <Widget>[
-      const HomeScreen(), // No longer needs the callback
+      const HomeScreen(),
       TalentleiheScreen(
+        ausgelieheneTalente: _ausgelieheneTalente,
         onNavigateToNewOffer: (isBetrieb) {
           if (isBetrieb) {
             Navigator.of(context).push(
@@ -79,19 +101,12 @@ class MainScreenState extends State<MainScreen> {
               ),
             );
           } else {
-            // The closure captures the current _profil value
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) =>
-                    NeueTalentleiheScreen(userProfile: _profil),
-              ),
-            );
+            _handleNewTalentOffer(context);
           }
         },
       ),
       const KartenScreen(),
       const InfoScreen(),
-      // Pass the current profile and the update callback to KontoScreen
       KontoScreen(profil: _profil, onProfilUpdated: _updateProfil),
     ];
 

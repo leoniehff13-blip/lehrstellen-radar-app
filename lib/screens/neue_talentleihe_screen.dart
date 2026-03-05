@@ -41,16 +41,46 @@ class NeueTalentleiheScreenState extends State<NeueTalentleiheScreen> {
       _faehigkeitenController.text = widget.userProfile!.faehigkeiten?.join(', ') ?? '';
       if (_gewerke.contains(widget.userProfile!.gewerk)) {
         _selectedGewerk = widget.userProfile!.gewerk;
-        _updateLernziele();
+        _updateLernziele(isInit: true);
       }
+       _selectedLernziele = List<String>.from(widget.userProfile!.faehigkeiten ?? []);
     }
   }
 
-  void _updateLernziele() {
+  void _updateLernziele({bool isInit = false}) {
     setState(() {
       _lernziele = skillsByGewerk[_selectedGewerk] ?? [];
-      _selectedLernziele.clear();
+      if (!isInit) {
+        _selectedLernziele.clear();
+      }
     });
+  }
+
+  void _createTalentleihe() {
+    if (_formKey.currentState!.validate()) {
+      final neuesAngebot = Profil(
+        // Copy unchanging data from the original profile
+        profilTyp: widget.userProfile?.profilTyp,
+        betrieb: widget.userProfile?.betrieb,
+        strasse: widget.userProfile?.strasse,
+        hausnummer: widget.userProfile?.hausnummer,
+        plz: widget.userProfile?.plz,
+        stadt: widget.userProfile?.stadt,
+        land: widget.userProfile?.land,
+        ansprechperson: widget.userProfile?.ansprechperson,
+        spezialisierung: widget.userProfile?.spezialisierung,
+        lehrjahr: widget.userProfile?.lehrjahr,
+
+        // Use data from the form controllers and selections
+        name: _nameController.text,
+        vorname: _vornameController.text,
+        unternehmen: _unternehmenController.text,
+        handwerkskammer: _handwerkskammerController.text,
+        gewerk: _selectedGewerk,
+        faehigkeiten: _selectedLernziele,
+      );
+      Navigator.of(context).pop(neuesAngebot);
+    }
   }
 
   Future<void> _selectDateRange(BuildContext context) async {
@@ -90,7 +120,6 @@ class NeueTalentleiheScreenState extends State<NeueTalentleiheScreen> {
                     child: TextFormField(
                       controller: _vornameController,
                       decoration: const InputDecoration(labelText: 'Vorname'),
-                      readOnly: true,
                     ),
                   ),
                   const SizedBox(width: 16),
@@ -98,7 +127,6 @@ class NeueTalentleiheScreenState extends State<NeueTalentleiheScreen> {
                     child: TextFormField(
                       controller: _nameController,
                       decoration: const InputDecoration(labelText: 'Nachname'),
-                      readOnly: true,
                     ),
                   ),
                 ],
@@ -133,7 +161,6 @@ class NeueTalentleiheScreenState extends State<NeueTalentleiheScreen> {
                     child: TextFormField(
                       controller: _unternehmenController,
                       decoration: const InputDecoration(labelText: 'Unternehmen'),
-                      readOnly: true,
                     ),
                   ),
                   const SizedBox(width: 16),
@@ -141,7 +168,6 @@ class NeueTalentleiheScreenState extends State<NeueTalentleiheScreen> {
                     child: TextFormField(
                       controller: _handwerkskammerController,
                       decoration: const InputDecoration(labelText: 'Handwerkskammer'),
-                      readOnly: true,
                     ),
                   ),
                 ],
@@ -174,15 +200,16 @@ class NeueTalentleiheScreenState extends State<NeueTalentleiheScreen> {
               const SizedBox(height: 16),
               TextFormField(
                 controller: _faehigkeitenController,
-                decoration: const InputDecoration(labelText: 'Fähigkeiten'),
-                readOnly: true,
+                decoration: const InputDecoration(labelText: 'Bestehende Fähigkeiten (Referenz)'),
+                readOnly: true, // This should remain read-only as a reference
               ),
               const SizedBox(height: 24),
               if (_selectedGewerk != null)
                 MultiSelectDialogField(
                   items: _lernziele.map((e) => MultiSelectItem(e, e)).toList(),
-                  title: const Text("Lernziele"),
+                  title: const Text("Neue/Angebotene Fähigkeiten"),
                   selectedColor: Theme.of(context).primaryColor,
+                  initialValue: _selectedLernziele,
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: const BorderRadius.all(Radius.circular(8)),
@@ -196,7 +223,7 @@ class NeueTalentleiheScreenState extends State<NeueTalentleiheScreen> {
                     color: Colors.grey,
                   ),
                   buttonText: Text(
-                    "Gewünschte Lernziele auswählen",
+                    "Neue/Angebotene Fähigkeiten auswählen",
                     style: TextStyle(color: Colors.grey[700], fontSize: 16),
                   ),
                   onConfirm: (results) {
@@ -219,15 +246,7 @@ class NeueTalentleiheScreenState extends State<NeueTalentleiheScreen> {
                   backgroundColor: Theme.of(context).primaryColor,
                   foregroundColor: Colors.white,
                 ),
-                onPressed: () {
-                  if (_formKey.currentState!.validate()) {
-                    // Hier die Logik zum Speichern oder Senden der Daten einfügen
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                          content: Text('Talentleihe-Angebot erstellt!')),
-                    );
-                  }
-                },
+                onPressed: _createTalentleihe, // Updated onPressed handler
                 child: const Text('ANGEBOT ERSTELLEN'),
               ),
             ],
