@@ -4,10 +4,12 @@ import 'package:myapp/models/profil.dart';
 
 // Screens
 import 'screens/home_screen.dart';
-import 'screens/angebote_screen.dart';
+import 'screens/talentleihe_screen.dart';
 import 'screens/karten_screen.dart';
 import 'screens/info_screen.dart';
 import 'screens/konto_screen.dart';
+import 'screens/neue_talentleihe_screen.dart';
+import 'screens/neuer_betrieb_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -19,7 +21,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Azubi Match',
+      title: 'Talentleihe',
       theme: ThemeData(
         primaryColor: const Color(0xFF002C59),
         colorScheme: ColorScheme.fromSeed(
@@ -47,20 +49,6 @@ class MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
   Profil? _profil;
 
-  late final List<Widget> _widgetOptions;
-
-  @override
-  void initState() {
-    super.initState();
-    _widgetOptions = <Widget>[
-      HomeScreen(onProfilErstellen: _updateProfil),
-      const AngeboteScreen(),
-      const KartenScreen(),
-      const InfoScreen(),
-      KontoScreen(profil: _profil),
-    ];
-  }
-
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
@@ -70,18 +58,48 @@ class MainScreenState extends State<MainScreen> {
   void _updateProfil(Profil profil) {
     setState(() {
       _profil = profil;
-      _widgetOptions[4] = KontoScreen(profil: _profil); // Update the screen
-      _selectedIndex = 4; // Switch to the Konto screen
+      // After updating profile, navigate to the Konto screen to show it
+      _selectedIndex = 4;
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    // Define the list of widgets directly in the build method
+    // This ensures they are rebuilt with the latest state (_profil)
+    // when setState is called.
+    final List<Widget> widgetOptions = <Widget>[
+      const HomeScreen(), // No longer needs the callback
+      TalentleiheScreen(
+        onNavigateToNewOffer: (isBetrieb) {
+          if (isBetrieb) {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => const NeuerBetriebScreen(),
+              ),
+            );
+          } else {
+            // The closure captures the current _profil value
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) =>
+                    NeueTalentleiheScreen(userProfile: _profil),
+              ),
+            );
+          }
+        },
+      ),
+      const KartenScreen(),
+      const InfoScreen(),
+      // Pass the current profile and the update callback to KontoScreen
+      KontoScreen(profil: _profil, onProfilUpdated: _updateProfil),
+    ];
+
     return Scaffold(
       appBar: _selectedIndex == 0 || _selectedIndex == 1
           ? null
           : AppBar(
-              title: const Text('Azubi Match'),
+              title: const Text('Talentleihe'),
               backgroundColor: Theme.of(context).primaryColor,
               titleTextStyle: GoogleFonts.inter(
                 fontSize: 20,
@@ -89,13 +107,13 @@ class MainScreenState extends State<MainScreen> {
                 color: Colors.white,
               ),
             ),
-      body: Center(child: _widgetOptions.elementAt(_selectedIndex)),
+      body: Center(child: widgetOptions.elementAt(_selectedIndex)),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
           BottomNavigationBarItem(
             icon: Icon(Icons.list_alt),
-            label: 'Angebote',
+            label: 'Talentleihe',
           ),
           BottomNavigationBarItem(icon: Icon(Icons.map), label: 'Karte'),
           BottomNavigationBarItem(icon: Icon(Icons.info), label: 'Infos'),
@@ -108,7 +126,7 @@ class MainScreenState extends State<MainScreen> {
         selectedItemColor: Theme.of(context).primaryColor,
         unselectedItemColor: Colors.grey,
         onTap: _onItemTapped,
-        type: BottomNavigationBarType.fixed, // Ensure all items are visible
+        type: BottomNavigationBarType.fixed,
       ),
     );
   }

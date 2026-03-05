@@ -1,30 +1,43 @@
 import 'package:flutter/material.dart';
-import '../models/azubi.dart';
-import 'azubi_detail_screen.dart';
+import '../models/talent.dart';
+import 'talent_detail_screen.dart';
 
-class AzubiListeScreen extends StatefulWidget {
-  const AzubiListeScreen({super.key});
+class TalentListeScreen extends StatefulWidget {
+  const TalentListeScreen({super.key});
 
   @override
-  State<AzubiListeScreen> createState() => _AzubiListeScreenState();
+  State<TalentListeScreen> createState() => _TalentListeScreenState();
 }
 
-class _AzubiListeScreenState extends State<AzubiListeScreen> {
-  final List<Azubi> azubiAngebote = [
-    Azubi(
-        name: 'Max Mustermann',
+class _TalentListeScreenState extends State<TalentListeScreen> {
+  final List<Talent> talentAngebote = [
+    Talent(
+        name: 'Marlon Gambotron',
         beruf: 'Elektroniker für Betriebstechnik',
         lehrjahr: 2,
         profilbild:
             'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=100&auto=format&fit=crop',
         faehigkeiten: ['Löten', 'Schaltpläne lesen', 'VDE-Normen'],
         lernziele: [
-          'SPS-Programmierung vertiefen',
-          'Fehlersuche in komplexen Anlagen'
+          'Beleuchtung installieren',
+          'Erdung prüfen',
+          'Fehler diagnostizieren',
+          'Kabel verlegen',
+          'Leitungen dimensionieren',
+          'Messgeräte bedienen',
+          'Motoren anschließen',
+          'Prüfprotokolle erstellen',
+          'Schaltkreise verdrahten',
+          'Schaltpläne lesen',
+          'Schutzmaßnahmen anwenden',
+          'Sicherungen prüfen',
+          'Steckdosen installieren',
+          'Steuerungen programmieren',
+          'Verteiler aufbauen'
         ],
-        email: 'max.mustermann@email.de'),
-    Azubi(
-        name: 'Erika Mustermann',
+        email: 'marlon.gambotron@email.de'),
+    Talent(
+        name: 'Laura Altkorn',
         beruf: 'Anlagenmechanikerin für SHK',
         lehrjahr: 3,
         profilbild:
@@ -35,38 +48,30 @@ class _AzubiListeScreenState extends State<AzubiListeScreen> {
           'Kundendienst'
         ],
         lernziele: ['Hydraulischer Abgleich', 'Regenerative Energien'],
-        email: 'erika.mustermann@email.de'),
-    Azubi(
-        name: 'Jonas Schmidt',
-        beruf: 'Tischler',
+        email: 'laura.altkorn@email.de'),
+    Talent(
+        name: 'Alex Cedric Müller',
+        beruf: 'Zimmerer',
         lehrjahr: 1,
         profilbild:
             'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?q=80&w=100&auto=format&fit=crop',
         faehigkeiten: ['Holzverbindungen', 'Oberflächenbehandlung'],
         lernziele: [
-          'Umgang mit CNC-Maschinen',
-          'Kundenberatung und -betreuung'
+          'Dachstühle bauen',
+          'Kundenberatung und -betreuung',
+          'Nachhaltige Dämmstoffe'
         ],
-        email: 'jonas.schmidt@email.de'),
-    Azubi(
-        name: 'Anna Kovac',
-        beruf: 'Malerin und Lackiererin',
-        lehrjahr: 4,
-        profilbild: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=100&auto=format&fit=crop',
-        faehigkeiten: ['Spachteltechniken', 'Fassadengestaltung', 'Tapezieren'],
-        lernziele: ['Airless-Spritztechnik', 'Dekorative Wandgestaltung'],
-        email: 'anna.kovac@email.de'),
-
+        email: 'alex-cedric.mueller@email.de'),
   ];
 
   int? _gefiltertesLehrjahr;
 
   @override
   Widget build(BuildContext context) {
-    final gefilterteAzubis = _gefiltertesLehrjahr == null
-        ? azubiAngebote
-        : azubiAngebote
-            .where((azubi) => azubi.lehrjahr == _gefiltertesLehrjahr)
+    final gefilterteTalente = _gefiltertesLehrjahr == null
+        ? talentAngebote
+        : talentAngebote
+            .where((talent) => talent.lehrjahr == _gefiltertesLehrjahr)
             .toList();
 
     return Column(
@@ -87,9 +92,9 @@ class _AzubiListeScreenState extends State<AzubiListeScreen> {
         ),
         Expanded(
           child: ListView.builder(
-            itemCount: gefilterteAzubis.length,
+            itemCount: gefilterteTalente.length,
             itemBuilder: (context, index) {
-              final azubi = gefilterteAzubis[index];
+              final talent = gefilterteTalente[index];
               return Card(
                 margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 elevation: 4,
@@ -97,17 +102,17 @@ class _AzubiListeScreenState extends State<AzubiListeScreen> {
                 child: ListTile(
                   leading: CircleAvatar(
                     radius: 30,
-                    backgroundImage: NetworkImage(azubi.profilbild),
+                    backgroundImage: NetworkImage(talent.profilbild),
                     backgroundColor: Colors.grey[200],
                   ),
-                  title: Text(azubi.name, style: const TextStyle(fontWeight: FontWeight.bold)),
-                  subtitle: Text('${azubi.beruf}\n${azubi.lehrjahr}. Lehrjahr'),
+                  title: Text(talent.name, style: const TextStyle(fontWeight: FontWeight.bold)),
+                  subtitle: Text('${talent.beruf}\n${talent.lehrjahr}. Lehrjahr'),
                   trailing: const Icon(Icons.chevron_right),
                   onTap: () {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => AzubiDetailScreen(azubi: azubi),
+                        builder: (context) => TalentDetailScreen(talent: talent),
                       ),
                     );
                   },
