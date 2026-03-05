@@ -78,13 +78,14 @@ class KontoScreen extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Text('Profil-Typ: ${profil!.profilTyp}', style: Theme.of(context).textTheme.headlineSmall),
+        const Chip(label: Text('Talent'), avatar: Icon(Icons.person)),
         const SizedBox(height: 16),
         _buildInfoCard('Name', '${profil!.vorname} ${profil!.name}'),
         _buildInfoCard('Wohnort', '${profil!.stadt}, ${profil!.land}'),
         _buildInfoCard('Gewerk', profil!.gewerk ?? 'Nicht angegeben'),
         _buildInfoCard('Ausbildungsbetrieb', profil!.unternehmen ?? 'Nicht angegeben'),
         _buildInfoCard('Lehrjahr', '${profil!.lehrjahr}. Lehrjahr'),
+        _buildInfoCard('HWK', profil!.handwerkskammer ?? 'Nicht angegeben'),
         if (profil!.faehigkeiten != null && profil!.faehigkeiten!.isNotEmpty) ...[
           const SizedBox(height: 16),
           Text('Fähigkeiten', style: Theme.of(context).textTheme.titleLarge),
@@ -103,13 +104,12 @@ class KontoScreen extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Text('Profil-Typ: ${profil!.profilTyp}', style: Theme.of(context).textTheme.headlineSmall),
+        const Chip(label: Text('Unternehmen'), avatar: Icon(Icons.business)),
         const SizedBox(height: 16),
         _buildInfoCard('Name des Betriebs', profil!.betrieb ?? 'Nicht angegeben'),
         _buildInfoCard('Gewerk', profil!.gewerk ?? 'Nicht angegeben'),
         _buildInfoCard('Ansprechperson', profil!.ansprechperson ?? 'Nicht angegeben'),
         _buildInfoCard('Adresse', '${profil!.strasse} ${profil!.hausnummer}, ${profil!.plz} ${profil!.stadt}, ${profil!.land}'),
-        _buildInfoCard('Handwerkskammer', profil!.handwerkskammer ?? 'Nicht angegeben'),
         _buildInfoCard('Spezialisierung', profil!.spezialisierung ?? 'Nicht angegeben'),
       ],
     );
