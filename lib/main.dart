@@ -50,6 +50,13 @@ class MainScreenState extends State<MainScreen> {
   Profil? _profil;
 
   late final List<Widget> _widgetOptions;
+  final List<String> _appBarTitles = const [
+    'Home',
+    'Talentleihe', // Dieser Titel wird von der AppBar des TalentleiheScreens überschrieben
+    'Karte',
+    'Infos',
+    'Konto',
+  ];
 
   @override
   void initState() {
@@ -89,7 +96,8 @@ class MainScreenState extends State<MainScreen> {
   void _updateProfil(Profil profil) {
     setState(() {
       _profil = profil;
-      _widgetOptions[4] = KontoScreen(profil: _profil, onProfilUpdated: _updateProfil);
+      _widgetOptions[4] =
+          KontoScreen(profil: _profil, onProfilUpdated: _updateProfil);
       _selectedIndex = 4;
     });
   }
@@ -100,7 +108,7 @@ class MainScreenState extends State<MainScreen> {
       appBar: _selectedIndex == 0 || _selectedIndex == 1
           ? null
           : AppBar(
-              title: const Text('Talentleihe'),
+              title: Text(_appBarTitles[_selectedIndex]), // Dynamischer Titel
               backgroundColor: Theme.of(context).primaryColor,
               titleTextStyle: GoogleFonts.inter(
                 fontSize: 20,

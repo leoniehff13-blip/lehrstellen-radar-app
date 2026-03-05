@@ -60,6 +60,24 @@ class BetriebListeScreen extends StatelessWidget {
         ansprechpartner: 'Herr Schulze',
         email: 'karriere@kreativ-ag.de',
         telefon: '+49 30 1122334'),
+    Betrieb(
+        name: 'Bäckerei Knete Kross',
+        branche: 'Lebensmittelhandwerk',
+        ort: 'Köln',
+        logo:
+            'https://images.unsplash.com/photo-1598373182133-52452f7691ef?q=80&w=100&auto=format&fit=crop',
+        beschreibung:
+            'Frische Backwaren mit Tradition und Leidenschaft. Lerne das Bäckerhandwerk in einem Familienbetrieb.',
+        aufgabenbereiche: [
+          'Teigherstellung',
+          'Backen von Brot und Brötchen',
+          'Kundenberatung'
+        ],
+        webseite: 'www.knete-kross.de',
+        adresse: 'Musterstraße 1, 50667 Köln',
+        ansprechpartner: 'Herr Kross',
+        email: 'info@knete-kross.de',
+        telefon: '+49 221 555667'),
   ];
 
   @override

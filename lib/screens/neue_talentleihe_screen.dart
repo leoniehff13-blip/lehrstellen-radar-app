@@ -22,6 +22,7 @@ class NeueTalentleiheScreenState extends State<NeueTalentleiheScreen> {
   final _handwerkskammerController = TextEditingController();
   final _faehigkeitenController = TextEditingController();
   final _gewerkController = TextEditingController();
+  final _einsatzortController = TextEditingController();
 
   final List<String> _lernziele = [
     'Schweißen',
@@ -41,7 +42,8 @@ class NeueTalentleiheScreenState extends State<NeueTalentleiheScreen> {
       _unternehmenController.text = widget.userProfile!.unternehmen ?? '';
       _handwerkskammerController.text =
           widget.userProfile!.handwerkskammer ?? '';
-      _faehigkeitenController.text = widget.userProfile!.faehigkeiten ?? '';
+      _faehigkeitenController.text =
+          widget.userProfile!.faehigkeiten?.join(', ') ?? '';
       _gewerkController.text = widget.userProfile!.gewerk ?? '';
     }
   }
@@ -49,8 +51,8 @@ class NeueTalentleiheScreenState extends State<NeueTalentleiheScreen> {
   Future<void> _selectDateRange(BuildContext context) async {
     final DateTimeRange? picked = await showDateRangePicker(
       context: context,
-      firstDate: DateTime(2023),
-      lastDate: DateTime(2025),
+      firstDate: DateTime.now(),
+      lastDate: DateTime.now().add(const Duration(days: 365)),
     );
     if (picked != null && picked != _selectedDateRange) {
       setState(() {
@@ -59,17 +61,31 @@ class NeueTalentleiheScreenState extends State<NeueTalentleiheScreen> {
     }
   }
 
+  void _submitForm() {
+    if (_formKey.currentState!.validate()) {
+      // Form is valid, show success message and pop
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Talentleihe erfolgreich erstellt!'),
+          backgroundColor: Colors.green,
+        ),
+      );
+      Navigator.of(context).pop();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Neue Talentleihe'),
-        backgroundColor: const Color(0xFFD6DCE5),
+        backgroundColor: Theme.of(context).primaryColor,
         titleTextStyle: const TextStyle(
-          color: Color(0xFF002C59),
+          color: Colors.white,
           fontSize: 22,
           fontWeight: FontWeight.bold,
         ),
+         iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -98,81 +114,92 @@ class NeueTalentleiheScreenState extends State<NeueTalentleiheScreen> {
                 readOnly: true,
               ),
               TextFormField(
-                controller: _handwerkskammerController,
-                decoration: const InputDecoration(labelText: 'Handwerkskammer'),
-                readOnly: true,
-              ),
-              TextFormField(
                 controller: _faehigkeitenController,
                 decoration: const InputDecoration(labelText: 'Fähigkeiten'),
                 readOnly: true,
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 24),
+              
+              // Lernziele MultiSelect
               MultiSelectDialogField(
                 items: _lernziele.map((e) => MultiSelectItem(e, e)).toList(),
                 title: const Text("Lernziele"),
                 selectedColor: Theme.of(context).primaryColor,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: const BorderRadius.all(Radius.circular(40)),
-                  border: Border.all(
-                    color: Colors.grey,
-                    width: 1,
-                  ),
-                ),
-                buttonIcon: const Icon(
-                  Icons.arrow_drop_down,
-                  color: Colors.grey,
-                ),
-                buttonText: const Text(
-                  "Lernziele auswählen",
-                  style: TextStyle(
-                    color: Colors.grey,
-                    fontSize: 16,
-                  ),
-                ),
+                buttonText: const Text("Gewünschte Lernziele auswählen"),
                 onConfirm: (results) {
-                  setState(() {
-                    _selectedLernziele = results.cast<String>().toList();
-                  });
+                  _selectedLernziele = results.cast<String>().toList();
+                   _formKey.currentState?.validate();
+                },
+                validator: (values) {
+                  if (values == null || values.isEmpty) {
+                    return 'Bitte wählen Sie mindestens ein Lernziel aus.';
+                  }
+                  return null;
                 },
               ),
               const SizedBox(height: 16),
-               if (_selectedLernziele.isNotEmpty)
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 8.0),
-                  child: Text(
-                    'Ausgewählte Ziele: ${_selectedLernziele.join(', ')}',
-                    style: Theme.of(context).textTheme.bodyMedium,
-                  ),
-                ),
-              Row(
-                children: [
-                  Expanded(
-                    child: Text(_selectedDateRange == null
-                        ? 'Kein Zeitraum ausgewählt'
-                        : '${DateFormat('dd.MM.yyyy').format(_selectedDateRange!.start)} - ${DateFormat('dd.MM.yyyy').format(_selectedDateRange!.end)}'),
-                  ),
-                  TextButton(
-                    onPressed: () => _selectDateRange(context),
-                    child: const Text('Zeitraum auswählen'),
-                  ),
-                ],
+
+              // Zeitraum Picker
+              FormField<DateTimeRange>(
+                validator: (value) {
+                  if (_selectedDateRange == null) {
+                    return 'Bitte wählen Sie einen Zeitraum aus.';
+                  }
+                  return null;
+                },
+                builder: (FormFieldState<DateTimeRange> state) {
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      ListTile(
+                        contentPadding: EdgeInsets.zero,
+                        title: Text(_selectedDateRange == null
+                            ? 'Gewünschter Zeitraum'
+                            : '${DateFormat('dd.MM.yyyy').format(_selectedDateRange!.start)} - ${DateFormat('dd.MM.yyyy').format(_selectedDateRange!.end)}'),
+                        trailing: Icon(Icons.calendar_today, color: Theme.of(context).primaryColor),
+                        onTap: () async {
+                           await _selectDateRange(context);
+                           state.didChange(_selectedDateRange);
+                        },
+                      ),
+                      if (state.hasError)
+                        Padding(
+                          padding: const EdgeInsets.only(left: 12.0),
+                          child: Text(
+                            state.errorText!,
+                            style: TextStyle(color: Theme.of(context).colorScheme.error, fontSize: 12),
+                          ),
+                        ),
+                    ],
+                  );
+                },
               ),
               const SizedBox(height: 16),
+              
+              // Einsatzort TextFormField
               TextFormField(
+                controller: _einsatzortController,
                 decoration: const InputDecoration(
-                  labelText: 'Präferierte Einsatzorte oder Umkreissuche',
+                  labelText: 'Präferierte Einsatzorte oder Umkreis',
                 ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Bitte geben Sie einen Einsatzort oder Umkreis an.';
+                  }
+                  return null;
+                },
               ),
               const SizedBox(height: 32),
+              
+              // Submit Button
               ElevatedButton(
-                onPressed: () {
-                  if (_formKey.currentState!.validate()) {
-                    // TODO: Implement save logic
-                  }
-                },
-                child: const Text('Talentleihe erstellen'),
+                onPressed: _submitForm,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Theme.of(context).primaryColor,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                ),
+                child: const Text('TALENTLEIHE ERSTELLEN'),
               ),
             ],
           ),

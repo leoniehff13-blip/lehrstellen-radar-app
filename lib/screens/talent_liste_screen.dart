@@ -12,19 +12,32 @@ class TalentListeScreen extends StatefulWidget {
 class _TalentListeScreenState extends State<TalentListeScreen> {
   final List<Talent> talentAngebote = [
     Talent(
-        name: 'Max Mustermann',
+        name: 'Marlon Gambotron',
         beruf: 'Elektroniker für Betriebstechnik',
         lehrjahr: 2,
         profilbild:
             'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=100&auto=format&fit=crop',
         faehigkeiten: ['Löten', 'Schaltpläne lesen', 'VDE-Normen'],
         lernziele: [
-          'SPS-Programmierung vertiefen',
-          'Fehlersuche in komplexen Anlagen'
+          'Beleuchtung installieren',
+          'Erdung prüfen',
+          'Fehler diagnostizieren',
+          'Kabel verlegen',
+          'Leitungen dimensionieren',
+          'Messgeräte bedienen',
+          'Motoren anschließen',
+          'Prüfprotokolle erstellen',
+          'Schaltkreise verdrahten',
+          'Schaltpläne lesen',
+          'Schutzmaßnahmen anwenden',
+          'Sicherungen prüfen',
+          'Steckdosen installieren',
+          'Steuerungen programmieren',
+          'Verteiler aufbauen'
         ],
-        email: 'max.mustermann@email.de'),
+        email: 'marlon.gambotron@email.de'),
     Talent(
-        name: 'Erika Mustermann',
+        name: 'Laura Altkorn',
         beruf: 'Anlagenmechanikerin für SHK',
         lehrjahr: 3,
         profilbild:
@@ -35,28 +48,20 @@ class _TalentListeScreenState extends State<TalentListeScreen> {
           'Kundendienst'
         ],
         lernziele: ['Hydraulischer Abgleich', 'Regenerative Energien'],
-        email: 'erika.mustermann@email.de'),
+        email: 'laura.altkorn@email.de'),
     Talent(
-        name: 'Jonas Schmidt',
-        beruf: 'Tischler',
+        name: 'Alex Cedric Müller',
+        beruf: 'Zimmerer',
         lehrjahr: 1,
         profilbild:
             'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?q=80&w=100&auto=format&fit=crop',
         faehigkeiten: ['Holzverbindungen', 'Oberflächenbehandlung'],
         lernziele: [
-          'Umgang mit CNC-Maschinen',
-          'Kundenberatung und -betreuung'
+          'Dachstühle bauen',
+          'Kundenberatung und -betreuung',
+          'Nachhaltige Dämmstoffe'
         ],
-        email: 'jonas.schmidt@email.de'),
-    Talent(
-        name: 'Anna Kovac',
-        beruf: 'Malerin und Lackiererin',
-        lehrjahr: 4,
-        profilbild: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=100&auto=format&fit=crop',
-        faehigkeiten: ['Spachteltechniken', 'Fassadengestaltung', 'Tapezieren'],
-        lernziele: ['Airless-Spritztechnik', 'Dekorative Wandgestaltung'],
-        email: 'anna.kovac@email.de'),
-
+        email: 'alex-cedric.mueller@email.de'),
   ];
 
   int? _gefiltertesLehrjahr;
