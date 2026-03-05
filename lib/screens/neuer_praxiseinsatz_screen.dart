@@ -2,23 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:multi_select_flutter/multi_select_flutter.dart';
 import 'package:myapp/data/skills_data.dart';
-import 'package:myapp/models/profil.dart';
+import 'package:myapp/models/betrieb.dart';
 
-class NeueTalentleiheScreen extends StatefulWidget {
-  final Profil? userProfile;
+class NeuerPraxiseinsatzScreen extends StatefulWidget {
+  final Betrieb? betriebProfile;
 
-  const NeueTalentleiheScreen({super.key, this.userProfile});
+  const NeuerPraxiseinsatzScreen({super.key, this.betriebProfile});
 
   @override
-  NeueTalentleiheScreenState createState() => NeueTalentleiheScreenState();
+  NeuerPraxiseinsatzScreenState createState() =>
+      NeuerPraxiseinsatzScreenState();
 }
 
-class NeueTalentleiheScreenState extends State<NeueTalentleiheScreen> {
+class NeuerPraxiseinsatzScreenState extends State<NeuerPraxiseinsatzScreen> {
   final _formKey = GlobalKey<FormState>();
   DateTimeRange? _selectedDateRange;
 
   final _nameController = TextEditingController();
-  final _vornameController = TextEditingController();
+  final _ansprechpartnerController = TextEditingController();
   final _unternehmenController = TextEditingController();
   final _handwerkskammerController = TextEditingController();
   final _faehigkeitenController = TextEditingController();
@@ -26,60 +27,53 @@ class NeueTalentleiheScreenState extends State<NeueTalentleiheScreen> {
   String? _selectedGewerk;
   final List<String> _gewerke = ['Elektriker', 'Zimmerer'];
 
-  List<String> _lernziele = [];
-  List<String> _selectedLernziele = [];
+  List<String> _aufgabenbereiche = [];
+  List<String> _selectedAufgabenbereiche = [];
 
   @override
   void initState() {
     super.initState();
-    if (widget.userProfile != null) {
-      _nameController.text = widget.userProfile!.name ?? '';
-      _vornameController.text = widget.userProfile!.vorname ?? '';
-      _unternehmenController.text = widget.userProfile!.unternehmen ?? '';
-      _handwerkskammerController.text =
-          widget.userProfile!.handwerkskammer ?? '';
-      _faehigkeitenController.text = widget.userProfile!.faehigkeiten?.join(', ') ?? '';
-      if (_gewerke.contains(widget.userProfile!.gewerk)) {
-        _selectedGewerk = widget.userProfile!.gewerk;
-        _updateLernziele(isInit: true);
+    if (widget.betriebProfile != null) {
+      _nameController.text = widget.betriebProfile!.name;
+      _ansprechpartnerController.text = widget.betriebProfile!.ansprechpartner;
+       _handwerkskammerController.text = widget.betriebProfile!.handwerkskammerId; // Assuming this is the correct field
+       if (_gewerke.contains(widget.betriebProfile!.branche)) {
+        _selectedGewerk = widget.betriebProfile!.branche;
+        _updateAufgaben(isInit: true);
       }
-       _selectedLernziele = List<String>.from(widget.userProfile!.faehigkeiten ?? []);
+      _selectedAufgabenbereiche = List<String>.from(widget.betriebProfile!.aufgabenbereiche);
     }
   }
 
-  void _updateLernziele({bool isInit = false}) {
+  void _updateAufgaben({bool isInit = false}) {
     setState(() {
-      _lernziele = skillsByGewerk[_selectedGewerk] ?? [];
+      _aufgabenbereiche = skillsByGewerk[_selectedGewerk] ?? [];
       if (!isInit) {
-        _selectedLernziele.clear();
+        _selectedAufgabenbereiche.clear();
       }
     });
   }
 
-  void _createTalentleihe() {
+  void _createPraxiseinsatz() {
     if (_formKey.currentState!.validate()) {
-      final neuesAngebot = Profil(
-        // Copy unchanging data from the original profile
-        profilTyp: widget.userProfile?.profilTyp,
-        betrieb: widget.userProfile?.betrieb,
-        strasse: widget.userProfile?.strasse,
-        hausnummer: widget.userProfile?.hausnummer,
-        plz: widget.userProfile?.plz,
-        stadt: widget.userProfile?.stadt,
-        land: widget.userProfile?.land,
-        ansprechperson: widget.userProfile?.ansprechperson,
-        spezialisierung: widget.userProfile?.spezialisierung,
-        lehrjahr: widget.userProfile?.lehrjahr,
-
-        // Use data from the form controllers and selections
+      // Create a new Betrieb object or a specific Praxiseinsatz object
+      // For now, let's assume we are creating a new Betrieb instance for the offer
+      final neuerEinsatz = Betrieb(
         name: _nameController.text,
-        vorname: _vornameController.text,
-        unternehmen: _unternehmenController.text,
-        handwerkskammer: _handwerkskammerController.text,
-        gewerk: _selectedGewerk,
-        faehigkeiten: _selectedLernziele,
+        ansprechpartner: _ansprechpartnerController.text,
+        branche: _selectedGewerk!,
+        handwerkskammerId: _handwerkskammerController.text,
+        aufgabenbereiche: _selectedAufgabenbereiche,
+        // Dummy data for other required fields, adjust as needed
+        ort: widget.betriebProfile?.ort ?? '',
+        logo: widget.betriebProfile?.logo ?? '',
+        beschreibung: widget.betriebProfile?.beschreibung ?? '',
+        webseite: widget.betriebProfile?.webseite ?? '',
+        adresse: widget.betriebProfile?.adresse ?? '',
+        email: widget.betriebProfile?.email ?? '',
+        telefon: widget.betriebProfile?.telefon ?? '',
       );
-      Navigator.of(context).pop(neuesAngebot);
+      Navigator.of(context).pop(neuerEinsatz);
     }
   }
 
@@ -100,8 +94,8 @@ class NeueTalentleiheScreenState extends State<NeueTalentleiheScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Neue Talentleihe'),
-        backgroundColor: const Color(0xFFD6DCE5),
+        title: const Text('Neuer Praxiseinsatz'),
+         backgroundColor: const Color(0xFFD6DCE5),
         titleTextStyle: const TextStyle(
           color: Color(0xFF002C59),
           fontSize: 22,
@@ -114,27 +108,14 @@ class NeueTalentleiheScreenState extends State<NeueTalentleiheScreen> {
           key: _formKey,
           child: ListView(
             children: [
-              Row(
-                children: [
-                  Expanded(
-                    child: TextFormField(
-                      controller: _vornameController,
-                      decoration: const InputDecoration(labelText: 'Vorname'),
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: TextFormField(
-                      controller: _nameController,
-                      decoration: const InputDecoration(labelText: 'Nachname'),
-                    ),
-                  ),
-                ],
+              TextFormField(
+                controller: _nameController,
+                decoration: const InputDecoration(labelText: 'Name des Betriebs'),
               ),
               const SizedBox(height: 16),
               DropdownButtonFormField<String>(
                 decoration: const InputDecoration(
-                  labelText: 'Gewerk',
+                  labelText: 'Gewerk/Branche',
                   border: OutlineInputBorder(),
                 ),
                 value: _selectedGewerk,
@@ -147,30 +128,22 @@ class NeueTalentleiheScreenState extends State<NeueTalentleiheScreen> {
                 onChanged: (newValue) {
                   setState(() {
                     _selectedGewerk = newValue;
-                    _updateLernziele();
+                    _updateAufgaben();
                   });
                 },
                 validator: (value) =>
                     value == null ? 'Bitte ein Gewerk auswählen' : null,
                 isExpanded: true,
               ),
+               const SizedBox(height: 16),
+              TextFormField(
+                controller: _ansprechpartnerController,
+                decoration: const InputDecoration(labelText: 'Ansprechpartner'),
+              ),
               const SizedBox(height: 16),
-              Row(
-                children: [
-                  Expanded(
-                    child: TextFormField(
-                      controller: _unternehmenController,
-                      decoration: const InputDecoration(labelText: 'Unternehmen'),
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: TextFormField(
-                      controller: _handwerkskammerController,
-                      decoration: const InputDecoration(labelText: 'Handwerkskammer'),
-                    ),
-                  ),
-                ],
+               TextFormField(
+                controller: _handwerkskammerController,
+                decoration: const InputDecoration(labelText: 'Zuständige Handwerkskammer'),
               ),
               const SizedBox(height: 16),
               Row(
@@ -178,7 +151,7 @@ class NeueTalentleiheScreenState extends State<NeueTalentleiheScreen> {
                 children: [
                   Text(
                     _selectedDateRange == null
-                        ? 'Verfügbarkeitszeitraum'
+                        ? 'Einsatzzeitraum'
                         : '${DateFormat('dd.MM.yyyy').format(_selectedDateRange!.start)} - ${DateFormat('dd.MM.yyyy').format(_selectedDateRange!.end)}',
                     style: Theme.of(context).textTheme.titleMedium,
                   ),
@@ -191,25 +164,17 @@ class NeueTalentleiheScreenState extends State<NeueTalentleiheScreen> {
               const SizedBox(height: 16),
               TextFormField(
                 decoration: const InputDecoration(
-                  labelText: 'Präferierte Einsatzorte oder Umkreissuche',
+                  labelText: 'Einsatzort',
                   border: OutlineInputBorder(),
                 ),
-              ),
-              const SizedBox(height: 16),
-              const Divider(),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _faehigkeitenController,
-                decoration: const InputDecoration(labelText: 'Bestehende Fähigkeiten (Referenz)'),
-                readOnly: true, // This should remain read-only as a reference
               ),
               const SizedBox(height: 24),
               if (_selectedGewerk != null)
                 MultiSelectDialogField(
-                  items: _lernziele.map((e) => MultiSelectItem(e, e)).toList(),
-                  title: const Text("Neue/Angebotene Fähigkeiten"),
+                  items: _aufgabenbereiche.map((e) => MultiSelectItem(e, e)).toList(),
+                  title: const Text("Aufgabenbereiche/Anforderungen"),
                   selectedColor: Theme.of(context).primaryColor,
-                  initialValue: _selectedLernziele,
+                  initialValue: _selectedAufgabenbereiche,
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: const BorderRadius.all(Radius.circular(8)),
@@ -223,18 +188,18 @@ class NeueTalentleiheScreenState extends State<NeueTalentleiheScreen> {
                     color: Colors.grey,
                   ),
                   buttonText: Text(
-                    "Neue/Angebotene Fähigkeiten auswählen",
+                    "Aufgabenbereiche auswählen",
                     style: TextStyle(color: Colors.grey[700], fontSize: 16),
                   ),
                   onConfirm: (results) {
                     setState(() {
-                      _selectedLernziele = results.cast<String>();
+                      _selectedAufgabenbereiche = results.cast<String>();
                     });
                   },
                   chipDisplay: MultiSelectChipDisplay(
                     onTap: (value) {
                       setState(() {
-                        _selectedLernziele.remove(value);
+                        _selectedAufgabenbereiche.remove(value);
                       });
                     },
                   ),
@@ -246,8 +211,8 @@ class NeueTalentleiheScreenState extends State<NeueTalentleiheScreen> {
                   backgroundColor: Theme.of(context).primaryColor,
                   foregroundColor: Colors.white,
                 ),
-                onPressed: _createTalentleihe, // Updated onPressed handler
-                child: const Text('ANGEBOT ERSTELLEN'),
+                onPressed: _createPraxiseinsatz,
+                child: const Text('PRAXISEINSATZ ERSTELLEN'),
               ),
             ],
           ),

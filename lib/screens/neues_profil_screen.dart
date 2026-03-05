@@ -217,7 +217,7 @@ class NeuesProfilScreenState extends State<NeuesProfilScreen> {
                   const SizedBox(height: 16),
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 8.0),
-                    child: Row( crossAxisAlignment: CrossAxisAlignment.end, children: [ Expanded( child: DropdownButtonFormField<String>( value: _selectedGewerk, decoration: const InputDecoration(labelText: 'Gewerk*', border: OutlineInputBorder()), items: _gewerke.map((String gewerk) => DropdownMenuItem<String>(value: gewerk, child: Text(gewerk))).toList(), onChanged: (newValue) { setState(() { _selectedGewerk = newValue; _updateFaehigkeiten(); }); }, validator: (value) => value == null ? 'Bitte ein Gewerk auswählen' : null, ), ), IconButton( icon: const Icon(Icons.info_outline), tooltip: 'Information', onPressed: () { showDialog( context: context, builder: (context) => AlertDialog( title: const Text('Hinweis'), content: const Text('Dieses Programm befindet sich in einer Testphase - komm später noch einmal wieder, um zu schauen, ob nun auch dein Gewerk mitmacht.'), actions: [TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text('OK'))], ), ); }, ), ], ),
+                    child: Row( crossAxisAlignment: CrossAxisAlignment.end, children: [ Expanded( child: DropdownButtonFormField<String>( initialValue: _selectedGewerk, decoration: const InputDecoration(labelText: 'Gewerk*', border: OutlineInputBorder()), items: _gewerke.map((String gewerk) => DropdownMenuItem<String>(value: gewerk, child: Text(gewerk))).toList(), onChanged: (newValue) { setState(() { _selectedGewerk = newValue; _updateFaehigkeiten(); }); }, validator: (value) => value == null ? 'Bitte ein Gewerk auswählen' : null, ), ), IconButton( icon: const Icon(Icons.info_outline), tooltip: 'Information', onPressed: () { showDialog( context: context, builder: (context) => AlertDialog( title: const Text('Hinweis'), content: const Text('Dieses Programm befindet sich in einer Testphase - komm später noch einmal wieder, um zu schauen, ob nun auch dein Gewerk mitmacht.'), actions: [TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text('OK'))], ), ); }, ), ], ),
                   ),
                   TextFormField(controller: _unternehmenController, decoration: const InputDecoration(labelText: 'Unternehmen*', border: OutlineInputBorder()), validator: (value) => (value == null || value.isEmpty) ? 'Bitte das Unternehmen eingeben' : null),
                   const SizedBox(height: 16),
@@ -259,7 +259,7 @@ class NeuesProfilScreenState extends State<NeuesProfilScreen> {
                       ),
                       onConfirm: (results) {
                         setState(() {
-                          _selectedFaehigkeiten = results.cast<String>();
+                          _selectedFaehigkeiten = results.cast<String>().toList();
                         });
                       },
                       chipDisplay: MultiSelectChipDisplay(

@@ -3,35 +3,17 @@ import 'package:myapp/models/profil.dart';
 import 'package:myapp/screens/betrieb_liste_screen.dart';
 import 'package:myapp/screens/talent_liste_screen.dart';
 
-class TalentleiheScreen extends StatefulWidget {
-  final Function(bool) onNavigateToNewOffer;
+class TalentleiheScreen extends StatelessWidget {
+  final TabController tabController;
   final List<Profil> ausgelieheneTalente;
+  final GlobalKey<BetriebListeScreenState> betriebListeKey;
 
   const TalentleiheScreen({
     super.key,
-    required this.onNavigateToNewOffer,
+    required this.tabController,
     required this.ausgelieheneTalente,
+    required this.betriebListeKey,
   });
-
-  @override
-  TalentleiheScreenState createState() => TalentleiheScreenState();
-}
-
-class TalentleiheScreenState extends State<TalentleiheScreen>
-    with SingleTickerProviderStateMixin {
-  late TabController _tabController;
-
-  @override
-  void initState() {
-    super.initState();
-    _tabController = TabController(length: 2, vsync: this);
-  }
-
-  @override
-  void dispose() {
-    _tabController.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -45,10 +27,10 @@ class TalentleiheScreenState extends State<TalentleiheScreen>
           fontWeight: FontWeight.bold,
         ),
         bottom: TabBar(
-          controller: _tabController,
+          controller: tabController,
           tabs: const [
-            Tab(icon: Icon(Icons.business), text: 'Betriebe'),
             Tab(icon: Icon(Icons.person), text: 'Talente'),
+            Tab(icon: Icon(Icons.business), text: 'Betriebe'),
           ],
           labelColor: const Color(0xFF002C59),
           unselectedLabelColor: Colors.black54,
@@ -57,16 +39,11 @@ class TalentleiheScreenState extends State<TalentleiheScreen>
         ),
       ),
       body: TabBarView(
-        controller: _tabController,
+        controller: tabController,
         children: [
-          const BetriebListeScreen(),
-          TalentListeScreen(talente: widget.ausgelieheneTalente),
+          TalentListeScreen(talente: ausgelieheneTalente),
+          BetriebListeScreen(key: betriebListeKey),
         ],
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => widget.onNavigateToNewOffer(_tabController.index == 0),
-        backgroundColor: const Color(0xFF002C59),
-        child: const Icon(Icons.add, color: Colors.white),
       ),
     );
   }

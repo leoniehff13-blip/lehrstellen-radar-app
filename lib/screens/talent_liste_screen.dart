@@ -20,6 +20,7 @@ class _TalentListeScreenState extends State<TalentListeScreen> {
         faehigkeiten: ['Löten', 'Schaltpläne lesen', 'VDE-Normen'],
         profilTyp: 'Azubi',
         profilbild: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=100&auto=format&fit=crop',
+        stadt: 'Berlin',
         ),
     Profil(
         name: 'Altkorn',
@@ -33,6 +34,7 @@ class _TalentListeScreenState extends State<TalentListeScreen> {
         ],
         profilTyp: 'Azubi',
         profilbild: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=100&auto=format&fit=crop',
+        stadt: 'München',
         ),
     Profil(
         name: 'Müller',
@@ -42,6 +44,7 @@ class _TalentListeScreenState extends State<TalentListeScreen> {
         faehigkeiten: ['Holzverbindungen', 'Oberflächenbehandlung'],
         profilTyp: 'Azubi',
         profilbild: 'https://images.unsplash.com/photo-1568602471122-7832951cc4c5?q=80&w=100&auto=format&fit=crop',
+        stadt: 'Hamburg',
         ),
   ];
 
@@ -103,7 +106,7 @@ class _TalentListeScreenState extends State<TalentListeScreen> {
                       style:
                           const TextStyle(fontWeight: FontWeight.bold)),
                   subtitle: Text(
-                      '${talent.gewerk ?? 'N/A'}\n${talent.lehrjahr}. Lehrjahr'),
+                      '${talent.gewerk ?? 'N/A'} - ${talent.lehrjahr}. Lehrjahr\n${talent.stadt ?? 'Ort unbekannt'}'),
                   trailing: const Icon(Icons.chevron_right),
                   onTap: () {
                     Navigator.push(
