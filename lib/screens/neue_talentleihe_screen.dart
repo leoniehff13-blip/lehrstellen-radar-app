@@ -38,12 +38,14 @@ class NeueTalentleiheScreenState extends State<NeueTalentleiheScreen> {
       _unternehmenController.text = widget.userProfile!.unternehmen ?? '';
       _handwerkskammerController.text =
           widget.userProfile!.handwerkskammer ?? '';
-      _faehigkeitenController.text = widget.userProfile!.faehigkeiten?.join(', ') ?? '';
+      _faehigkeitenController.text =
+          widget.userProfile!.faehigkeiten?.join(', ') ?? '';
       if (_gewerke.contains(widget.userProfile!.gewerk)) {
         _selectedGewerk = widget.userProfile!.gewerk;
         _updateLernziele(isInit: true);
       }
-       _selectedLernziele = List<String>.from(widget.userProfile!.faehigkeiten ?? []);
+      _selectedLernziele =
+          List<String>.from(widget.userProfile!.faehigkeiten ?? []);
     }
   }
 
@@ -160,14 +162,16 @@ class NeueTalentleiheScreenState extends State<NeueTalentleiheScreen> {
                   Expanded(
                     child: TextFormField(
                       controller: _unternehmenController,
-                      decoration: const InputDecoration(labelText: 'Unternehmen'),
+                      decoration:
+                          const InputDecoration(labelText: 'Unternehmen'),
                     ),
                   ),
                   const SizedBox(width: 16),
                   Expanded(
                     child: TextFormField(
                       controller: _handwerkskammerController,
-                      decoration: const InputDecoration(labelText: 'Handwerkskammer'),
+                      decoration:
+                          const InputDecoration(labelText: 'Handwerkskammer'),
                     ),
                   ),
                 ],
@@ -200,7 +204,8 @@ class NeueTalentleiheScreenState extends State<NeueTalentleiheScreen> {
               const SizedBox(height: 16),
               TextFormField(
                 controller: _faehigkeitenController,
-                decoration: const InputDecoration(labelText: 'Bestehende Fähigkeiten (Referenz)'),
+                decoration: const InputDecoration(
+                    labelText: 'Bestehende Fähigkeiten (Referenz)'),
                 readOnly: true, // This should remain read-only as a reference
               ),
               const SizedBox(height: 24),

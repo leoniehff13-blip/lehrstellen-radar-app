@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:myapp/data/hwk_data.dart';
 import '../models/betrieb.dart';
-import '../models/handwerkskammer.dart';
 import 'betrieb_detail_screen.dart';
 
 class BetriebListeScreen extends StatefulWidget {
@@ -11,116 +11,6 @@ class BetriebListeScreen extends StatefulWidget {
 }
 
 class _BetriebListeScreenState extends State<BetriebListeScreen> {
-  // Using the full list of chambers for consistency
-  final List<Handwerkskammer> _handwerkskammern = [
-    Handwerkskammer(id: 'aachen', name: 'HWK Aachen', region: 'Aachen'),
-    Handwerkskammer(
-        id: 'schwaben', name: 'HWK für Schwaben', region: 'Augsburg'),
-    Handwerkskammer(
-        id: 'oberfranken', name: 'HWK für Oberfranken', region: 'Bayreuth'),
-    Handwerkskammer(id: 'berlin', name: 'HWK Berlin', region: 'Berlin'),
-    Handwerkskammer(
-        id: 'bielefeld',
-        name: 'HWK Ostwestfalen-Lippe zu Bielefeld',
-        region: 'Bielefeld'),
-    Handwerkskammer(
-        id: 'braunschweig_lueneburg_stade',
-        name: 'HWK Braunschweig-Lüneburg-Stade',
-        region: 'Braunschweig'),
-    Handwerkskammer(id: 'bremen', name: 'HWK Bremen', region: 'Bremen'),
-    Handwerkskammer(id: 'chemnitz', name: 'HWK Chemnitz', region: 'Chemnitz'),
-    Handwerkskammer(id: 'cottbus', name: 'HWK Cottbus', region: 'Cottbus'),
-    Handwerkskammer(id: 'dortmund', name: 'HWK Dortmund', region: 'Dortmund'),
-    Handwerkskammer(id: 'dresden', name: 'HWK Dresden', region: 'Dresden'),
-    Handwerkskammer(
-        id: 'duesseldorf', name: 'HWK Düsseldorf', region: 'Düsseldorf'),
-    Handwerkskammer(id: 'erfurt', name: 'HWK Erfurt', region: 'Erfurt'),
-    Handwerkskammer(
-        id: 'flensburg', name: 'HWK Flensburg', region: 'Flensburg'),
-    Handwerkskammer(
-        id: 'frankfurt_oder',
-        name: 'HWK Frankfurt (Oder) - Region Ostbrandenburg',
-        region: 'Frankfurt (Oder)'),
-    Handwerkskammer(
-        id: 'frankfurt_rhein_main',
-        name: 'HWK Frankfurt-Rhein-Main',
-        region: 'Frankfurt am Main'),
-    Handwerkskammer(id: 'freiburg', name: 'HWK Freiburg', region: 'Freiburg'),
-    Handwerkskammer(
-        id: 'mittelfranken', name: 'HWK für Mittelfranken', region: 'Nürnberg'),
-    Handwerkskammer(
-        id: 'muenchen_oberbayern',
-        name: 'HWK für München und Oberbayern',
-        region: 'München'),
-    Handwerkskammer(
-        id: 'niederbayern_oberpfalz',
-        name: 'HWK Niederbayern-Oberpfalz',
-        region: 'Passau'),
-    Handwerkskammer(
-        id: 'unterfranken', name: 'HWK für Unterfranken', region: 'Würzburg'),
-    Handwerkskammer(
-        id: 'halle', name: 'HWK Halle (Saale)', region: 'Halle (Saale)'),
-    Handwerkskammer(id: 'hamburg', name: 'HWK Hamburg', region: 'Hamburg'),
-    Handwerkskammer(id: 'hannover', name: 'HWK Hannover', region: 'Hannover'),
-    Handwerkskammer(
-        id: 'heilbronn_franken',
-        name: 'HWK Heilbronn-Franken',
-        region: 'Heilbronn'),
-    Handwerkskammer(
-        id: 'hildesheim_suedniedersachsen',
-        name: 'HWK Hildesheim-Südniedersachsen',
-        region: 'Hildesheim'),
-    Handwerkskammer(
-        id: 'karlsruhe', name: 'HWK Karlsruhe', region: 'Karlsruhe'),
-    Handwerkskammer(id: 'kassel', name: 'HWK Kassel', region: 'Kassel'),
-    Handwerkskammer(id: 'koblenz', name: 'HWK Koblenz', region: 'Koblenz'),
-    Handwerkskammer(id: 'koeln', name: 'HWK zu Köln', region: 'Köln'),
-    Handwerkskammer(id: 'konstanz', name: 'HWK Konstanz', region: 'Konstanz'),
-    Handwerkskammer(id: 'leipzig', name: 'HWK zu Leipzig', region: 'Leipzig'),
-    Handwerkskammer(id: 'luebeck', name: 'HWK Lübeck', region: 'Lübeck'),
-    Handwerkskammer(
-        id: 'magdeburg', name: 'HWK Magdeburg', region: 'Magdeburg'),
-    Handwerkskammer(
-        id: 'mannheim',
-        name: 'HWK Mannheim Rhein-Neckar-Odenwald',
-        region: 'Mannheim'),
-    Handwerkskammer(id: 'muenster', name: 'HWK Münster', region: 'Münster'),
-    Handwerkskammer(
-        id: 'oldenburg', name: 'HWK Oldenburg', region: 'Oldenburg'),
-    Handwerkskammer(
-        id: 'osnabrueck_emsland',
-        name: 'HWK Osnabrück-Emsland-Grafschaft Bentheim',
-        region: 'Osnabrück'),
-    Handwerkskammer(
-        id: 'ostfriesland', name: 'HWK für Ostfriesland', region: 'Aurich'),
-    Handwerkskammer(
-        id: 'ostthueringen', name: 'HWK für Ostthüringen', region: 'Gera'),
-    Handwerkskammer(
-        id: 'pfalz', name: 'HWK der Pfalz', region: 'Kaiserslautern'),
-    Handwerkskammer(id: 'potsdam', name: 'HWK Potsdam', region: 'Potsdam'),
-    Handwerkskammer(
-        id: 'reutlingen', name: 'HWK Reutlingen', region: 'Reutlingen'),
-    Handwerkskammer(
-        id: 'rheinhessen', name: 'HWK Rheinhessen', region: 'Mainz'),
-    Handwerkskammer(
-        id: 'rostock',
-        name: 'HWK Ostmecklenburg-Vorpommern',
-        region: 'Rostock'),
-    Handwerkskammer(
-        id: 'saarland', name: 'HWK des Saarlandes', region: 'Saarbrücken'),
-    Handwerkskammer(id: 'schwerin', name: 'HWK Schwerin', region: 'Schwerin'),
-    Handwerkskammer(
-        id: 'stuttgart', name: 'HWK Region Stuttgart', region: 'Stuttgart'),
-    Handwerkskammer(
-        id: 'suedthueringen', name: 'HWK Südthüringen', region: 'Suhl'),
-    Handwerkskammer(
-        id: 'suedwestfalen', name: 'HWK Südwestfalen', region: 'Arnsberg'),
-    Handwerkskammer(id: 'trier', name: 'HWK Trier', region: 'Trier'),
-    Handwerkskammer(id: 'ulm', name: 'HWK Ulm', region: 'Ulm'),
-    Handwerkskammer(
-        id: 'wiesbaden', name: 'HWK Wiesbaden', region: 'Wiesbaden'),
-  ];
-
   final List<Betrieb> _allBetriebe = [
     Betrieb(
         name: 'Tietz GmbH & Co. KG',
@@ -283,13 +173,13 @@ class _BetriebListeScreenState extends State<BetriebListeScreen> {
             value: null,
             child: Text('Alle anzeigen'),
           ),
-          ..._handwerkskammern
+          ...alleHandwerkskammern
               .map<DropdownMenuItem<String>>((Handwerkskammer kammer) {
             return DropdownMenuItem<String>(
               value: kammer.id,
-              child: Text(kammer.name),
+              child: Text(kammer.shortName),
             );
-          }).toList(),
+          }),
         ],
       ),
     );

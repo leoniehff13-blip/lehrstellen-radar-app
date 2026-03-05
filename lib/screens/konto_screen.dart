@@ -83,17 +83,21 @@ class KontoScreen extends StatelessWidget {
         _buildInfoCard('Name', '${profil!.vorname} ${profil!.name}'),
         _buildInfoCard('Wohnort', '${profil!.stadt}, ${profil!.land}'),
         _buildInfoCard('Gewerk', profil!.gewerk ?? 'Nicht angegeben'),
-        _buildInfoCard('Ausbildungsbetrieb', profil!.unternehmen ?? 'Nicht angegeben'),
+        _buildInfoCard(
+            'Ausbildungsbetrieb', profil!.unternehmen ?? 'Nicht angegeben'),
         _buildInfoCard('Lehrjahr', '${profil!.lehrjahr}. Lehrjahr'),
         _buildInfoCard('HWK', profil!.handwerkskammer ?? 'Nicht angegeben'),
-        if (profil!.faehigkeiten != null && profil!.faehigkeiten!.isNotEmpty) ...[
+        if (profil!.faehigkeiten != null &&
+            profil!.faehigkeiten!.isNotEmpty) ...[
           const SizedBox(height: 16),
           Text('Fähigkeiten', style: Theme.of(context).textTheme.titleLarge),
           const SizedBox(height: 8),
           Wrap(
             spacing: 8.0,
             runSpacing: 4.0,
-            children: profil!.faehigkeiten!.map((skill) => Chip(label: Text(skill))).toList(),
+            children: profil!.faehigkeiten!
+                .map((skill) => Chip(label: Text(skill)))
+                .toList(),
           ),
         ],
       ],
@@ -106,11 +110,15 @@ class KontoScreen extends StatelessWidget {
       children: <Widget>[
         const Chip(label: Text('Unternehmen'), avatar: Icon(Icons.business)),
         const SizedBox(height: 16),
-        _buildInfoCard('Name des Betriebs', profil!.betrieb ?? 'Nicht angegeben'),
+        _buildInfoCard(
+            'Name des Betriebs', profil!.betrieb ?? 'Nicht angegeben'),
         _buildInfoCard('Gewerk', profil!.gewerk ?? 'Nicht angegeben'),
-        _buildInfoCard('Ansprechperson', profil!.ansprechperson ?? 'Nicht angegeben'),
-        _buildInfoCard('Adresse', '${profil!.strasse} ${profil!.hausnummer}, ${profil!.plz} ${profil!.stadt}, ${profil!.land}'),
-        _buildInfoCard('Spezialisierung', profil!.spezialisierung ?? 'Nicht angegeben'),
+        _buildInfoCard(
+            'Ansprechperson', profil!.ansprechperson ?? 'Nicht angegeben'),
+        _buildInfoCard('Adresse',
+            '${profil!.strasse} ${profil!.hausnummer}, ${profil!.plz} ${profil!.stadt}, ${profil!.land}'),
+        _buildInfoCard(
+            'Spezialisierung', profil!.spezialisierung ?? 'Nicht angegeben'),
       ],
     );
   }

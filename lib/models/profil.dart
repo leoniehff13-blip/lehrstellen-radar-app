@@ -5,7 +5,7 @@ class Profil {
   final int? lehrjahr;
   final List<String>? faehigkeiten;
   final String? profilTyp; // 'Azubi' oder 'Betrieb'
-  final String? unternehmen; 
+  final String? unternehmen;
   final String? profilbild; // URL zum Profilbild
   final String? betrieb;
   final String? strasse;
@@ -16,7 +16,6 @@ class Profil {
   final String? ansprechperson;
   final String? handwerkskammer;
   final String? spezialisierung;
-
 
   Profil({
     this.name,

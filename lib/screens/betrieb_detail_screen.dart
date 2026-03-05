@@ -32,7 +32,8 @@ class BetriebDetailScreen extends StatelessWidget {
           children: <Widget>[
             Card(
               elevation: 4,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12)),
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
@@ -67,22 +68,30 @@ class BetriebDetailScreen extends StatelessWidget {
             const SizedBox(height: 24),
             _buildSectionTitle(context, 'Über uns'),
             const SizedBox(height: 8),
-            Text(betrieb.beschreibung, style: Theme.of(context).textTheme.bodyMedium),
+            Text(betrieb.beschreibung,
+                style: Theme.of(context).textTheme.bodyMedium),
             const SizedBox(height: 24),
             _buildSectionTitle(context, 'Aufgabenbereiche für Azubis'),
             const SizedBox(height: 8),
             ...betrieb.aufgabenbereiche.map((task) => ListTile(
-                  leading: const Icon(Icons.check_circle_outline, color: Color(0xFF002C59)),
+                  leading: const Icon(Icons.check_circle_outline,
+                      color: Color(0xFF002C59)),
                   title: Text(task),
                 )),
             const Divider(height: 32, thickness: 1),
             _buildSectionTitle(context, 'Kontakt & Standort'),
             const SizedBox(height: 16),
-            _buildContactInfo(context, Icons.person, 'Ansprechpartner', betrieb.ansprechpartner),
-            _buildContactInfo(context, Icons.email, 'E-Mail', betrieb.email, isLink: true, url: 'mailto:${betrieb.email}'),
-            _buildContactInfo(context, Icons.phone, 'Telefon', betrieb.telefon, isLink: true, url: 'tel:${betrieb.telefon}'),
-            _buildContactInfo(context, Icons.language, 'Webseite', betrieb.webseite, isLink: true, url: 'https://${betrieb.webseite}'),
-            _buildContactInfo(context, Icons.location_on, 'Adresse', betrieb.adresse),
+            _buildContactInfo(context, Icons.person, 'Ansprechpartner',
+                betrieb.ansprechpartner),
+            _buildContactInfo(context, Icons.email, 'E-Mail', betrieb.email,
+                isLink: true, url: 'mailto:${betrieb.email}'),
+            _buildContactInfo(context, Icons.phone, 'Telefon', betrieb.telefon,
+                isLink: true, url: 'tel:${betrieb.telefon}'),
+            _buildContactInfo(
+                context, Icons.language, 'Webseite', betrieb.webseite,
+                isLink: true, url: 'https://${betrieb.webseite}'),
+            _buildContactInfo(
+                context, Icons.location_on, 'Adresse', betrieb.adresse),
             const SizedBox(height: 16),
             Container(
               height: 300,
@@ -104,11 +113,16 @@ class BetriebDetailScreen extends StatelessWidget {
   Widget _buildSectionTitle(BuildContext context, String title) {
     return Text(
       title,
-      style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+      style: Theme.of(context)
+          .textTheme
+          .titleLarge
+          ?.copyWith(fontWeight: FontWeight.bold),
     );
   }
 
-  Widget _buildContactInfo(BuildContext context, IconData icon, String label, String value, {bool isLink = false, String? url}) {
+  Widget _buildContactInfo(
+      BuildContext context, IconData icon, String label, String value,
+      {bool isLink = false, String? url}) {
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 4),
       child: ListTile(
@@ -117,7 +131,8 @@ class BetriebDetailScreen extends StatelessWidget {
         subtitle: Text(
           value,
           style: isLink
-              ? const TextStyle(color: Colors.blue, decoration: TextDecoration.underline)
+              ? const TextStyle(
+                  color: Colors.blue, decoration: TextDecoration.underline)
               : null,
         ),
         onTap: isLink && url != null
