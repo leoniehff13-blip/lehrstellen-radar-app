@@ -47,20 +47,6 @@ class MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
   Profil? _profil;
 
-  late final List<Widget> _widgetOptions;
-
-  @override
-  void initState() {
-    super.initState();
-    _widgetOptions = <Widget>[
-      HomeScreen(onProfilErstellen: _updateProfil),
-      const AngeboteScreen(),
-      const KartenScreen(),
-      const InfoScreen(),
-      KontoScreen(profil: _profil),
-    ];
-  }
-
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
@@ -70,13 +56,22 @@ class MainScreenState extends State<MainScreen> {
   void _updateProfil(Profil profil) {
     setState(() {
       _profil = profil;
-      _widgetOptions[4] = KontoScreen(profil: _profil); // Update the screen
-      _selectedIndex = 4; // Switch to the Konto screen
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    final List<Widget> widgetOptions = <Widget>[
+      HomeScreen(onProfilErstellen: (p) {
+        _updateProfil(p);
+        _onItemTapped(4);
+      }),
+      const AngeboteScreen(),
+      const KartenScreen(),
+      const InfoScreen(),
+      KontoScreen(profil: _profil, onProfilUpdated: _updateProfil),
+    ];
+
     return Scaffold(
       appBar: _selectedIndex == 0 || _selectedIndex == 1
           ? null
@@ -89,7 +84,7 @@ class MainScreenState extends State<MainScreen> {
                 color: Colors.white,
               ),
             ),
-      body: Center(child: _widgetOptions.elementAt(_selectedIndex)),
+      body: Center(child: widgetOptions.elementAt(_selectedIndex)),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),

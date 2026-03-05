@@ -3,7 +3,9 @@ import 'package:country_picker/country_picker.dart';
 import 'package:myapp/models/profil.dart';
 
 class NeuesProfilScreen extends StatefulWidget {
-  const NeuesProfilScreen({super.key});
+  final Profil? profil;
+
+  const NeuesProfilScreen({super.key, this.profil});
 
   @override
   NeuesProfilScreenState createState() => NeuesProfilScreenState();
@@ -30,13 +32,62 @@ class NeuesProfilScreenState extends State<NeuesProfilScreen> {
   final _unternehmenController = TextEditingController();
   final _handwerkskammerController = TextEditingController();
   final _spezialisierungController = TextEditingController();
-  final _faehigkeitenController = TextEditingController();
   final _ansprechpersonController = TextEditingController();
+
+  final List<TextEditingController> _faehigkeitenControllers = [];
 
   @override
   void initState() {
     super.initState();
     _countries.addAll(CountryService().getAll().map((c) => c.name).where((name) => name != 'Germany'));
+
+    if (widget.profil != null) {
+      final p = widget.profil!;
+      _selectedProfilTyp = p.profilTyp;
+      _nameController.text = p.name ?? '';
+      _vornameController.text = p.vorname ?? '';
+      _betriebController.text = p.betrieb ?? '';
+      _strasseController.text = p.strasse ?? '';
+      _hausnummerController.text = p.hausnummer ?? '';
+      _plzController.text = p.plz ?? '';
+      _stadtController.text = p.stadt ?? '';
+      _selectedCountry = p.land;
+      _ansprechpersonController.text = p.ansprechperson ?? '';
+      _selectedGewerk = p.gewerk;
+      _unternehmenController.text = p.unternehmen ?? '';
+      _handwerkskammerController.text = p.handwerkskammer ?? '';
+      _spezialisierungController.text = p.spezialisierung ?? '';
+      _selectedLehrjahr = p.lehrjahr;
+
+      if (p.faehigkeiten != null && p.faehigkeiten!.isNotEmpty) {
+        _faehigkeitenControllers.addAll(
+          p.faehigkeiten!.map((faehigkeit) => TextEditingController(text: faehigkeit)),
+        );
+      } else {
+        _faehigkeitenControllers.add(TextEditingController());
+      }
+    } else {
+      _faehigkeitenControllers.add(TextEditingController());
+    }
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _vornameController.dispose();
+    _betriebController.dispose();
+    _strasseController.dispose();
+    _hausnummerController.dispose();
+    _plzController.dispose();
+    _stadtController.dispose();
+    _unternehmenController.dispose();
+    _handwerkskammerController.dispose();
+    _spezialisierungController.dispose();
+    _ansprechpersonController.dispose();
+    for (var controller in _faehigkeitenControllers) {
+      controller.dispose();
+    }
+    super.dispose();
   }
 
   void _checkLand() {
@@ -68,7 +119,7 @@ class NeuesProfilScreenState extends State<NeuesProfilScreen> {
         children: [
           Expanded(
             child: DropdownButtonFormField<String>(
-              initialValue: _selectedGewerk,
+              value: _selectedGewerk,
               decoration: const InputDecoration(labelText: 'Gewerk*'),
               items: _gewerke.map((String gewerk) {
                 return DropdownMenuItem<String>(
@@ -109,11 +160,68 @@ class NeuesProfilScreenState extends State<NeuesProfilScreen> {
     );
   }
 
+  Widget _buildFaehigkeitenList() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 16),
+        Text('Fähigkeiten', style: Theme.of(context).textTheme.titleMedium),
+        ListView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: _faehigkeitenControllers.length,
+          itemBuilder: (context, index) {
+            return Padding(
+              padding: const EdgeInsets.symmetric(vertical: 4.0),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: TextFormField(
+                      controller: _faehigkeitenControllers[index],
+                      decoration: InputDecoration(
+                        labelText: 'Fähigkeit ${index + 1}',
+                      ),
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.remove_circle_outline),
+                    onPressed: () {
+                      setState(() {
+                        if (_faehigkeitenControllers.length > 1) {
+                          _faehigkeitenControllers[index].dispose();
+                          _faehigkeitenControllers.removeAt(index);
+                        } else {
+                          _faehigkeitenControllers[index].clear();
+                        }
+                      });
+                    },
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
+        const SizedBox(height: 8),
+        TextButton.icon(
+          icon: const Icon(Icons.add),
+          label: const Text('Fähigkeit hinzufügen'),
+          onPressed: () {
+            setState(() {
+              _faehigkeitenControllers.add(TextEditingController());
+            });
+          },
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final isEditing = widget.profil != null;
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Neues Profil anlegen'),
+        title: Text(isEditing ? 'Profil bearbeiten' : 'Neues Profil anlegen'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -121,22 +229,25 @@ class NeuesProfilScreenState extends State<NeuesProfilScreen> {
           key: _formKey,
           child: ListView(
             children: <Widget>[
-              DropdownButtonFormField<String>(
-                initialValue: _selectedProfilTyp,
-                decoration: const InputDecoration(labelText: 'Profil-Typ*'),
-                items: _profilTypen.map((String typ) {
-                  return DropdownMenuItem<String>(
-                    value: typ,
-                    child: Text(typ),
-                  );
-                }).toList(),
-                onChanged: (newValue) {
-                  setState(() {
-                    _selectedProfilTyp = newValue;
-                  });
-                },
-                validator: (value) => value == null ? 'Bitte einen Profil-Typ auswählen' : null,
-              ),
+              if (!isEditing)
+                DropdownButtonFormField<String>(
+                  value: _selectedProfilTyp,
+                  decoration: const InputDecoration(labelText: 'Profil-Typ*'),
+                  items: _profilTypen.map((String typ) {
+                    return DropdownMenuItem<String>(
+                      value: typ,
+                      child: Text(typ),
+                    );
+                  }).toList(),
+                  onChanged: (newValue) {
+                    setState(() {
+                      _selectedProfilTyp = newValue;
+                    });
+                  },
+                  validator: (value) => value == null ? 'Bitte einen Profil-Typ auswählen' : null,
+                )
+              else
+                Text('Profil-Typ: $_selectedProfilTyp', style: Theme.of(context).textTheme.titleLarge),
               if (_selectedProfilTyp == 'Unternehmen') ...[
                 _buildGewerkField(),
                 TextFormField(
@@ -192,7 +303,7 @@ class NeuesProfilScreenState extends State<NeuesProfilScreen> {
                   ],
                 ),
                 DropdownButtonFormField<String>(
-                  initialValue: _selectedCountry,
+                  value: _selectedCountry,
                   decoration: const InputDecoration(labelText: 'Land*'),
                   items: _countries.map((String country) {
                     return DropdownMenuItem<String>(
@@ -243,7 +354,7 @@ class NeuesProfilScreenState extends State<NeuesProfilScreen> {
                   validator: (value) => (value == null || value.isEmpty) ? 'Bitte einen Ort eingeben' : null,
                 ),
                 DropdownButtonFormField<String>(
-                  initialValue: _selectedCountry,
+                  value: _selectedCountry,
                   decoration: const InputDecoration(labelText: 'Land*'),
                   items: _countries.map((String country) {
                     return DropdownMenuItem<String>(
@@ -259,13 +370,14 @@ class NeuesProfilScreenState extends State<NeuesProfilScreen> {
                   },
                   validator: (value) => value == null ? 'Bitte ein Land auswählen' : null,
                 ),
-                 _buildGewerkField(),
+                _buildGewerkField(),
                 TextFormField(
                   controller: _unternehmenController,
                   decoration: const InputDecoration(labelText: 'Unternehmen*'),
                   validator: (value) => (value == null || value.isEmpty) ? 'Bitte das Unternehmen eingeben' : null,
                 ),
                 DropdownButtonFormField<int>(
+                  value: _selectedLehrjahr,
                   decoration: const InputDecoration(labelText: 'Lehrjahr*'),
                   items: _lehrjahre.map((int lehrjahr) {
                     return DropdownMenuItem<int>(
@@ -280,33 +392,37 @@ class NeuesProfilScreenState extends State<NeuesProfilScreen> {
                   },
                   validator: (value) => value == null ? 'Bitte das Lehrjahr auswählen' : null,
                 ),
-                TextFormField(
-                  controller: _faehigkeitenController,
-                  decoration: const InputDecoration(labelText: 'Fähigkeiten'),
-                ),
+                _buildFaehigkeitenList(),
               ],
               const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
-                    final newProfile = Profil(
-                        profilTyp: _selectedProfilTyp,
-                        name: _selectedProfilTyp == 'Azubi' ? _nameController.text : null,
-                        vorname: _selectedProfilTyp == 'Azubi' ? _vornameController.text : null,
-                        betrieb: _selectedProfilTyp == 'Unternehmen' ? _betriebController.text : null,
-                        strasse: _selectedProfilTyp == 'Unternehmen' ? _strasseController.text : null,
-                        hausnummer: _selectedProfilTyp == 'Unternehmen' ? _hausnummerController.text : null,
-                        plz: _selectedProfilTyp == 'Unternehmen' ? _plzController.text : null,
-                        stadt: _stadtController.text,
-                        land: _selectedCountry,
-                        ansprechperson: _selectedProfilTyp == 'Unternehmen' ? _ansprechpersonController.text : null,
-                        gewerk: _selectedGewerk,
-                        unternehmen: _selectedProfilTyp == 'Azubi' ? _unternehmenController.text : null,
-                        handwerkskammer: _handwerkskammerController.text,
-                        spezialisierung: _selectedProfilTyp == 'Unternehmen' ? _spezialisierungController.text : null,
-                        lehrjahr: _selectedLehrjahr,
-                        faehigkeiten: _selectedProfilTyp == 'Azubi' ? _faehigkeitenController.text : null);
-                    Navigator.of(context).pop(newProfile);
+                    final faehigkeiten = _faehigkeitenControllers
+                        .map((controller) => controller.text.trim())
+                        .where((faehigkeit) => faehigkeit.isNotEmpty)
+                        .toList();
+
+                    final updatedProfile = Profil(
+                      profilTyp: _selectedProfilTyp,
+                      name: _nameController.text,
+                      vorname: _vornameController.text,
+                      betrieb: _betriebController.text,
+                      strasse: _strasseController.text,
+                      hausnummer: _hausnummerController.text,
+                      plz: _plzController.text,
+                      stadt: _stadtController.text,
+                      land: _selectedCountry,
+                      ansprechperson: _ansprechpersonController.text,
+                      gewerk: _selectedGewerk,
+                      unternehmen: _unternehmenController.text,
+                      handwerkskammer: _handwerkskammerController.text,
+                      spezialisierung: _spezialisierungController.text,
+                      lehrjahr: _selectedLehrjahr,
+                      faehigkeiten: faehigkeiten,
+                    );
+
+                    Navigator.of(context).pop(updatedProfile);
                   }
                 },
                 child: const Text('Profil speichern'),

@@ -13,8 +13,8 @@ class Profil {
   final int? lehrjahr;
   final String? unternehmen;
   final String? handwerkskammer;
-  final String? spezialisierung; // Hinzugefügt
-  final String? faehigkeiten;
+  final String? spezialisierung;
+  final List<String>? faehigkeiten;
 
   Profil({
     this.name,
@@ -31,7 +31,7 @@ class Profil {
     this.lehrjahr,
     this.unternehmen,
     this.handwerkskammer,
-    this.spezialisierung, // Hinzugefügt
+    this.spezialisierung,
     this.faehigkeiten,
   });
 }

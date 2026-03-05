@@ -7,7 +7,7 @@ Azubi-Match ist eine mobile Anwendung, die entwickelt wird, um Auszubildende im 
 ## Geplante Funktionen
 
 *   **Profile für Auszubildende:**
-    *   Anzeige der bereits erlernten Fähigkeiten.
+    *   Anzeige der bereits erlernten Fähigkeiten (dynamische Liste).
     *   Übersicht der noch zu absolvierenden Ausbildungsinhalte.
 *   **Profile für Betriebe:**
     *   Darstellung der typischen Aufgaben und Tätigkeitsbereiche.
@@ -48,6 +48,7 @@ Azubi-Match ist eine mobile Anwendung, die entwickelt wird, um Auszubildende im 
     *   Einrichtung der `GoogleMap`-Ansicht.
     *   Hinzufügen von Markern für die Dummy-Daten.
 8.  **Anpassung des Formulars "Neues Profil anlegen":**
+    *   Implementierung einer dynamischen Eingabe für "Fähigkeiten" im Azubi-Profil, die das Hinzufügen und Entfernen mehrerer Fähigkeiten ermöglicht.
     *   Erweiterung des Formulars für Unternehmen um die Felder "Handwerkskammer" und "Spezialisierung".
     *   Umbenennung von "Betrieb" zu "Name des Betriebs".
     *   Optimierung des Layouts für Unternehmens- und Azubi-Profile durch Anordnung von Feldern in Zeilen (z.B. "Straße"/"Hausnummer", "Vorname"/"Name").
