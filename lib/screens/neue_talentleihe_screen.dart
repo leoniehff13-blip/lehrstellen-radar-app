@@ -137,7 +137,7 @@ class NeueTalentleiheScreenState extends State<NeueTalentleiheScreen> {
                   labelText: 'Gewerk',
                   border: OutlineInputBorder(),
                 ),
-                value: _selectedGewerk,
+                initialValue: _selectedGewerk,
                 items: _gewerke.map((String gewerk) {
                   return DropdownMenuItem<String>(
                     value: gewerk,

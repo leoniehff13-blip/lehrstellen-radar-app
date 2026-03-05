@@ -9,10 +9,15 @@ Talentleihe ist eine mobile Anwendung, die entwickelt wird, um Talente im Handwe
 *   **Profile für Talente:**
     *   Anzeige der bereits erlernten Fähigkeiten (dynamische Liste).
     *   Übersicht der noch zu absolvierenden Ausbildungsinhalte.
+    *   Möglichkeit, ein Profilbild hochzuladen.
 *   **Profile für Betriebe:**
     *   Darstellung der typischen Aufgaben und Tätigkeitsbereiche.
     *   Auflistung von Spezialisierungen.
     *   Angabe der Handwerkskammer.
+    *   Möglichkeit, ein Firmenlogo oder ein Bild des Betriebs hochzuladen.
+*   **Konto-Bildschirm:**
+    *   Zentrale Anlaufstelle für das eigene Profil und die eigenen Angebote.
+    *   Tab-Navigation zwischen "Mein Profil" und "Meine Angebote".
 *   **Darstellungsoptionen:**
     *   Listenansicht für Talente und Betriebe.
     *   Kartenansicht zur geografischen Orientierung.
@@ -23,45 +28,38 @@ Talentleihe ist eine mobile Anwendung, die entwickelt wird, um Talente im Handwe
     *   **Farbpalette:** Blautöne (#D6DCE5, #002C59), Grau und Weiß.
     *   **Stil:** Modern, klar und benutzerfreundlich.
 
-## Aktuelle Änderung: Refactoring von 'Azubi' zu 'Talent' und Fehlerbehebungen
+## Aktuelle Änderung: Tab-Navigation im Kontobildschirm
 
 ### Übersicht
 
-In diesem Schritt wurde die gesamte Anwendung überarbeitet, um die Terminologie von "Azubi" und "Azubi-Match" zu "Talent" und "Talentleihe" zu ändern. Dies schafft eine modernere und ansprechendere Nutzererfahrung. Zusätzlich wurden diverse Fehler behoben und die Codebasis stabilisiert.
+Der Kontobildschirm wurde grundlegend überarbeitet und mit einer Tab-Navigation ausgestattet. Dies ermöglicht eine klare Trennung und eine intuitive Benutzerführung zwischen den persönlichen Profildetails und den eigenen Angeboten im Rahmen der Talentleihe.
 
 ### Implementierungsschritte
 
-1.  **Grundstruktur und Theming:**
-    *   Einrichtung der `MaterialApp` und des Haupt-Layouts.
-    *   Implementierung des Farbschemas mittels `ThemeData`.
-    *   Erstellung einer Startseite mit einer `BottomNavigationBar` für die Hauptbereiche (Auszubildende, Betriebe, Karte, Infos).
-2.  **Installation von Paketen:**
-    *   `google_maps_flutter` für die Kartenansicht.
-    *   `provider` für das State Management (z.B. für den Theme-Wechsel oder die Verwaltung von App-Daten).
-    *   `multi_select_flutter` für die Auswahl von Lernzielen.
-    *   `intl` für die Datumsformatierung.
-3.  **Erstellung der Bildschirm-Platzhalter:**
-    *   `lib/screens/talent_liste_screen.dart` (früher `azubi_liste_screen.dart`)
-    *   `lib/screens/betrieb_liste_screen.dart`
-    *   `lib/screens/karten_screen.dart`
-    *   `lib/screens/info_screen.dart`
-    *   `lib/screens/konto_screen.dart`
-    *   `lib/screens/neue_talentleihe_screen.dart` (früher `neuer_azubi_screen.dart`)
-    *   `lib/screens/neuer_betrieb_screen.dart`
-4.  **Implementierung der Navigation:**
-    *   Aufbau der Navigation zwischen den einzelnen Bildschirmen.
-5.  **Refactoring von 'Azubi' zu 'Talent':**
-    *   Die Klasse `Azubi` in `lib/models/azubi.dart` wurde in `Talent` umbenannt und die Datei zu `lib/models/talent.dart` verschoben.
-    *   Alle Bildschirme und Widgets wurden angepasst, um das neue `Talent`-Modell zu verwenden.
-    *   Der App-Titel und die Bezeichnungen in der UI wurden von "Azubi Match" zu "Talentleihe" und von "Azubis" zu "Talente" geändert.
-6.  **Anpassung des Formulars "Neues Profil anlegen":**
-    *   Implementierung einer dynamischen Eingabe für "Fähigkeiten" im Talent-Profil.
-    *   Erweiterung des Formulars für Unternehmen um die Felder "Handwerkskammer" und "Spezialisierung".
-    *   Optimierung des Layouts für Unternehmens- und Talent-Profile.
-    *   Implementierung von Pflichtfeldern und Validierung.
-7.  **Fehlerbehebungen:**
-    *   Behebung diverser Laufzeit- und Analysefehler.
-    *   Korrektur von Tippfehlern und veralteten Referenzen.
-8.  **Finalisierung:**
-    *   Überprüfung aller Texte und Umstellung auf Deutsch.
-    *   Feinschliff der Benutzeroberfläche.
+1.  **Umbau zu `StatefulWidget`:**
+    *   Der `KontoScreen` wurde von einem `StatelessWidget` in ein `StatefulWidget` umgewandelt, um den Zustand des `TabController` verwalten zu können.
+2.  **Implementierung der `TabBar`:**
+    *   Eine `TabBar` mit den beiden Tabs "Mein Profil" und "Meine Angebote" wurde in die `AppBar` des `KontoScreen` integriert.
+    *   Ein `TabController` wurde hinzugefügt, um die Synchronisation zwischen den Tabs und den zugehörigen Inhalten zu steuern.
+3.  **Erstellung der `TabBarView`:**
+    *   Die Inhalte für das Profil und die Angebote wurden in eine `TabBarView` verschoben.
+    *   Der erste Tab zeigt die bekannten Profildetails an.
+    *   Der zweite Tab enthält einen Platzhalter, der in Zukunft die Liste der Angebote des Nutzers anzeigen wird.
+4.  **Optimierung der UI:**
+    *   Der Titel der `AppBar` wurde zu "Mein Konto" geändert, um die neue, umfassendere Funktionalität widerzuspiegeln.
+    *   Die Logik zur Anzeige des "Profil erstellen"-Zustands bleibt erhalten, wenn noch kein Profil vorhanden ist. In diesem Fall wird die `TabBar` ausgeblendet.
+
+## Vorherige Änderungen
+
+### Überarbeitung des Kontobildschirms
+
+*   **UI-Anpassung des `KontoScreen`:**
+    *   Die Datei `lib/screens/konto_screen.dart` wurde so angepasst, dass sie unterhalb der Profildetails einen neuen Bereich "Meine Angebote" anzeigt.
+
+### Hinzufügen von Profilbildern
+
+*   **Installation des `image_picker` Pakets.**
+*   **Konfiguration für iOS.**
+*   **Erweiterung des Datenmodells.**
+*   **Implementierung der Bildauswahl.**
+*   **Anzeige des Profilbilds.**

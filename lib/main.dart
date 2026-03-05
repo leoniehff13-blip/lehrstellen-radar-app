@@ -51,6 +51,7 @@ class MainScreenState extends State<MainScreen> with SingleTickerProviderStateMi
   int _selectedIndex = 0;
   Profil? _profil;
   final List<Profil> _ausgelieheneTalente = [];
+  final List<Profil> _meineAngebote = [];
   TabController? _tabController;
   final GlobalKey<BetriebListeScreenState> _betriebListeKey = GlobalKey<BetriebListeScreenState>();
   late final List<Widget> _widgetOptions;
@@ -94,7 +95,12 @@ class MainScreenState extends State<MainScreen> with SingleTickerProviderStateMi
       ),
       const KartenScreen(),
       const InfoScreen(),
-      KontoScreen(profil: _profil, onProfilUpdated: _updateProfil),
+      KontoScreen(
+        profil: _profil, 
+        onProfilUpdated: _updateProfil,
+        onProfilDeleted: _deleteProfil,
+        meineAngebote: _meineAngebote,
+      ),
     ];
   }
 
@@ -117,6 +123,14 @@ class MainScreenState extends State<MainScreen> with SingleTickerProviderStateMi
     });
   }
 
+  void _deleteProfil() {
+    setState(() {
+      _profil = null;
+      _meineAngebote.clear(); // Also clear the offers when profile is deleted
+    });
+  }
+
+
   void _handleNewTalentOffer() async {
     if (_profil != null) {
       final neuesAngebot = await Navigator.of(context).push(
@@ -128,6 +142,7 @@ class MainScreenState extends State<MainScreen> with SingleTickerProviderStateMi
       if (neuesAngebot != null && neuesAngebot is Profil) {
         setState(() {
           _ausgelieheneTalente.add(neuesAngebot);
+          _meineAngebote.add(neuesAngebot);
         });
          ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Neues Talent-Angebot wurde erstellt!')),

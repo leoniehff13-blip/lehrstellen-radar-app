@@ -7,11 +7,9 @@ class BetriebListeScreen extends StatefulWidget {
   const BetriebListeScreen({super.key});
 
   @override
-  // Make the state public by removing the underscore
   BetriebListeScreenState createState() => BetriebListeScreenState();
 }
 
-// Make the state class public
 class BetriebListeScreenState extends State<BetriebListeScreen> {
   final List<Handwerkskammer> _handwerkskammern = [
     Handwerkskammer(id: 'aachen', name: 'HWK Aachen', region: 'Aachen'),
@@ -223,7 +221,6 @@ class BetriebListeScreenState extends State<BetriebListeScreen> {
     });
   }
 
-  // Make the dialog method public
   void showFilterDialog() {
     showDialog(
       context: context,
@@ -270,45 +267,73 @@ class BetriebListeScreenState extends State<BetriebListeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: ListView.builder(
-        itemCount: _filteredBetriebe.length,
-        itemBuilder: (context, index) {
-          final betrieb = _filteredBetriebe[index];
-          final handwerkskammer = _handwerkskammern.firstWhere(
-              (kammer) => kammer.id == betrieb.handwerkskammerId,
-              orElse: () => Handwerkskammer(id: '', name: 'Unbekannt', region: ''));
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: DropdownButton<String>(
+              value: _selectedKammerId,
+              hint: const Text('Nach Handwerkskammer filtern'),
+              isExpanded: true,
+              onChanged: (String? newValue) {
+                _filterBetriebe(newValue);
+              },
+              items: [
+                const DropdownMenuItem<String>(
+                  value: null,
+                  child: Text('Alle anzeigen'),
+                ),
+                ..._handwerkskammern
+                    .map<DropdownMenuItem<String>>((Handwerkskammer kammer) {
+                  return DropdownMenuItem<String>(
+                    value: kammer.id,
+                    child: Text(kammer.name),
+                  );
+                }),
+              ],
+            ),
+          ),
+          Expanded(
+            child: ListView.builder(
+              itemCount: _filteredBetriebe.length,
+              itemBuilder: (context, index) {
+                final betrieb = _filteredBetriebe[index];
+                final handwerkskammer = _handwerkskammern.firstWhere(
+                    (kammer) => kammer.id == betrieb.handwerkskammerId,
+                    orElse: () => Handwerkskammer(id: '', name: 'Unbekannt', region: ''));
 
-          return Card(
-            margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            elevation: 4,
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-            child: ListTile(
-              leading: CircleAvatar(
-                radius: 30,
-                backgroundImage: NetworkImage(betrieb.logo),
-                backgroundColor: Colors.grey[200],
-              ),
-              title: Text(betrieb.name,
-                  style: const TextStyle(fontWeight: FontWeight.bold)),
-              subtitle: Text(
-                  '${betrieb.branche}\n${betrieb.adresse} - ${handwerkskammer.name}'),
-              trailing: const Icon(Icons.chevron_right),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) =>
-                        BetriebDetailScreen(betrieb: betrieb),
+                return Card(
+                  margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  elevation: 4,
+                  shape:
+                      RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  child: ListTile(
+                    leading: CircleAvatar(
+                      radius: 30,
+                      backgroundImage: NetworkImage(betrieb.logo),
+                      backgroundColor: Colors.grey[200],
+                    ),
+                    title: Text(betrieb.name,
+                        style: const TextStyle(fontWeight: FontWeight.bold)),
+                    subtitle: Text(
+                        '${betrieb.branche}\n${betrieb.adresse} - ${handwerkskammer.name}'),
+                    trailing: const Icon(Icons.chevron_right),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              BetriebDetailScreen(betrieb: betrieb),
+                        ),
+                      );
+                    },
                   ),
                 );
               },
             ),
-          );
-        },
+          ),
+        ],
       ),
-      // The main FAB is now in main.dart, so we remove the Column and the extra FAB here.
-      // We only need the part that can be called from the outside.
     );
   }
 }
