@@ -39,41 +39,52 @@ class InfoScreenState extends State<InfoScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Card(
-          margin: const EdgeInsets.all(16.0),
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Text(
-              'Hier findest du alle Handwerkskammern in Deutschland. Du kannst nach ihnen suchen oder in der Liste scrollen. Klicke auf eine Kammer, um ihre Webseite zu besuchen.',
-              textAlign: TextAlign.center,
-            ),
-          ),
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Info'),
+        backgroundColor: const Color(0xFFD6DCE5),
+        titleTextStyle: const TextStyle(
+          color: Color(0xFF002C59),
+          fontSize: 22,
+          fontWeight: FontWeight.bold,
         ),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(16.0, 0, 16.0, 16.0),
-          child: TextField(
-            controller: _searchController,
-            decoration: InputDecoration(
-              labelText: 'Suche',
-              hintText: 'Handwerkskammer suchen...',
-              prefixIcon: const Icon(Icons.search),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(25.0),
+      ),
+      body: Column(
+        children: [
+          Card(
+            margin: const EdgeInsets.all(16.0),
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Text(
+                'Hier findest du alle Handwerkskammern in Deutschland. Du kannst nach ihnen suchen oder in der Liste scrollen. Klicke auf eine Kammer, um ihre Webseite zu besuchen.',
+                textAlign: TextAlign.center,
               ),
             ),
           ),
-        ),
-        Expanded(
-          child: ListView.builder(
-            itemCount: _filteredKammern.length,
-            itemBuilder: (context, index) {
-              return _buildKammerInfo(context, _filteredKammern[index]);
-            },
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16.0, 0, 16.0, 16.0),
+            child: TextField(
+              controller: _searchController,
+              decoration: InputDecoration(
+                labelText: 'Suche',
+                hintText: 'Handwerkskammer suchen...',
+                prefixIcon: const Icon(Icons.search),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(25.0),
+                ),
+              ),
+            ),
           ),
-        ),
-      ],
+          Expanded(
+            child: ListView.builder(
+              itemCount: _filteredKammern.length,
+              itemBuilder: (context, index) {
+                return _buildKammerInfo(context, _filteredKammern[index]);
+              },
+            ),
+          ),
+        ],
+      ),
     );
   }
 

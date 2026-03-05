@@ -124,7 +124,7 @@ class MainScreenState extends State<MainScreen> {
     ];
 
     return Scaffold(
-      appBar: _selectedIndex == 0 || _selectedIndex == 1 || _selectedIndex == 4
+      appBar: _selectedIndex == 0 || _selectedIndex == 1 || _selectedIndex == 2 || _selectedIndex == 3 || _selectedIndex == 4
           ? null
           : AppBar(
               title: const Text('Talentleihe'),
