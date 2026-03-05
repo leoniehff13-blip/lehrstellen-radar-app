@@ -318,7 +318,7 @@ Widget _buildFilterDropdown() {
             value: kammer.id,
             child: Text(kammer.name),
           );
-        }).toList(),
+        }),
       ],
     ),
   );

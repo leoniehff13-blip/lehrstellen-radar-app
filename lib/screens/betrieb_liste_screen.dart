@@ -289,7 +289,7 @@ class _BetriebListeScreenState extends State<BetriebListeScreen> {
               value: kammer.id,
               child: Text(kammer.name),
             );
-          }).toList(),
+          }),
         ],
       ),
     );
