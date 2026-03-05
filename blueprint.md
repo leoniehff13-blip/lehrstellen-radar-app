@@ -12,6 +12,7 @@ Azubi-Match ist eine mobile Anwendung, die entwickelt wird, um Auszubildende im 
 *   **Profile für Betriebe:**
     *   Darstellung der typischen Aufgaben und Tätigkeitsbereiche.
     *   Auflistung von Spezialisierungen.
+    *   Angabe der Handwerkskammer.
 *   **Darstellungsoptionen:**
     *   Listenansicht für Auszubildende und Betriebe.
     *   Kartenansicht zur geografischen Orientierung.
@@ -46,6 +47,13 @@ Azubi-Match ist eine mobile Anwendung, die entwickelt wird, um Auszubildende im 
 7.  **Umsetzung der Kartenansicht:**
     *   Einrichtung der `GoogleMap`-Ansicht.
     *   Hinzufügen von Markern für die Dummy-Daten.
-8.  **Finalisierung:**
+8.  **Anpassung des Formulars "Neues Profil anlegen":**
+    *   Erweiterung des Formulars für Unternehmen um die Felder "Handwerkskammer" und "Spezialisierung".
+    *   Umbenennung von "Betrieb" zu "Name des Betriebs".
+    *   Optimierung des Layouts für Unternehmens- und Azubi-Profile durch Anordnung von Feldern in Zeilen (z.B. "Straße"/"Hausnummer", "Vorname"/"Name").
+    *   Implementierung von Pflichtfeldern für Unternehmensprofile (alle außer Handwerkskammer/Spezialisierung) inklusive visueller Kennzeichnung (*) und Validierung.
+    *   Umwandlung des Texthinweises zur Testphase in ein Info-Icon mit Dialogfenster für eine sauberere Oberfläche.
+    *   Anpassung der Feld-Reihenfolge im Unternehmensprofil für eine bessere logische Gliederung (Gewerk und Ansprechperson nach oben verschoben).
+9.  **Finalisierung:**
     *   Überprüfung aller Texte und Umstellung auf Deutsch.
     *   Feinschliff der Benutzeroberfläche und Fehlerbehebung.

@@ -29,6 +29,7 @@ class NeuesProfilScreenState extends State<NeuesProfilScreen> {
   final _stadtController = TextEditingController();
   final _unternehmenController = TextEditingController();
   final _handwerkskammerController = TextEditingController();
+  final _spezialisierungController = TextEditingController();
   final _faehigkeitenController = TextEditingController();
   final _ansprechpersonController = TextEditingController();
 
@@ -59,6 +60,55 @@ class NeuesProfilScreenState extends State<NeuesProfilScreen> {
     }
   }
 
+  Widget _buildGewerkField() {
+    return Padding(
+      padding: const EdgeInsets.only(top: 20.0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          Expanded(
+            child: DropdownButtonFormField<String>(
+              initialValue: _selectedGewerk,
+              decoration: const InputDecoration(labelText: 'Gewerk*'),
+              items: _gewerke.map((String gewerk) {
+                return DropdownMenuItem<String>(
+                  value: gewerk,
+                  child: Text(gewerk),
+                );
+              }).toList(),
+              onChanged: (newValue) {
+                setState(() {
+                  _selectedGewerk = newValue;
+                });
+              },
+              validator: (value) => value == null ? 'Bitte ein Gewerk auswählen' : null,
+            ),
+          ),
+          IconButton(
+            icon: const Icon(Icons.info_outline),
+            tooltip: 'Information',
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (context) => AlertDialog(
+                  title: const Text('Hinweis'),
+                  content: const Text(
+                      'Dieses Programm befindet sich in einer Testphase - komm später noch einmal wieder, um zu schauen, ob nun auch dein Gewerk mitmacht.'),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      child: const Text('OK'),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -73,7 +123,7 @@ class NeuesProfilScreenState extends State<NeuesProfilScreen> {
             children: <Widget>[
               DropdownButtonFormField<String>(
                 initialValue: _selectedProfilTyp,
-                decoration: const InputDecoration(labelText: 'Profil-Typ'),
+                decoration: const InputDecoration(labelText: 'Profil-Typ*'),
                 items: _profilTypen.map((String typ) {
                   return DropdownMenuItem<String>(
                     value: typ,
@@ -87,44 +137,63 @@ class NeuesProfilScreenState extends State<NeuesProfilScreen> {
                 },
                 validator: (value) => value == null ? 'Bitte einen Profil-Typ auswählen' : null,
               ),
-              if (_selectedProfilTyp == 'Azubi') ...[
+              if (_selectedProfilTyp == 'Unternehmen') ...[
+                _buildGewerkField(),
                 TextFormField(
-                  controller: _nameController,
-                  decoration: const InputDecoration(labelText: 'Name'),
-                  validator: (value) => (value == null || value.isEmpty) ? 'Bitte einen Namen eingeben' : null,
+                  controller: _ansprechpersonController,
+                  decoration: const InputDecoration(labelText: 'Ansprechperson*'),
+                  validator: (value) => (value == null || value.isEmpty) ? 'Bitte eine Ansprechperson eingeben' : null,
                 ),
-                TextFormField(
-                  controller: _vornameController,
-                  decoration: const InputDecoration(labelText: 'Vorname'),
-                  validator: (value) => (value == null || value.isEmpty) ? 'Bitte einen Vornamen eingeben' : null,
-                ),
-              ] else if (_selectedProfilTyp == 'Unternehmen') ...[
                 TextFormField(
                   controller: _betriebController,
-                  decoration: const InputDecoration(labelText: 'Betrieb'),
+                  decoration: const InputDecoration(labelText: 'Name des Betriebs*'),
                   validator: (value) => (value == null || value.isEmpty) ? 'Bitte einen Betriebsnamen eingeben' : null,
                 ),
-                TextFormField(
-                  controller: _strasseController,
-                  decoration: const InputDecoration(labelText: 'Straße'),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: TextFormField(
+                        controller: _strasseController,
+                        decoration: const InputDecoration(labelText: 'Straße*'),
+                        validator: (value) => (value == null || value.isEmpty) ? 'Bitte eine Straße eingeben' : null,
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    SizedBox(
+                      width: 120,
+                      child: TextFormField(
+                        controller: _hausnummerController,
+                        decoration: const InputDecoration(labelText: 'Hausnummer*'),
+                        validator: (value) => (value == null || value.isEmpty) ? 'Bitte eine Hausnummer eingeben' : null,
+                      ),
+                    ),
+                  ],
                 ),
-                TextFormField(
-                  controller: _hausnummerController,
-                  decoration: const InputDecoration(labelText: 'Hausnummer'),
-                ),
-                TextFormField(
-                  controller: _plzController,
-                  decoration: const InputDecoration(labelText: 'Postleitzahl'),
-                ),
-              ],
-              if (_selectedProfilTyp != null) ...[
-                TextFormField(
-                  controller: _stadtController,
-                  decoration: const InputDecoration(labelText: 'Ort'),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(
+                      width: 120,
+                      child: TextFormField(
+                        controller: _plzController,
+                        decoration: const InputDecoration(labelText: 'Postleitzahl*'),
+                        validator: (value) => (value == null || value.isEmpty) ? 'Bitte eine PLZ eingeben' : null,
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: TextFormField(
+                        controller: _stadtController,
+                        decoration: const InputDecoration(labelText: 'Ort*'),
+                        validator: (value) => (value == null || value.isEmpty) ? 'Bitte einen Ort eingeben' : null,
+                      ),
+                    ),
+                  ],
                 ),
                 DropdownButtonFormField<String>(
                   initialValue: _selectedCountry,
-                  decoration: const InputDecoration(labelText: 'Land'),
+                  decoration: const InputDecoration(labelText: 'Land*'),
                   items: _countries.map((String country) {
                     return DropdownMenuItem<String>(
                       value: country,
@@ -137,44 +206,67 @@ class NeuesProfilScreenState extends State<NeuesProfilScreen> {
                       _checkLand();
                     });
                   },
-                ),
-                if (_selectedProfilTyp == 'Unternehmen')
-                  TextFormField(
-                    controller: _ansprechpersonController,
-                    decoration: const InputDecoration(labelText: 'Ansprechperson'),
-                  ),
-                const SizedBox(height: 20),
-                const Text(
-                  'Dieses Programm befindet sich in einer Testphase - komm später noch einmal wieder, um zu schauen, ob nun auch dein Gewerk mitmacht :)',
-                  style: TextStyle(fontStyle: FontStyle.italic),
-                ),
-                DropdownButtonFormField<String>(
-                  initialValue: _selectedGewerk,
-                  decoration: const InputDecoration(labelText: 'Gewerk'),
-                  items: _gewerke.map((String gewerk) {
-                    return DropdownMenuItem<String>(
-                      value: gewerk,
-                      child: Text(gewerk),
-                    );
-                  }).toList(),
-                  onChanged: (newValue) {
-                    setState(() {
-                      _selectedGewerk = newValue;
-                    });
-                  },
-                ),
-              ],
-              if (_selectedProfilTyp == 'Azubi') ...[
-                TextFormField(
-                  controller: _unternehmenController,
-                  decoration: const InputDecoration(labelText: 'Unternehmen'),
+                  validator: (value) => value == null ? 'Bitte ein Land auswählen' : null,
                 ),
                 TextFormField(
                   controller: _handwerkskammerController,
                   decoration: const InputDecoration(labelText: 'Handwerkskammer'),
                 ),
+                TextFormField(
+                  controller: _spezialisierungController,
+                  decoration: const InputDecoration(labelText: 'Spezialisierung'),
+                ),
+              ] else if (_selectedProfilTyp == 'Azubi') ...[
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: TextFormField(
+                        controller: _vornameController,
+                        decoration: const InputDecoration(labelText: 'Vorname*'),
+                        validator: (value) => (value == null || value.isEmpty) ? 'Bitte einen Vornamen eingeben' : null,
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: TextFormField(
+                        controller: _nameController,
+                        decoration: const InputDecoration(labelText: 'Name*'),
+                        validator: (value) => (value == null || value.isEmpty) ? 'Bitte einen Namen eingeben' : null,
+                      ),
+                    ),
+                  ],
+                ),
+                TextFormField(
+                  controller: _stadtController,
+                  decoration: const InputDecoration(labelText: 'Ort*'),
+                  validator: (value) => (value == null || value.isEmpty) ? 'Bitte einen Ort eingeben' : null,
+                ),
+                DropdownButtonFormField<String>(
+                  initialValue: _selectedCountry,
+                  decoration: const InputDecoration(labelText: 'Land*'),
+                  items: _countries.map((String country) {
+                    return DropdownMenuItem<String>(
+                      value: country,
+                      child: Text(country),
+                    );
+                  }).toList(),
+                  onChanged: (newValue) {
+                    setState(() {
+                      _selectedCountry = newValue;
+                      _checkLand();
+                    });
+                  },
+                  validator: (value) => value == null ? 'Bitte ein Land auswählen' : null,
+                ),
+                 _buildGewerkField(),
+                TextFormField(
+                  controller: _unternehmenController,
+                  decoration: const InputDecoration(labelText: 'Unternehmen*'),
+                  validator: (value) => (value == null || value.isEmpty) ? 'Bitte das Unternehmen eingeben' : null,
+                ),
                 DropdownButtonFormField<int>(
-                  decoration: const InputDecoration(labelText: 'Lehrjahr'),
+                  decoration: const InputDecoration(labelText: 'Lehrjahr*'),
                   items: _lehrjahre.map((int lehrjahr) {
                     return DropdownMenuItem<int>(
                       value: lehrjahr,
@@ -210,7 +302,8 @@ class NeuesProfilScreenState extends State<NeuesProfilScreen> {
                         ansprechperson: _selectedProfilTyp == 'Unternehmen' ? _ansprechpersonController.text : null,
                         gewerk: _selectedGewerk,
                         unternehmen: _selectedProfilTyp == 'Azubi' ? _unternehmenController.text : null,
-                        handwerkskammer: _selectedProfilTyp == 'Azubi' ? _handwerkskammerController.text : null,
+                        handwerkskammer: _handwerkskammerController.text,
+                        spezialisierung: _selectedProfilTyp == 'Unternehmen' ? _spezialisierungController.text : null,
                         lehrjahr: _selectedLehrjahr,
                         faehigkeiten: _selectedProfilTyp == 'Azubi' ? _faehigkeitenController.text : null);
                     Navigator.of(context).pop(newProfile);
