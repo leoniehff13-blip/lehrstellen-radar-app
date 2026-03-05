@@ -49,20 +49,27 @@ class MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
   Profil? _profil;
 
-  late final List<Widget> _widgetOptions;
-  final List<String> _appBarTitles = const [
-    'Home',
-    'Talentleihe', // Dieser Titel wird von der AppBar des TalentleiheScreens überschrieben
-    'Karte',
-    'Infos',
-    'Konto',
-  ];
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
+  void _updateProfil(Profil profil) {
+    setState(() {
+      _profil = profil;
+      // After updating profile, navigate to the Konto screen to show it
+      _selectedIndex = 4;
+    });
+  }
 
   @override
-  void initState() {
-    super.initState();
-    _widgetOptions = <Widget>[
-      HomeScreen(onProfilErstellen: _updateProfil),
+  Widget build(BuildContext context) {
+    // Define the list of widgets directly in the build method
+    // This ensures they are rebuilt with the latest state (_profil)
+    // when setState is called.
+    final List<Widget> widgetOptions = <Widget>[
+      const HomeScreen(), // No longer needs the callback
       TalentleiheScreen(
         onNavigateToNewOffer: (isBetrieb) {
           if (isBetrieb) {
@@ -72,6 +79,7 @@ class MainScreenState extends State<MainScreen> {
               ),
             );
           } else {
+            // The closure captures the current _profil value
             Navigator.of(context).push(
               MaterialPageRoute(
                 builder: (context) =>
@@ -83,32 +91,15 @@ class MainScreenState extends State<MainScreen> {
       ),
       const KartenScreen(),
       const InfoScreen(),
+      // Pass the current profile and the update callback to KontoScreen
       KontoScreen(profil: _profil, onProfilUpdated: _updateProfil),
     ];
-  }
 
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
-
-  void _updateProfil(Profil profil) {
-    setState(() {
-      _profil = profil;
-      _widgetOptions[4] =
-          KontoScreen(profil: _profil, onProfilUpdated: _updateProfil);
-      _selectedIndex = 4;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
     return Scaffold(
       appBar: _selectedIndex == 0 || _selectedIndex == 1
           ? null
           : AppBar(
-              title: Text(_appBarTitles[_selectedIndex]), // Dynamischer Titel
+              title: const Text('Talentleihe'),
               backgroundColor: Theme.of(context).primaryColor,
               titleTextStyle: GoogleFonts.inter(
                 fontSize: 20,
@@ -116,7 +107,7 @@ class MainScreenState extends State<MainScreen> {
                 color: Colors.white,
               ),
             ),
-      body: Center(child: _widgetOptions.elementAt(_selectedIndex)),
+      body: Center(child: widgetOptions.elementAt(_selectedIndex)),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
