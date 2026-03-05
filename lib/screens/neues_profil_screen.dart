@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:country_picker/country_picker.dart';
+import 'package:multi_select_flutter/multi_select_flutter.dart';
+import 'package:myapp/data/skills_data.dart';
 import 'package:myapp/models/profil.dart';
 
 class NeuesProfilScreen extends StatefulWidget {
@@ -24,59 +26,20 @@ class NeuesProfilScreenState extends State<NeuesProfilScreen> {
   final List<String> _profilTypen = ['Azubi', 'Unternehmen'];
   final List<int> _lehrjahre = [1, 2, 3, 4];
   final List<String> hwks = [
-    "Aachen",
-    "Augsburg (Schwaben)",
-    "Berlin",
-    "Bielefeld (Ostwestfalen-Lippe zu Bielefeld)",
-    "Braunschweig-Lüneburg-Stade",
-    "Bremen",
-    "Chemnitz",
-    "Cottbus",
-    "Dortmund",
-    "Dresden",
-    "Düsseldorf",
-    "Erfurt",
-    "Flensburg",
-    "Frankfurt (Oder) – Region Ostbrandenburg",
-    "Frankfurt-Rhein-Main",
-    "Freiburg",
-    "Halle (Saale)",
-    "Hamburg",
-    "Hannover",
-    "Heilbronn-Franken",
-    "Hildesheim-Südniedersachsen",
-    "Karlsruhe",
-    "Kassel",
-    "Koblenz",
-    "Köln",
-    "Konstanz",
-    "Leipzig",
-    "Lübeck",
-    "Magdeburg",
-    "Mannheim Rhein-Neckar-Odenwald",
-    "Mittelfranken",
-    "München und Oberbayern",
-    "Münster",
-    "Niederbayern-Oberpfalz",
-    "Oldenburg",
-    "Ostmecklenburg-Vorpommern",
-    "Osnabrück-Emsland-Grafschaft Bentheim",
-    "Ostwestfalen-Lippe zu Bielefeld",
-    "Pfalz",
-    "Potsdam",
-    "Reutlingen",
-    "Rhein-Main",
-    "Rheinhessen",
-    "Rostock",
-    "Saarland",
-    "Schwerin",
-    "Stuttgart",
-    "Südthüringen",
-    "Trier",
-    "Ulm",
-    "Wiesbaden",
+    "Aachen", "Augsburg (Schwaben)", "Berlin", "Bielefeld (Ostwestfalen-Lippe zu Bielefeld)",
+    "Braunschweig-Lüneburg-Stade", "Bremen", "Chemnitz", "Cottbus", "Dortmund", "Dresden",
+    "Düsseldorf", "Erfurt", "Flensburg", "Frankfurt (Oder) – Region Ostbrandenburg", "Frankfurt-Rhein-Main",
+    "Freiburg", "Halle (Saale)", "Hamburg", "Hannover", "Heilbronn-Franken", "Hildesheim-Südniedersachsen",
+    "Karlsruhe", "Kassel", "Koblenz", "Köln", "Konstanz", "Leipzig", "Lübeck", "Magdeburg",
+    "Mannheim Rhein-Neckar-Odenwald", "Mittelfranken", "München und Oberbayern", "Münster",
+    "Niederbayern-Oberpfalz", "Oldenburg", "Ostmecklenburg-Vorpommern", "Osnabrück-Emsland-Grafschaft Bentheim",
+    "Ostwestfalen-Lippe zu Bielefeld", "Pfalz", "Potsdam", "Reutlingen", "Rhein-Main", "Rheinhessen",
+    "Rostock", "Saarland", "Schwerin", "Stuttgart", "Südthüringen", "Trier", "Ulm", "Wiesbaden",
     "Würzburg-Schweinfurt"
   ];
+
+  List<String> _faehigkeiten = [];
+  List<String> _selectedFaehigkeiten = [];
 
   final _nameController = TextEditingController();
   final _vornameController = TextEditingController();
@@ -89,8 +52,6 @@ class NeuesProfilScreenState extends State<NeuesProfilScreen> {
   final _spezialisierungController = TextEditingController();
   final _ansprechpersonController = TextEditingController();
 
-  final List<TextEditingController> _faehigkeitenControllers = [];
-
   @override
   void initState() {
     super.initState();
@@ -98,8 +59,6 @@ class NeuesProfilScreenState extends State<NeuesProfilScreen> {
 
     if (widget.profil != null) {
       _populateFieldsFromProfile(widget.profil!);
-    } else {
-      _faehigkeitenControllers.add(TextEditingController());
     }
   }
 
@@ -120,12 +79,11 @@ class NeuesProfilScreenState extends State<NeuesProfilScreen> {
     _spezialisierungController.text = p.spezialisierung ?? '';
     _selectedLehrjahr = p.lehrjahr;
 
-    if (p.faehigkeiten != null && p.faehigkeiten!.isNotEmpty) {
-      _faehigkeitenControllers.addAll(
-        p.faehigkeiten!.map((faehigkeit) => TextEditingController(text: faehigkeit)),
-      );
-    } else {
-      _faehigkeitenControllers.add(TextEditingController());
+    if (p.gewerk != null) {
+      _faehigkeiten = skillsByGewerk[p.gewerk!] ?? [];
+    }
+    if (p.faehigkeiten != null) {
+      _selectedFaehigkeiten = List<String>.from(p.faehigkeiten!);
     }
   }
 
@@ -141,19 +99,18 @@ class NeuesProfilScreenState extends State<NeuesProfilScreen> {
     _unternehmenController.dispose();
     _spezialisierungController.dispose();
     _ansprechpersonController.dispose();
-    for (var controller in _faehigkeitenControllers) {
-      controller.dispose();
-    }
     super.dispose();
+  }
+
+  void _updateFaehigkeiten() {
+    setState(() {
+      _faehigkeiten = skillsByGewerk[_selectedGewerk] ?? [];
+      _selectedFaehigkeiten.clear();
+    });
   }
 
   void _saveProfile() {
     if (_formKey.currentState!.validate()) {
-      final faehigkeiten = _faehigkeitenControllers
-          .map((controller) => controller.text.trim())
-          .where((faehigkeit) => faehigkeit.isNotEmpty)
-          .toList();
-
       final updatedProfile = Profil(
         profilTyp: _selectedProfilTyp,
         name: _nameController.text,
@@ -170,12 +127,12 @@ class NeuesProfilScreenState extends State<NeuesProfilScreen> {
         handwerkskammer: _selectedHandwerkskammer,
         spezialisierung: _spezialisierungController.text,
         lehrjahr: _selectedLehrjahr,
-        faehigkeiten: faehigkeiten,
+        faehigkeiten: _selectedFaehigkeiten,
       );
       Navigator.of(context).pop(updatedProfile);
     }
   }
-  
+
   void _checkLand() {
     if (_selectedCountry != null && _selectedCountry!.toLowerCase() != 'deutschland') {
       showDialog(
@@ -260,7 +217,7 @@ class NeuesProfilScreenState extends State<NeuesProfilScreen> {
                   const SizedBox(height: 16),
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 8.0),
-                    child: Row( crossAxisAlignment: CrossAxisAlignment.end, children: [ Expanded( child: DropdownButtonFormField<String>( initialValue: _selectedGewerk, decoration: const InputDecoration(labelText: 'Gewerk*', border: OutlineInputBorder()), items: _gewerke.map((String gewerk) => DropdownMenuItem<String>(value: gewerk, child: Text(gewerk))).toList(), onChanged: (newValue) => setState(() => _selectedGewerk = newValue), validator: (value) => value == null ? 'Bitte ein Gewerk auswählen' : null, ), ), IconButton( icon: const Icon(Icons.info_outline), tooltip: 'Information', onPressed: () { showDialog( context: context, builder: (context) => AlertDialog( title: const Text('Hinweis'), content: const Text('Dieses Programm befindet sich in einer Testphase - komm später noch einmal wieder, um zu schauen, ob nun auch dein Gewerk mitmacht.'), actions: [TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text('OK'))], ), ); }, ), ], ),
+                    child: Row( crossAxisAlignment: CrossAxisAlignment.end, children: [ Expanded( child: DropdownButtonFormField<String>( value: _selectedGewerk, decoration: const InputDecoration(labelText: 'Gewerk*', border: OutlineInputBorder()), items: _gewerke.map((String gewerk) => DropdownMenuItem<String>(value: gewerk, child: Text(gewerk))).toList(), onChanged: (newValue) { setState(() { _selectedGewerk = newValue; _updateFaehigkeiten(); }); }, validator: (value) => value == null ? 'Bitte ein Gewerk auswählen' : null, ), ), IconButton( icon: const Icon(Icons.info_outline), tooltip: 'Information', onPressed: () { showDialog( context: context, builder: (context) => AlertDialog( title: const Text('Hinweis'), content: const Text('Dieses Programm befindet sich in einer Testphase - komm später noch einmal wieder, um zu schauen, ob nun auch dein Gewerk mitmacht.'), actions: [TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text('OK'))], ), ); }, ), ], ),
                   ),
                   TextFormField(controller: _unternehmenController, decoration: const InputDecoration(labelText: 'Unternehmen*', border: OutlineInputBorder()), validator: (value) => (value == null || value.isEmpty) ? 'Bitte das Unternehmen eingeben' : null),
                   const SizedBox(height: 16),
@@ -283,14 +240,37 @@ class NeuesProfilScreenState extends State<NeuesProfilScreen> {
                     validator: (value) => value == null ? 'Bitte eine Handwerkskammer auswählen' : null,
                   ),
                   const SizedBox(height: 24),
-                  Text('Fähigkeiten', style: Theme.of(context).textTheme.titleLarge),
-                  const SizedBox(height: 8),
-                  for (int i = 0; i < _faehigkeitenControllers.length; i++) 
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 8.0),
-                      child: Row(children: [Expanded(child: TextFormField(controller: _faehigkeitenControllers[i], decoration: InputDecoration(labelText: 'Fähigkeit ${i + 1}', border: const OutlineInputBorder()))), IconButton(icon: const Icon(Icons.remove_circle_outline, color: Colors.red), onPressed: () { setState(() { if (_faehigkeitenControllers.length > 1) { _faehigkeitenControllers[i].dispose(); _faehigkeitenControllers.removeAt(i); } else { _faehigkeitenControllers[i].clear(); } }); })])
+                  // Fähigkeiten
+                  if (_selectedGewerk != null)
+                    MultiSelectDialogField(
+                      items: _faehigkeiten.map((e) => MultiSelectItem(e, e)).toList(),
+                      title: const Text("Fähigkeiten auswählen"),
+                      initialValue: _selectedFaehigkeiten,
+                      selectedColor: Theme.of(context).primaryColor,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: const BorderRadius.all(Radius.circular(8)),
+                        border: Border.all(color: Colors.grey, width: 1),
+                      ),
+                      buttonIcon: const Icon(Icons.arrow_drop_down, color: Colors.grey),
+                      buttonText: Text(
+                        "Fähigkeiten auswählen",
+                        style: TextStyle(color: Colors.grey[700], fontSize: 16),
+                      ),
+                      onConfirm: (results) {
+                        setState(() {
+                          _selectedFaehigkeiten = results.cast<String>();
+                        });
+                      },
+                      chipDisplay: MultiSelectChipDisplay(
+                        onTap: (value) {
+                          setState(() {
+                            _selectedFaehigkeiten.remove(value);
+                          });
+                        },
+                      ),
                     ),
-                  TextButton.icon(icon: const Icon(Icons.add), label: const Text('Fähigkeit hinzufügen'), onPressed: () => setState(() => _faehigkeitenControllers.add(TextEditingController()))),
+
                 ],
 
                 const SizedBox(height: 24),

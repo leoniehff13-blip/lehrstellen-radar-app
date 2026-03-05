@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:multi_select_flutter/multi_select_flutter.dart';
+import 'package:myapp/data/skills_data.dart';
 import 'package:myapp/models/profil.dart';
 
 class NeueTalentleiheScreen extends StatefulWidget {
@@ -21,15 +22,11 @@ class NeueTalentleiheScreenState extends State<NeueTalentleiheScreen> {
   final _unternehmenController = TextEditingController();
   final _handwerkskammerController = TextEditingController();
   final _faehigkeitenController = TextEditingController();
-  final _gewerkController = TextEditingController();
 
-  final List<String> _lernziele = [
-    'Schweißen',
-    'Löten',
-    'CNC-Fräsen',
-    'Qualitätskontrolle',
-    'Technisches Zeichnen'
-  ];
+  String? _selectedGewerk;
+  final List<String> _gewerke = ['Elektriker', 'Zimmerer'];
+
+  List<String> _lernziele = [];
   List<String> _selectedLernziele = [];
 
   @override
@@ -42,7 +39,47 @@ class NeueTalentleiheScreenState extends State<NeueTalentleiheScreen> {
       _handwerkskammerController.text =
           widget.userProfile!.handwerkskammer ?? '';
       _faehigkeitenController.text = widget.userProfile!.faehigkeiten?.join(', ') ?? '';
-      _gewerkController.text = widget.userProfile!.gewerk ?? '';
+      if (_gewerke.contains(widget.userProfile!.gewerk)) {
+        _selectedGewerk = widget.userProfile!.gewerk;
+        _updateLernziele(isInit: true);
+      }
+       _selectedLernziele = List<String>.from(widget.userProfile!.faehigkeiten ?? []);
+    }
+  }
+
+  void _updateLernziele({bool isInit = false}) {
+    setState(() {
+      _lernziele = skillsByGewerk[_selectedGewerk] ?? [];
+      if (!isInit) {
+        _selectedLernziele.clear();
+      }
+    });
+  }
+
+  void _createTalentleihe() {
+    if (_formKey.currentState!.validate()) {
+      final neuesAngebot = Profil(
+        // Copy unchanging data from the original profile
+        profilTyp: widget.userProfile?.profilTyp,
+        betrieb: widget.userProfile?.betrieb,
+        strasse: widget.userProfile?.strasse,
+        hausnummer: widget.userProfile?.hausnummer,
+        plz: widget.userProfile?.plz,
+        stadt: widget.userProfile?.stadt,
+        land: widget.userProfile?.land,
+        ansprechperson: widget.userProfile?.ansprechperson,
+        spezialisierung: widget.userProfile?.spezialisierung,
+        lehrjahr: widget.userProfile?.lehrjahr,
+
+        // Use data from the form controllers and selections
+        name: _nameController.text,
+        vorname: _vornameController.text,
+        unternehmen: _unternehmenController.text,
+        handwerkskammer: _handwerkskammerController.text,
+        gewerk: _selectedGewerk,
+        faehigkeiten: _selectedLernziele,
+      );
+      Navigator.of(context).pop(neuesAngebot);
     }
   }
 
@@ -77,85 +114,77 @@ class NeueTalentleiheScreenState extends State<NeueTalentleiheScreen> {
           key: _formKey,
           child: ListView(
             children: [
-              TextFormField(
-                controller: _nameController,
-                decoration: const InputDecoration(labelText: 'Name'),
-                readOnly: true,
-              ),
-              TextFormField(
-                controller: _vornameController,
-                decoration: const InputDecoration(labelText: 'Vorname'),
-                readOnly: true,
-              ),
-              TextFormField(
-                controller: _gewerkController,
-                decoration: const InputDecoration(labelText: 'Gewerk'),
-                readOnly: true,
-              ),
-              TextFormField(
-                controller: _unternehmenController,
-                decoration: const InputDecoration(labelText: 'Unternehmen'),
-                readOnly: true,
-              ),
-              TextFormField(
-                controller: _handwerkskammerController,
-                decoration: const InputDecoration(labelText: 'Handwerkskammer'),
-                readOnly: true,
-              ),
-              TextFormField(
-                controller: _faehigkeitenController,
-                decoration: const InputDecoration(labelText: 'Fähigkeiten'),
-                readOnly: true,
-              ),
-              const SizedBox(height: 16),
-              MultiSelectDialogField(
-                items: _lernziele.map((e) => MultiSelectItem(e, e)).toList(),
-                title: const Text("Lernziele"),
-                selectedColor: Theme.of(context).primaryColor,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: const BorderRadius.all(Radius.circular(40)),
-                  border: Border.all(
-                    color: Colors.grey,
-                    width: 1,
-                  ),
-                ),
-                buttonIcon: const Icon(
-                  Icons.arrow_drop_down,
-                  color: Colors.grey,
-                ),
-                buttonText: const Text(
-                  "Lernziele auswählen",
-                  style: TextStyle(
-                    color: Colors.grey,
-                    fontSize: 16,
-                  ),
-                ),
-                onConfirm: (results) {
-                  setState(() {
-                    _selectedLernziele = results.cast<String>().toList();
-                  });
-                },
-              ),
-              const SizedBox(height: 16),
-               if (_selectedLernziele.isNotEmpty)
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 8.0),
-                  child: Text(
-                    'Ausgewählte Ziele: ${_selectedLernziele.join(', ')}',
-                    style: Theme.of(context).textTheme.bodyMedium,
-                  ),
-                ),
               Row(
                 children: [
                   Expanded(
-                    child: Text(_selectedDateRange == null
-                        ? 'Kein Zeitraum ausgewählt'
-                        : '${DateFormat('dd.MM.yyyy').format(_selectedDateRange!.start)} - ${DateFormat('dd.MM.yyyy').format(_selectedDateRange!.end)}'),
+                    child: TextFormField(
+                      controller: _vornameController,
+                      decoration: const InputDecoration(labelText: 'Vorname'),
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: TextFormField(
+                      controller: _nameController,
+                      decoration: const InputDecoration(labelText: 'Nachname'),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              DropdownButtonFormField<String>(
+                decoration: const InputDecoration(
+                  labelText: 'Gewerk',
+                  border: OutlineInputBorder(),
+                ),
+                value: _selectedGewerk,
+                items: _gewerke.map((String gewerk) {
+                  return DropdownMenuItem<String>(
+                    value: gewerk,
+                    child: Text(gewerk),
+                  );
+                }).toList(),
+                onChanged: (newValue) {
+                  setState(() {
+                    _selectedGewerk = newValue;
+                    _updateLernziele();
+                  });
+                },
+                validator: (value) =>
+                    value == null ? 'Bitte ein Gewerk auswählen' : null,
+                isExpanded: true,
+              ),
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  Expanded(
+                    child: TextFormField(
+                      controller: _unternehmenController,
+                      decoration: const InputDecoration(labelText: 'Unternehmen'),
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: TextFormField(
+                      controller: _handwerkskammerController,
+                      decoration: const InputDecoration(labelText: 'Handwerkskammer'),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    _selectedDateRange == null
+                        ? 'Verfügbarkeitszeitraum'
+                        : '${DateFormat('dd.MM.yyyy').format(_selectedDateRange!.start)} - ${DateFormat('dd.MM.yyyy').format(_selectedDateRange!.end)}',
+                    style: Theme.of(context).textTheme.titleMedium,
                   ),
                   TextButton(
                     onPressed: () => _selectDateRange(context),
-                    child: const Text('Zeitraum auswählen'),
+                    child: const Text('Auswählen'),
                   ),
                 ],
               ),
@@ -163,16 +192,62 @@ class NeueTalentleiheScreenState extends State<NeueTalentleiheScreen> {
               TextFormField(
                 decoration: const InputDecoration(
                   labelText: 'Präferierte Einsatzorte oder Umkreissuche',
+                  border: OutlineInputBorder(),
                 ),
               ),
+              const SizedBox(height: 16),
+              const Divider(),
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: _faehigkeitenController,
+                decoration: const InputDecoration(labelText: 'Bestehende Fähigkeiten (Referenz)'),
+                readOnly: true, // This should remain read-only as a reference
+              ),
+              const SizedBox(height: 24),
+              if (_selectedGewerk != null)
+                MultiSelectDialogField(
+                  items: _lernziele.map((e) => MultiSelectItem(e, e)).toList(),
+                  title: const Text("Neue/Angebotene Fähigkeiten"),
+                  selectedColor: Theme.of(context).primaryColor,
+                  initialValue: _selectedLernziele,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: const BorderRadius.all(Radius.circular(8)),
+                    border: Border.all(
+                      color: Colors.grey,
+                      width: 1,
+                    ),
+                  ),
+                  buttonIcon: const Icon(
+                    Icons.arrow_drop_down,
+                    color: Colors.grey,
+                  ),
+                  buttonText: Text(
+                    "Neue/Angebotene Fähigkeiten auswählen",
+                    style: TextStyle(color: Colors.grey[700], fontSize: 16),
+                  ),
+                  onConfirm: (results) {
+                    setState(() {
+                      _selectedLernziele = results.cast<String>().toList();
+                    });
+                  },
+                  chipDisplay: MultiSelectChipDisplay(
+                    onTap: (value) {
+                      setState(() {
+                        _selectedLernziele.remove(value);
+                      });
+                    },
+                  ),
+                ),
               const SizedBox(height: 32),
               ElevatedButton(
-                onPressed: () {
-                  if (_formKey.currentState!.validate()) {
-                    // TODO: Implement save logic
-                  }
-                },
-                child: const Text('Talentleihe erstellen'),
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  backgroundColor: Theme.of(context).primaryColor,
+                  foregroundColor: Colors.white,
+                ),
+                onPressed: _createTalentleihe, // Updated onPressed handler
+                child: const Text('ANGEBOT ERSTELLEN'),
               ),
             ],
           ),

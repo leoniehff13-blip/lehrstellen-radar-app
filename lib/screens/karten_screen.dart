@@ -1,48 +1,442 @@
+
 import 'package:flutter/material.dart';
-import 'package:webview_flutter/webview_flutter.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'dart:developer' as developer;
+
+import '../models/handwerkskammer.dart'; 
+import '../models/betrieb.dart';
 
 class KartenScreen extends StatefulWidget {
-  const KartenScreen({super.key});
+  final List<Betrieb>? betriebe;
+
+  const KartenScreen({super.key, this.betriebe});
 
   @override
   State<KartenScreen> createState() => _KartenScreenState();
 }
 
 class _KartenScreenState extends State<KartenScreen> {
-  late final WebViewController _controller;
+  final MapController _mapController = MapController();
+  final List<Marker> _markers = [];
+  bool _isLoading = true;
+
+ final List<Handwerkskammer> _handwerkskammern = [
+    Handwerkskammer(id: 'aachen', name: 'HWK Aachen', region: 'Aachen'),
+    Handwerkskammer(id: 'schwaben', name: 'HWK für Schwaben', region: 'Augsburg'),
+    Handwerkskammer(id: 'oberfranken', name: 'HWK für Oberfranken', region: 'Bayreuth'),
+    Handwerkskammer(id: 'berlin', name: 'HWK Berlin', region: 'Berlin'),
+    Handwerkskammer(id: 'bielefeld', name: 'HWK Ostwestfalen-Lippe zu Bielefeld', region: 'Bielefeld'),
+    Handwerkskammer(id: 'braunschweig_lueneburg_stade', name: 'HWK Braunschweig-Lüneburg-Stade', region: 'Braunschweig'),
+    Handwerkskammer(id: 'bremen', name: 'HWK Bremen', region: 'Bremen'),
+    Handwerkskammer(id: 'chemnitz', name: 'HWK Chemnitz', region: 'Chemnitz'),
+    Handwerkskammer(id: 'cottbus', name: 'HWK Cottbus', region: 'Cottbus'),
+    Handwerkskammer(id: 'dortmund', name: 'HWK Dortmund', region: 'Dortmund'),
+    Handwerkskammer(id: 'dresden', name: 'HWK Dresden', region: 'Dresden'),
+    Handwerkskammer(id: 'duesseldorf', name: 'HWK Düsseldorf', region: 'Düsseldorf'),
+    Handwerkskammer(id: 'erfurt', name: 'HWK Erfurt', region: 'Erfurt'),
+    Handwerkskammer(id: 'flensburg', name: 'HWK Flensburg', region: 'Flensburg'),
+    Handwerkskammer(id: 'frankfurt_oder', name: 'HWK Frankfurt (Oder) - Region Ostbrandenburg', region: 'Frankfurt (Oder)'),
+    Handwerkskammer(id: 'frankfurt_rhein_main', name: 'HWK Frankfurt-Rhein-Main', region: 'Frankfurt am Main'),
+    Handwerkskammer(id: 'freiburg', name: 'HWK Freiburg', region: 'Freiburg'),
+    Handwerkskammer(id: 'mittelfranken', name: 'HWK für Mittelfranken', region: 'Nürnberg'),
+    Handwerkskammer(id: 'muenchen_oberbayern', name: 'HWK für München und Oberbayern', region: 'München'),
+    Handwerkskammer(id: 'niederbayern_oberpfalz', name: 'HWK Niederbayern-Oberpfalz', region: 'Passau'),
+    Handwerkskammer(id: 'unterfranken', name: 'HWK für Unterfranken', region: 'Würzburg'),
+    Handwerkskammer(id: 'halle', name: 'HWK Halle (Saale)', region: 'Halle (Saale)'),
+    Handwerkskammer(id: 'hamburg', name: 'HWK Hamburg', region: 'Hamburg'),
+    Handwerkskammer(id: 'hannover', name: 'HWK Hannover', region: 'Hannover'),
+    Handwerkskammer(id: 'heilbronn_franken', name: 'HWK Heilbronn-Franken', region: 'Heilbronn'),
+    Handwerkskammer(id: 'hildesheim_suedniedersachsen', name: 'HWK Hildesheim-Südniedersachsen', region: 'Hildesheim'),
+    Handwerkskammer(id: 'karlsruhe', name: 'HWK Karlsruhe', region: 'Karlsruhe'),
+    Handwerkskammer(id: 'kassel', name: 'HWK Kassel', region: 'Kassel'),
+    Handwerkskammer(id: 'koblenz', name: 'HWK Koblenz', region: 'Koblenz'),
+    Handwerkskammer(id: 'koeln', name: 'HWK zu Köln', region: 'Köln'),
+    Handwerkskammer(id: 'konstanz', name: 'HWK Konstanz', region: 'Konstanz'),
+    Handwerkskammer(id: 'leipzig', name: 'HWK zu Leipzig', region: 'Leipzig'),
+    Handwerkskammer(id: 'luebeck', name: 'HWK Lübeck', region: 'Lübeck'),
+    Handwerkskammer(id: 'magdeburg', name: 'HWK Magdeburg', region: 'Magdeburg'),
+    Handwerkskammer(id: 'mannheim', name: 'HWK Mannheim Rhein-Neckar-Odenwald', region: 'Mannheim'),
+    Handwerkskammer(id: 'muenster', name: 'HWK Münster', region: 'Münster'),
+    Handwerkskammer(id: 'oldenburg', name: 'HWK Oldenburg', region: 'Oldenburg'),
+    Handwerkskammer(id: 'osnabrueck_emsland', name: 'HWK Osnabrück-Emsland-Grafschaft Bentheim', region: 'Osnabrück'),
+    Handwerkskammer(id: 'ostfriesland', name: 'HWK für Ostfriesland', region: 'Aurich'),
+    Handwerkskammer(id: 'ostthueringen', name: 'HWK für Ostthüringen', region: 'Gera'),
+    Handwerkskammer(id: 'pfalz', name: 'HWK der Pfalz', region: 'Kaiserslautern'),
+    Handwerkskammer(id: 'potsdam', name: 'HWK Potsdam', region: 'Potsdam'),
+    Handwerkskammer(id: 'reutlingen', name: 'HWK Reutlingen', region: 'Reutlingen'),
+    Handwerkskammer(id: 'rheinhessen', name: 'HWK Rheinhessen', region: 'Mainz'),
+    Handwerkskammer(id: 'rostock', name: 'HWK Ostmecklenburg-Vorpommern', region: 'Rostock'),
+    Handwerkskammer(id: 'saarland', name: 'HWK des Saarlandes', region: 'Saarbrücken'),
+    Handwerkskammer(id: 'schwerin', name: 'HWK Schwerin', region: 'Schwerin'),
+    Handwerkskammer(id: 'stuttgart', name: 'HWK Region Stuttgart', region: 'Stuttgart'),
+    Handwerkskammer(id: 'suedthueringen', name: 'HWK Südthüringen', region: 'Suhl'),
+    Handwerkskammer(id: 'suedwestfalen', name: 'HWK Südwestfalen', region: 'Arnsberg'),
+    Handwerkskammer(id: 'trier', name: 'HWK Trier', region: 'Trier'),
+    Handwerkskammer(id: 'ulm', name: 'HWK Ulm', region: 'Ulm'),
+    Handwerkskammer(id: 'wiesbaden', name: 'HWK Wiesbaden', region: 'Wiesbaden'),
+  ];
+
+  final List<Betrieb> _betriebe = [
+    Betrieb(
+        name: 'Muster GmbH & Co. KG',
+        branche: 'Maschinenbau',
+        ort: 'Stuttgart',
+        logo:'https://images.unsplash.com/photo-1556761175-5973dc0f32e7?q=80&w=100&auto=format&fit=crop',
+        beschreibung:'Wir sind ein führender Hersteller von Spezialmaschinen.',
+        aufgabenbereiche: ['Montage', 'Wartung', 'Qualitätssicherung'],
+        webseite: 'www.example.com',
+        adresse: 'Musterstraße 1, 70173 Stuttgart, Deutschland',
+        ansprechpartner: 'Frau Dr. Schneider',
+        email: 'bewerbung@example.com',
+        telefon: '+49 711 123456',
+        handwerkskammerId: 'stuttgart'),
+    Betrieb(
+        name: 'Holzbau Schmidt',
+        branche: 'Handwerk',
+        ort: 'Freiburg',
+        logo:'https://images.unsplash.com/photo-1556761175-5973dc0f32e7?q=80&w=100&auto=format&fit=crop',
+        beschreibung: 'Traditioneller Holzbaubetrieb mit moderner Technik.',
+        aufgabenbereiche: ['Dachstühle', 'Holzrahmenbau', 'Innenausbau'],
+        webseite: 'www.example.com',
+        adresse: 'Hauptstraße 5, 79104 Freiburg, Germany',
+        ansprechpartner: 'Herr Schmidt',
+        email: 'info@example.com',
+        telefon: '+49 761 987654',
+        handwerkskammerId: 'freiburg'),
+    Betrieb(
+        name: 'Kreativ-Software AG',
+        branche: 'IT & Software',
+        ort: 'Berlin',
+        logo:'https://images.unsplash.com/photo-1556761175-5973dc0f32e7?q=80&w=100&auto=format&fit=crop',
+        beschreibung:'Wir entwickeln innovative Softwarelösungen.',
+        aufgabenbereiche: ['Anwendungsentwicklung', 'Backend-Entwicklung'],
+        webseite: 'www.example.com',
+        adresse: 'Friedrichstraße 100, 10117 Berlin, Deutschland',
+        ansprechpartner: 'Herr Meier',
+        email: 'karriere@example.com',
+        telefon: '+49 30 12345678',
+        handwerkskammerId: 'berlin'),
+    Betrieb(
+        name: 'Innovatec GmbH',
+        branche: 'IT & Hardware',
+        ort: 'München',
+        logo:'https://images.unsplash.com/photo-1556761175-5973dc0f32e7?q=80&w=100&auto=format&fit=crop',
+        beschreibung: 'Hardware-Lösungen für die Industrie.',
+        aufgabenbereiche: ['Systemintegration', 'Netzwerktechnik'],
+        webseite: 'www.example.com',
+        adresse: 'Balanstraße 73, 81541 München, Deutschland',
+        ansprechpartner: 'Frau Huber',
+        email: 'jobs@example.com',
+        telefon: '+49 89 123456',
+        handwerkskammerId: 'muenchen_oberbayern'),
+    Betrieb(
+        name: 'Hafen-Logistik AG',
+        branche: 'Logistik',
+        ort: 'Hamburg',
+        logo:'https://images.unsplash.com/photo-1556761175-5973dc0f32e7?q=80&w=100&auto=format&fit=crop',
+        beschreibung: 'Ihr Partner für weltweite Logistik.',
+        aufgabenbereiche: ['Spedition', 'Lagerlogistik'],
+        webseite: 'www.example.com',
+        adresse: 'Bei St. Annen 1, 20457 Hamburg, Deutschland',
+        ansprechpartner: 'Herr Jansen',
+        email: 'contact@example.com',
+        telefon: '+49 40 987654',
+        handwerkskammerId: 'hamburg'),
+    Betrieb(
+        name: 'HSBA',
+        branche: 'Bildung',
+        ort: 'Hamburg',
+        logo:
+            'https://images.unsplash.com/photo-1556761175-5973dc0f32e7?q=80&w=100&auto=format&fit=crop',
+        beschreibung:
+            'Die Business School in Hamburg. Wir bieten duale Studiengänge und Weiterbildungen an.',
+        aufgabenbereiche: ['Duales Studium BWL', 'Master in Global Management'],
+        webseite: 'www.hsba.de',
+        adresse: 'Willy-Brandt-Straße 75, 20459 Hamburg, Deutschland',
+        ansprechpartner: 'Studienberatung',
+        email: 'info@hsba.de',
+        telefon: '+49 40 361380',
+        handwerkskammerId: 'hamburg'),
+  ];
+
+  String? _selectedKammerId;
 
   @override
   void initState() {
     super.initState();
-
-    // The URL for the embedded Google Map.
-    // This example centers the map on Germany.
-    const String mapUrl = 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d6433225.996452225!2d10.451526!3d51.165691!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x479a721ec2b1be6b%3A0x75e85d6b8e91e55b!2sGermany!5e0!3m2!1sen!2sde!4v1700000000000';
-
-    _controller = WebViewController()
-      ..setJavaScriptMode(JavaScriptMode.unrestricted)
-      ..setBackgroundColor(const Color(0x00000000))
-      ..setNavigationDelegate(
-        NavigationDelegate(
-          onProgress: (int progress) {
-            // You can use this to show a loading indicator.
-          },
-          onPageStarted: (String url) {},
-          onPageFinished: (String url) {},
-          onWebResourceError: (WebResourceError error) {},
-          onNavigationRequest: (NavigationRequest request) {
-            // By returning NavigationDecision.navigate, we allow the webview to load the URL.
-            return NavigationDecision.navigate;
-          },
-        ),
-      )
-      ..loadRequest(Uri.parse(mapUrl));
+    _updateMapContent(_betriebe);
   }
+
+  void _filterAndGeocodeBetriebe() {
+      final filteredBetriebe = _selectedKammerId == null
+        ? _betriebe
+        : _betriebe.where((b) => b.handwerkskammerId == _selectedKammerId).toList();
+
+      _updateMapContent(filteredBetriebe);
+  }
+
+  Future<void> _updateMapContent(List<Betrieb> betriebe) async {
+    setState(() {
+      _isLoading = true;
+      _markers.clear();
+    });
+
+    final List<Marker> resolvedMarkers = [];
+    for (final betrieb in betriebe) {
+      final latLng = await _getLatLngFromAddress(betrieb.adresse);
+      if (latLng != null) {
+        resolvedMarkers.add(
+          Marker(
+            width: 80.0,
+            height: 80.0,
+            point: latLng,
+            child: Tooltip(
+              message: "${betrieb.name}\n${betrieb.branche}",
+              child: IconButton(
+                icon: const Icon(
+                  Icons.location_pin,
+                  color: Colors.red,
+                  size: 40,
+                ),
+                onPressed: () {
+                   _showBetriebDetailsPopup(context, betrieb);
+                },
+              ),
+            ),
+          ),
+        );
+      }
+    }
+    
+    if (!mounted) return;
+
+    setState(() {
+      _markers.addAll(resolvedMarkers);
+      _isLoading = false;
+    });
+
+    if (_selectedKammerId == null) {
+        _mapController.move(const LatLng(51.1657, 10.4515), 6.0);
+    }
+  }
+
+  void _showBetriebDetailsPopup(BuildContext context, Betrieb betrieb) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) {
+        return DraggableScrollableSheet(
+          initialChildSize: 0.4,
+          minChildSize: 0.2,
+          maxChildSize: 0.75,
+          builder: (_, controller) {
+            return Container(
+               decoration: const BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                ),
+              child: SingleChildScrollView(
+                controller: controller,
+                child: _BetriebsDetailSheet(betrieb: betrieb),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Future<LatLng?> _getLatLngFromAddress(String address) async {
+    final url = Uri.parse(
+        'https://photon.komoot.io/api/?q=${Uri.encodeComponent(address)}&limit=1');
+    try {
+      final response = await http.get(url);
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        if (data['features'] != null && data['features'].isNotEmpty) {
+          final coordinates = data['features'][0]['geometry']['coordinates'];
+          final lon = coordinates[0];
+          final lat = coordinates[1];
+          return LatLng(lat, lon);
+        }
+      } else {
+        developer.log('Photon API request failed with status: ${response.statusCode}.', name: 'KartenScreen');
+      }
+    } catch (e) {
+      developer.log('Error during geocoding: $e', name: 'KartenScreen', error: e);
+    }
+    return null;
+  }
+
+ @override
+Widget build(BuildContext context) {
+  return Column(
+    children: [
+      _buildFilterDropdown(),
+      Expanded(
+        child: Stack(
+          children: [
+            FlutterMap(
+              mapController: _mapController,
+              options: MapOptions(
+                initialCenter: const LatLng(51.1657, 10.4515),
+                initialZoom: 6.0,
+              ),
+              children: [
+                TileLayer(
+                  urlTemplate: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+                  userAgentPackageName: 'com.example.myapp',
+                ),
+                MarkerLayer(markers: _markers),
+              ],
+            ),
+            if (_isLoading)
+              Container(
+                color: Colors.black.withOpacity(0.5),
+                child: const Center(child: CircularProgressIndicator()),
+              ),
+          ],
+        ),
+      ),
+    ],
+  );
+}
+
+Widget _buildFilterDropdown() {
+  return Container(
+    color: Theme.of(context).cardColor,
+    padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+    child: DropdownButton<String>(
+      value: _selectedKammerId,
+      isExpanded: true,
+      hint: const Text('Nach Handwerkskammer filtern'),
+      onChanged: (String? newValue) {
+        setState(() {
+          _selectedKammerId = newValue;
+        });
+        _filterAndGeocodeBetriebe();
+      },
+      items: [
+        const DropdownMenuItem<String>(
+          value: null,
+          child: Text('Alle anzeigen'),
+        ),
+        ..._handwerkskammern.map<DropdownMenuItem<String>>((Handwerkskammer kammer) {
+          return DropdownMenuItem<String>(
+            value: kammer.id,
+            child: Text(kammer.name),
+          );
+        }).toList(),
+      ],
+    ),
+  );
+}
+
+}
+
+class _BetriebsDetailSheet extends StatelessWidget {
+  final Betrieb betrieb;
+
+  const _BetriebsDetailSheet({required this.betrieb});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: WebViewWidget(controller: _controller),
+    final theme = Theme.of(context);
+    return Padding(
+      padding: const EdgeInsets.all(24.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(12.0),
+                child: Image.network(
+                  betrieb.logo,
+                  width: 80,
+                  height: 80,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) => 
+                    Container(
+                      width: 80, 
+                      height: 80, 
+                      color: Colors.grey[200], 
+                      child: Icon(Icons.business, size: 40, color: Colors.grey[600])
+                    ),
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children:[
+                        Text(
+                            betrieb.name,
+                            style: theme.textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                            betrieb.branche,
+                            style: theme.textTheme.bodyLarge?.copyWith(color: Colors.grey[600]),
+                        ),
+                    ]
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          Text(
+            betrieb.beschreibung,
+            style: theme.textTheme.bodyMedium?.copyWith(fontSize: 15),
+          ),
+          const SizedBox(height: 20),
+           const Divider(),
+           const SizedBox(height: 20),
+
+          _buildInfoRow(context, Icons.location_on_outlined, betrieb.adresse),
+          const SizedBox(height: 12),
+          _buildInfoRow(context, Icons.person_outline, betrieb.ansprechpartner),
+          const SizedBox(height: 12),
+          _buildInfoRow(context, Icons.email_outlined, betrieb.email),
+          const SizedBox(height: 12),
+          _buildInfoRow(context, Icons.phone_outlined, betrieb.telefon),
+           const SizedBox(height: 12),
+          _buildInfoRow(context, Icons.language_outlined, betrieb.webseite),
+          const SizedBox(height: 16),
+
+          ExpansionTile(
+            tilePadding: EdgeInsets.zero,
+            title: const Text(
+              'Gesuchtes Aufgabenprofil',
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+            ),
+            children: betrieb.aufgabenbereiche
+                .map((aufgabe) => ListTile(
+                      contentPadding: const EdgeInsets.only(left: 8.0, right: 8.0),
+                      leading: Icon(Icons.check_circle, color: theme.primaryColor),
+                      title: Text(aufgabe),
+                    ))
+                .toList(),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInfoRow(BuildContext context, IconData icon, String text) {
+    final theme = Theme.of(context);
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Icon(icon, color: theme.primaryColor.withOpacity(0.8), size: 22),
+        const SizedBox(width: 16),
+        Expanded(child: Text(text, style: theme.textTheme.bodyLarge?.copyWith(fontSize: 15))),
+      ],
     );
   }
 }

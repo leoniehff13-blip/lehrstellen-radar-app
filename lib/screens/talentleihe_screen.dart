@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:myapp/models/profil.dart';
 import 'package:myapp/screens/betrieb_liste_screen.dart';
 import 'package:myapp/screens/talent_liste_screen.dart';
 
 class TalentleiheScreen extends StatefulWidget {
   final Function(bool) onNavigateToNewOffer;
+  final List<Profil> ausgelieheneTalente;
 
-  const TalentleiheScreen({super.key, required this.onNavigateToNewOffer});
+  const TalentleiheScreen({
+    super.key,
+    required this.onNavigateToNewOffer,
+    required this.ausgelieheneTalente,
+  });
 
   @override
   TalentleiheScreenState createState() => TalentleiheScreenState();
@@ -53,8 +59,8 @@ class TalentleiheScreenState extends State<TalentleiheScreen>
       body: TabBarView(
         controller: _tabController,
         children: [
-          BetriebListeScreen(),
-          TalentListeScreen(),
+          const BetriebListeScreen(),
+          TalentListeScreen(talente: widget.ausgelieheneTalente),
         ],
       ),
       floatingActionButton: FloatingActionButton(
