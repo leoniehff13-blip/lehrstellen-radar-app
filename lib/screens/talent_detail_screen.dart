@@ -9,21 +9,21 @@ class TalentDetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Placeholder for profile image, as it's not in the Profil model yet
-    const profilbildPlaceholder = 
+    const profilbildPlaceholder =
         'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=100&auto=format&fit=crop';
 
     return Scaffold(
       appBar: AppBar(
         title: Text(talent.vorname ?? 'Talent'),
         flexibleSpace: Container(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Color(0xFF002C59), Color(0xFF3B5998)],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Color(0xFF002C59), Color(0xFF3B5998)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
             ),
           ),
+        ),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
@@ -41,17 +41,23 @@ class TalentDetailScreen extends StatelessWidget {
             Center(
               child: Text(
                 '${talent.vorname ?? ''} ${talent.name ?? ''}',
-                style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
+                style: Theme.of(context)
+                    .textTheme
+                    .headlineSmall
+                    ?.copyWith(fontWeight: FontWeight.bold),
               ),
             ),
             const SizedBox(height: 8),
             Center(
               child: Text(
                 '${talent.gewerk ?? 'N/A'} - ${talent.lehrjahr ?? 0}. Lehrjahr',
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Colors.grey[600]),
+                style: Theme.of(context)
+                    .textTheme
+                    .titleMedium
+                    ?.copyWith(color: Colors.grey[600]),
               ),
             ),
-             if (talent.unternehmen != null && talent.unternehmen!.isNotEmpty)
+            if (talent.unternehmen != null && talent.unternehmen!.isNotEmpty)
               Padding(
                 padding: const EdgeInsets.only(top: 8.0),
                 child: Center(
@@ -62,24 +68,29 @@ class TalentDetailScreen extends StatelessWidget {
                 ),
               ),
             const Divider(height: 32, thickness: 1),
-
             Text(
               'Fähigkeiten & Lernziele',
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+              style: Theme.of(context)
+                  .textTheme
+                  .titleLarge
+                  ?.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
             if (talent.faehigkeiten != null)
               Wrap(
                 spacing: 8.0,
                 runSpacing: 4.0,
-                children: talent.faehigkeiten!.map((skill) => Chip(
-                  label: Text(skill),
-                  backgroundColor: const Color(0xFFD6DCE5),
-                  labelStyle: const TextStyle(color: Color(0xFF002C59)),
-                  )).toList(),
+                children: talent.faehigkeiten!
+                    .map((skill) => Chip(
+                          label: Text(skill),
+                          backgroundColor: const Color(0xFFD6DCE5),
+                          labelStyle: const TextStyle(color: Color(0xFF002C59)),
+                        ))
+                    .toList(),
               ),
             if (talent.faehigkeiten == null || talent.faehigkeiten!.isEmpty)
-              const Text('Keine spezifischen Fähigkeiten oder Lernziele angegeben.'),
+              const Text(
+                  'Keine spezifischen Fähigkeiten oder Lernziele angegeben.'),
           ],
         ),
       ),

@@ -18,18 +18,18 @@ class HomeScreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                'Talentleihe', // Updated App Name
+                'Hier muss der Name der App stehen', // Updated App Name
                 style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      shadows: [
-                        Shadow(
-                          blurRadius: 10.0,
-                          color: Colors.black.withAlpha(128),
-                          offset: const Offset(2.0, 2.0),
-                        ),
-                      ],
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  shadows: [
+                    Shadow(
+                      blurRadius: 10.0,
+                      color: Colors.black.withAlpha(128),
+                      offset: const Offset(2.0, 2.0),
                     ),
+                  ],
+                ),
               ),
             ],
           ),

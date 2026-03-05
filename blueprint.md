@@ -28,19 +28,27 @@ Talentleihe ist eine mobile Anwendung, die entwickelt wird, um Talente im Handwe
     *   **Farbpalette:** Blautöne (#D6DCE5, #002C59), Grau und Weiß.
     *   **Stil:** Modern, klar und benutzerfreundlich.
 
-## Aktuelle Änderung: Fehlerbehebung auf dem Betriebslisten-Bildschirm
+## Aktuelle Änderung: Profil-Prüfung für 'Neuer Praxiseinsatz'
 
 ### Übersicht
 
-Ein Syntaxfehler in der Datei `lib/screens/betrieb_liste_screen.dart` wurde behoben. Der Fehler war identisch mit einem zuvor auf dem Karten-Bildschirm behobenen Problem und verhinderte die korrekte Ausführung der App.
+Es wurde eine Prüfung implementiert, die sicherstellt, dass nur Betriebe mit einem angelegten Profil einen neuen Praxiseinsatz erstellen können. Ist kein Profil vorhanden, wird der Nutzer aufgefordert, eines zu erstellen, und wird direkt zur Profil-Erstellungsseite geleitet.
 
 ### Implementierungsschritte
 
-1.  **Fehleranalyse:** Das Problem lag in den Testdaten für die `Betrieb`-Objekte. In den `aufgabenbereiche`-Listen fehlten die Kommas zur Trennung der einzelnen String-Einträge.
-2.  **Fehlerbehebung:** Die fehlenden Kommas wurden in den `aufgabenbereiche`-Listen der `_allBetriebe`-Liste in `lib/screens/betrieb_liste_screen.dart` ergänzt, wodurch die Dart-Syntax wieder korrekt ist.
+1.  **Prüflogik hinzugefügt:** In der Methode `_handleNewPraxiseinsatz` in `lib/main.dart` wird nun überprüft, ob die Variable `_loggedInBetrieb` `null` ist.
+2.  **Dialogfenster implementiert:** Wenn `_loggedInBetrieb` `null` ist, wird ein `AlertDialog` angezeigt.
+3.  **Benutzerführung im Dialog:** Der Dialog informiert den Nutzer über das fehlende Profil und bietet zwei Optionen:
+    *   **"Zum Profil":** Leitet den Nutzer zum "Konto"-Tab weiter, damit er sein Profil anlegen kann.
+    *   **"Abbrechen":** Schließt den Dialog.
+4.  **Bestehende Funktionalität beibehalten:** Ist ein Profil vorhanden, wird der Nutzer wie gewohnt zum Erstellungsformular für einen neuen Praxiseinsatz weitergeleitet.
 
 
 ## Vorherige Änderungen
+
+### Fehlerbehebung auf dem Betriebslisten-Bildschirm
+
+*   **Korrektur des `orElse`-Fallback:** In `lib/screens/betrieb_liste_screen.dart` wurde die `orElse`-Klausel korrigiert, um einen Absturz zu verhindern, wenn eine `handwerkskammerId` nicht gefunden wird. Es wird nun ein gültiges Fallback-Objekt erstellt.
 
 ### Fehlerbehebung auf dem Karten-Bildschirm
 

@@ -1,4 +1,3 @@
-
 final Map<String, List<String>> skillsByGewerk = {
   'Elektriker': [
     'Schaltkreise verdrahten',

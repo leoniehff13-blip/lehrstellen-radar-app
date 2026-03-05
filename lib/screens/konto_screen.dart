@@ -58,10 +58,8 @@ class _KontoScreenState extends State<KontoScreen> with SingleTickerProviderStat
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.profil == null ? 'Konto' : 'Mein Konto'),
-        backgroundColor: widget.profil == null ? Colors.grey[200] : const Color(0xFFD6DCE5),
-        titleTextStyle: widget.profil == null
-            ? Theme.of(context).appBarTheme.titleTextStyle
-            : const TextStyle(
+        backgroundColor: const Color(0xFFD6DCE5),
+        titleTextStyle: const TextStyle(
                 color: Color(0xFF002C59),
                 fontSize: 22,
                 fontWeight: FontWeight.bold,
