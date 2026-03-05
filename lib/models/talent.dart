@@ -1,4 +1,4 @@
-class Azubi {
+class Talent {
   final String name;
   final String beruf;
   final int lehrjahr;
@@ -7,7 +7,7 @@ class Azubi {
   final List<String> lernziele;
   final String email;
 
-  Azubi({
+  Talent({
     required this.name,
     required this.beruf,
     required this.lehrjahr,

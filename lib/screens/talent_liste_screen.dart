@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
-import '../models/azubi.dart';
-import 'azubi_detail_screen.dart';
+import '../models/talent.dart';
+import 'talent_detail_screen.dart';
 
-class AzubiListeScreen extends StatefulWidget {
-  const AzubiListeScreen({super.key});
+class TalentListeScreen extends StatefulWidget {
+  const TalentListeScreen({super.key});
 
   @override
-  State<AzubiListeScreen> createState() => _AzubiListeScreenState();
+  State<TalentListeScreen> createState() => _TalentListeScreenState();
 }
 
-class _AzubiListeScreenState extends State<AzubiListeScreen> {
-  final List<Azubi> azubiAngebote = [
-    Azubi(
+class _TalentListeScreenState extends State<TalentListeScreen> {
+  final List<Talent> talentAngebote = [
+    Talent(
         name: 'Max Mustermann',
         beruf: 'Elektroniker für Betriebstechnik',
         lehrjahr: 2,
@@ -23,7 +23,7 @@ class _AzubiListeScreenState extends State<AzubiListeScreen> {
           'Fehlersuche in komplexen Anlagen'
         ],
         email: 'max.mustermann@email.de'),
-    Azubi(
+    Talent(
         name: 'Erika Mustermann',
         beruf: 'Anlagenmechanikerin für SHK',
         lehrjahr: 3,
@@ -36,7 +36,7 @@ class _AzubiListeScreenState extends State<AzubiListeScreen> {
         ],
         lernziele: ['Hydraulischer Abgleich', 'Regenerative Energien'],
         email: 'erika.mustermann@email.de'),
-    Azubi(
+    Talent(
         name: 'Jonas Schmidt',
         beruf: 'Tischler',
         lehrjahr: 1,
@@ -48,7 +48,7 @@ class _AzubiListeScreenState extends State<AzubiListeScreen> {
           'Kundenberatung und -betreuung'
         ],
         email: 'jonas.schmidt@email.de'),
-    Azubi(
+    Talent(
         name: 'Anna Kovac',
         beruf: 'Malerin und Lackiererin',
         lehrjahr: 4,
@@ -63,10 +63,10 @@ class _AzubiListeScreenState extends State<AzubiListeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final gefilterteAzubis = _gefiltertesLehrjahr == null
-        ? azubiAngebote
-        : azubiAngebote
-            .where((azubi) => azubi.lehrjahr == _gefiltertesLehrjahr)
+    final gefilterteTalente = _gefiltertesLehrjahr == null
+        ? talentAngebote
+        : talentAngebote
+            .where((talent) => talent.lehrjahr == _gefiltertesLehrjahr)
             .toList();
 
     return Column(
@@ -87,9 +87,9 @@ class _AzubiListeScreenState extends State<AzubiListeScreen> {
         ),
         Expanded(
           child: ListView.builder(
-            itemCount: gefilterteAzubis.length,
+            itemCount: gefilterteTalente.length,
             itemBuilder: (context, index) {
-              final azubi = gefilterteAzubis[index];
+              final talent = gefilterteTalente[index];
               return Card(
                 margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 elevation: 4,
@@ -97,17 +97,17 @@ class _AzubiListeScreenState extends State<AzubiListeScreen> {
                 child: ListTile(
                   leading: CircleAvatar(
                     radius: 30,
-                    backgroundImage: NetworkImage(azubi.profilbild),
+                    backgroundImage: NetworkImage(talent.profilbild),
                     backgroundColor: Colors.grey[200],
                   ),
-                  title: Text(azubi.name, style: const TextStyle(fontWeight: FontWeight.bold)),
-                  subtitle: Text('${azubi.beruf}\n${azubi.lehrjahr}. Lehrjahr'),
+                  title: Text(talent.name, style: const TextStyle(fontWeight: FontWeight.bold)),
+                  subtitle: Text('${talent.beruf}\n${talent.lehrjahr}. Lehrjahr'),
                   trailing: const Icon(Icons.chevron_right),
                   onTap: () {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => AzubiDetailScreen(azubi: azubi),
+                        builder: (context) => TalentDetailScreen(talent: talent),
                       ),
                     );
                   },

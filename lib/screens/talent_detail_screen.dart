@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
-import '../models/azubi.dart';
+import '../models/talent.dart';
 
-class AzubiDetailScreen extends StatelessWidget {
-  final Azubi azubi;
+class TalentDetailScreen extends StatelessWidget {
+  final Talent talent;
 
-  const AzubiDetailScreen({super.key, required this.azubi});
+  const TalentDetailScreen({super.key, required this.talent});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(azubi.name),
+        title: Text(talent.name),
         flexibleSpace: Container(
             decoration: const BoxDecoration(
               gradient: LinearGradient(
@@ -29,27 +29,27 @@ class AzubiDetailScreen extends StatelessWidget {
             Center(
               child: CircleAvatar(
                 radius: 60,
-                backgroundImage: NetworkImage(azubi.profilbild),
+                backgroundImage: NetworkImage(talent.profilbild),
                 backgroundColor: Colors.grey[200],
               ),
             ),
             const SizedBox(height: 16),
             Center(
               child: Text(
-                azubi.name,
+                talent.name,
                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
               ),
             ),
             const SizedBox(height: 8),
             Center(
               child: Text(
-                '${azubi.beruf} - ${azubi.lehrjahr}. Lehrjahr',
+                '${talent.beruf} - ${talent.lehrjahr}. Lehrjahr',
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Colors.grey[600]),
               ),
             ),
             const SizedBox(height: 8),
             Center(
-                child: Text(azubi.email, style: const TextStyle(color: Colors.blueAccent)),
+                child: Text(talent.email, style: const TextStyle(color: Colors.blueAccent)),
             ),
             const Divider(height: 32, thickness: 1),
 
@@ -61,7 +61,7 @@ class AzubiDetailScreen extends StatelessWidget {
             Wrap(
               spacing: 8.0,
               runSpacing: 4.0,
-              children: azubi.faehigkeiten.map((skill) => Chip(label: Text(skill))).toList(),
+              children: talent.faehigkeiten.map((skill) => Chip(label: Text(skill))).toList(),
             ),
             const SizedBox(height: 24),
 
@@ -70,7 +70,7 @@ class AzubiDetailScreen extends StatelessWidget {
               style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
-            ...azubi.lernziele.map((goal) => ListTile(
+            ...talent.lernziele.map((goal) => ListTile(
                   leading: const Icon(Icons.check_circle_outline, color: Colors.purple),
                   title: Text(goal),
                 )),

@@ -4,10 +4,12 @@ import 'package:myapp/models/profil.dart';
 
 // Screens
 import 'screens/home_screen.dart';
-import 'screens/angebote_screen.dart';
+import 'screens/talentleihe_screen.dart';
 import 'screens/karten_screen.dart';
 import 'screens/info_screen.dart';
 import 'screens/konto_screen.dart';
+import 'screens/neue_talentleihe_screen.dart';
+import 'screens/neuer_betrieb_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -19,7 +21,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Azubi Match',
+      title: 'Talentleihe',
       theme: ThemeData(
         primaryColor: const Color(0xFF002C59),
         colorScheme: ColorScheme.fromSeed(
@@ -54,7 +56,24 @@ class MainScreenState extends State<MainScreen> {
     super.initState();
     _widgetOptions = <Widget>[
       HomeScreen(onProfilErstellen: _updateProfil),
-      const AngeboteScreen(),
+      TalentleiheScreen(
+        onNavigateToNewOffer: (isBetrieb) {
+          if (isBetrieb) {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => const NeuerBetriebScreen(),
+              ),
+            );
+          } else {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) =>
+                    NeueTalentleiheScreen(userProfile: _profil),
+              ),
+            );
+          }
+        },
+      ),
       const KartenScreen(),
       const InfoScreen(),
       KontoScreen(profil: _profil),
@@ -70,8 +89,8 @@ class MainScreenState extends State<MainScreen> {
   void _updateProfil(Profil profil) {
     setState(() {
       _profil = profil;
-      _widgetOptions[4] = KontoScreen(profil: _profil); // Update the screen
-      _selectedIndex = 4; // Switch to the Konto screen
+      _widgetOptions[4] = KontoScreen(profil: _profil);
+      _selectedIndex = 4;
     });
   }
 
@@ -81,7 +100,7 @@ class MainScreenState extends State<MainScreen> {
       appBar: _selectedIndex == 0 || _selectedIndex == 1
           ? null
           : AppBar(
-              title: const Text('Azubi Match'),
+              title: const Text('Talentleihe'),
               backgroundColor: Theme.of(context).primaryColor,
               titleTextStyle: GoogleFonts.inter(
                 fontSize: 20,
@@ -95,7 +114,7 @@ class MainScreenState extends State<MainScreen> {
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
           BottomNavigationBarItem(
             icon: Icon(Icons.list_alt),
-            label: 'Angebote',
+            label: 'Talentleihe',
           ),
           BottomNavigationBarItem(icon: Icon(Icons.map), label: 'Karte'),
           BottomNavigationBarItem(icon: Icon(Icons.info), label: 'Infos'),
@@ -108,7 +127,7 @@ class MainScreenState extends State<MainScreen> {
         selectedItemColor: Theme.of(context).primaryColor,
         unselectedItemColor: Colors.grey,
         onTap: _onItemTapped,
-        type: BottomNavigationBarType.fixed, // Ensure all items are visible
+        type: BottomNavigationBarType.fixed,
       ),
     );
   }

@@ -1,19 +1,19 @@
-# Projekt: Azubi-Match - Vermittlungsplattform für Handwerks-Azubis
+# Projekt: Talentleihe - Vermittlungsplattform für Handwerks-Talente
 
 ## Übersicht
 
-Azubi-Match ist eine mobile Anwendung, die entwickelt wird, um Auszubildende im Handwerk mit passenden Betrieben zusammenzubringen. Die Plattform soll es Auszubildenden ermöglichen, ihre Fähigkeiten und Lernfortschritte zu präsentieren, während Betriebe ihre Spezialisierungen und angebotenen Tätigkeiten darstellen können. Eine Kartenansicht soll die geografische Suche erleichtern.
+Talentleihe ist eine mobile Anwendung, die entwickelt wird, um Talente im Handwerk mit passenden Betrieben zusammenzubringen. Die Plattform soll es Talenten ermöglichen, ihre Fähigkeiten und Lernfortschritte zu präsentieren, während Betriebe ihre Spezialisierungen und angebotenen Tätigkeiten darstellen können. Eine Kartenansicht soll die geografische Suche erleichtern.
 
-## Geplante Funktionen
+## Stil, Design und Features
 
-*   **Profile für Auszubildende:**
+*   **Profile für Talente:**
     *   Anzeige der bereits erlernten Fähigkeiten.
     *   Übersicht der noch zu absolvierenden Ausbildungsinhalte.
 *   **Profile für Betriebe:**
     *   Darstellung der typischen Aufgaben und Tätigkeitsbereiche.
     *   Auflistung von Spezialisierungen.
 *   **Darstellungsoptionen:**
-    *   Listenansicht für Auszubildende und Betriebe.
+    *   Listenansicht für Talente und Betriebe.
     *   Kartenansicht zur geografischen Orientierung.
 *   **Informationsseite:**
     *   Informationen zu den Handwerkskammern und dem ZDH.
@@ -22,30 +22,28 @@ Azubi-Match ist eine mobile Anwendung, die entwickelt wird, um Auszubildende im 
     *   **Farbpalette:** Blautöne (#D6DCE5, #002C59), Grau und Weiß.
     *   **Stil:** Modern, klar und benutzerfreundlich.
 
-## Aktueller Umsetzungsplan
+## Aktuelle Änderung: Refactoring von 'Azubi' zu 'Talent'
 
-1.  **Grundstruktur und Theming:**
-    *   Einrichtung der `MaterialApp` und des Haupt-Layouts.
-    *   Implementierung des Farbschemas mittels `ThemeData`.
-    *   Erstellung einer Startseite mit einer `BottomNavigationBar` für die Hauptbereiche (Auszubildende, Betriebe, Karte, Infos).
-2.  **Installation von Paketen:**
-    *   `google_maps_flutter` für die Kartenansicht.
-    *   `provider` für das State Management (z.B. für den Theme-Wechsel oder die Verwaltung von App-Daten).
-3.  **Erstellung der Bildschirm-Platzhalter:**
-    *   `lib/screens/azubi_liste_screen.dart`
-    *   `lib/screens/betrieb_liste_screen.dart`
-    *   `lib/screens/karten_screen.dart`
-    *   `lib/screens/info_screen.dart`
-4.  **Implementierung der Navigation:**
-    *   Aufbau der Navigation zwischen den einzelnen Bildschirmen.
-5.  **Umsetzung der "Info"-Seite:**
-    *   Einfügen von Platzhalter-Informationen für die Handwerkskammern und den ZDH.
-6.  **Umsetzung der Listenansichten:**
-    *   Erstellung von Datenmodellen für Auszubildende und Betriebe.
-    *   Anzeige von Dummy-Daten in den Listen.
-7.  **Umsetzung der Kartenansicht:**
-    *   Einrichtung der `GoogleMap`-Ansicht.
-    *   Hinzufügen von Markern für die Dummy-Daten.
-8.  **Finalisierung:**
-    *   Überprüfung aller Texte und Umstellung auf Deutsch.
-    *   Feinschliff der Benutzeroberfläche und Fehlerbehebung.
+### Übersicht
+
+In diesem Schritt wurde die gesamte Anwendung überarbeitet, um die Terminologie von "Azubi" und "Azubi-Match" zu "Talent" und "Talentleihe" zu ändern. Dies schafft eine modernere und ansprechendere Nutzererfahrung.
+
+### Implementierungsschritte
+
+1.  **Datenmodell aktualisiert:**
+    *   Die Klasse `Azubi` in `lib/models/azubi.dart` wurde in `Talent` umbenannt.
+    *   Die Datei wurde zu `lib/models/talent.dart` umbenannt.
+2.  **Bildschirme für die Talent-Verwaltung umbenannt und angepasst:**
+    *   `lib/screens/azubi_liste_screen.dart` wurde zu `lib/screens/talent_liste_screen.dart`.
+    *   `lib/screens/azubi_detail_screen.dart` wurde zu `lib/screens/talent_detail_screen.dart`.
+    *   Der Inhalt der Bildschirme wurde angepasst, um das neue `Talent`-Modell zu verwenden.
+3.  **Haupt-Navigationsbildschirm aktualisiert:**
+    *   `lib/screens/angebote_screen.dart` wurde zu `lib/screens/talentleihe_screen.dart` umbenannt.
+    *   Der Titel wurde von "Angebote" zu "Talentleihe" geändert.
+    *   Der Tab "Azubis" wurde in "Talente" umbenannt.
+4.  **Zentrale App-Konfiguration angepasst:**
+    *   Die `lib/main.dart` wurde aktualisiert, um die neuen Bildschirm-Namen zu importieren und zu verwenden.
+    *   Der App-Titel wurde von "Azubi Match" zu "Talentleihe" geändert.
+    *   Der Navigations-Tab-Label wurde von "Angebote" zu "Talentleihe" geändert.
+5.  **Blueprint aktualisiert:**
+    *   Dieses Dokument wurde aktualisiert, um die durchgeführten Änderungen widerzuspiegeln.
