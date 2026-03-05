@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:myapp/models/betrieb.dart';
 import 'package:myapp/models/profil.dart';
 import 'package:myapp/screens/betrieb_liste_screen.dart';
 import 'package:myapp/screens/talent_liste_screen.dart';
@@ -6,11 +7,13 @@ import 'package:myapp/screens/talent_liste_screen.dart';
 class TalentleiheScreen extends StatelessWidget {
   final TabController tabController;
   final List<Profil> ausgelieheneTalente;
+  final List<Betrieb> praxiseinsaetze;
 
   const TalentleiheScreen({
     super.key,
     required this.tabController,
     required this.ausgelieheneTalente,
+    required this.praxiseinsaetze,
   });
 
   @override
@@ -40,7 +43,7 @@ class TalentleiheScreen extends StatelessWidget {
         controller: tabController,
         children: [
           TalentListeScreen(talente: ausgelieheneTalente),
-          const BetriebListeScreen(),
+          BetriebListeScreen(betriebe: praxiseinsaetze),
         ],
       ),
     );

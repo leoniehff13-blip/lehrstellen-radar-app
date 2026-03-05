@@ -1,7 +1,9 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:myapp/models/betrieb.dart';
 import 'package:myapp/models/profil.dart';
+import 'package:myapp/screens/betrieb_detail_screen.dart';
 import 'package:myapp/screens/neues_profil_screen.dart';
 
 class KontoScreen extends StatefulWidget {
@@ -9,6 +11,7 @@ class KontoScreen extends StatefulWidget {
   final Function(Profil) onProfilUpdated;
   final Function() onProfilDeleted;
   final List<Profil> meineAngebote;
+  final List<Betrieb> meinePraxiseinsaetze;
 
   const KontoScreen({
     super.key,
@@ -16,6 +19,7 @@ class KontoScreen extends StatefulWidget {
     required this.onProfilUpdated,
     required this.onProfilDeleted,
     required this.meineAngebote,
+    required this.meinePraxiseinsaetze,
   });
 
   @override
@@ -72,6 +76,10 @@ class _KontoScreenState extends State<KontoScreen> with SingleTickerProviderStat
                   Tab(text: 'Mein Profil'),
                   Tab(text: 'Meine Angebote'),
                 ],
+                 labelColor: const Color(0xFF002C59),
+                unselectedLabelColor: Colors.black54,
+                indicatorColor: const Color(0xFF002C59),
+                indicatorWeight: 3.0,
               ),
       ),
       body: widget.profil == null
@@ -117,7 +125,7 @@ class _KontoScreenState extends State<KontoScreen> with SingleTickerProviderStat
                       : null,
                   child: widget.profil?.profilbild == null || widget.profil!.profilbild!.isEmpty
                       ? Icon(
-                          widget.profil?.profilTyp == 'Azubi' ? Icons.person : Icons.business,
+                          widget.profil?.profilTyp == 'Azubi' || widget.profil?.profilTyp == 'Talent' ? Icons.person : Icons.business,
                           size: 50,
                         )
                       : null,
@@ -137,7 +145,10 @@ class _KontoScreenState extends State<KontoScreen> with SingleTickerProviderStat
   }
 
   Widget _buildAngeboteView(BuildContext context) {
-    if (widget.meineAngebote.isEmpty) {
+    final isCompany = widget.profil?.profilTyp == 'Unternehmen';
+
+    if ((isCompany && widget.meinePraxiseinsaetze.isEmpty) ||
+        (!isCompany && widget.meineAngebote.isEmpty)) {
       return const Center(
         child: Padding(
           padding: EdgeInsets.all(16.0),
@@ -150,10 +161,18 @@ class _KontoScreenState extends State<KontoScreen> with SingleTickerProviderStat
       );
     }
 
-    return ListView.builder(
-      itemCount: widget.meineAngebote.length,
+    if (isCompany) {
+      return _buildPraxiseinsatzListe(widget.meinePraxiseinsaetze);
+    } else {
+      return _buildTalentAngeboteListe(widget.meineAngebote);
+    }
+  }
+
+  Widget _buildTalentAngeboteListe(List<Profil> angebote) {
+     return ListView.builder(
+      itemCount: angebote.length,
       itemBuilder: (context, index) {
-        final angebot = widget.meineAngebote[index];
+        final angebot = angebote[index];
         return Card(
           margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
           child: ListTile(
@@ -162,7 +181,7 @@ class _KontoScreenState extends State<KontoScreen> with SingleTickerProviderStat
                   ? FileImage(File(angebot.profilbild!))
                   : null,
               child: angebot.profilbild == null || angebot.profilbild!.isEmpty
-                  ? Icon(angebot.profilTyp == 'Azubi' ? Icons.person : Icons.business)
+                  ? Icon(angebot.profilTyp == 'Azubi' || angebot.profilTyp == 'Talent' ? Icons.person : Icons.business)
                   : null,
             ),
             title: Text('${angebot.vorname} ${angebot.name}'),
@@ -173,6 +192,36 @@ class _KontoScreenState extends State<KontoScreen> with SingleTickerProviderStat
       },
     );
   }
+
+  Widget _buildPraxiseinsatzListe(List<Betrieb> angebote) {
+    return ListView.builder(
+      itemCount: angebote.length,
+      itemBuilder: (context, index) {
+        final betrieb = angebote[index];
+        return Card(
+          margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+          child: ListTile(
+            leading: CircleAvatar(
+              backgroundImage: betrieb.logo.startsWith('http') ? NetworkImage(betrieb.logo) : null,
+               child: !betrieb.logo.startsWith('http') ? const Icon(Icons.business) : null,
+            ),
+            title: Text(betrieb.name),
+            subtitle: Text(betrieb.branche),
+             trailing: const Icon(Icons.chevron_right),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => BetriebDetailScreen(betrieb: betrieb),
+                ),
+              );
+            },
+          ),
+        );
+      },
+    );
+  }
+
 
   Widget _buildAzubiProfil(BuildContext context) {
     return Column(

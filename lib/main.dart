@@ -52,8 +52,10 @@ class MainScreenState extends State<MainScreen>
   Profil? _profil;
   final List<Profil> _ausgelieheneTalente = [];
   final List<Profil> _meineAngebote = [];
+  final List<Betrieb> _praxiseinsaetze = [];
+  final List<Betrieb> _meinePraxiseinsaetze = [];
+
   TabController? _tabController;
-  late final List<Widget> _widgetOptions;
 
   static Betrieb? _loggedInBetrieb = null;
 
@@ -66,22 +68,6 @@ class MainScreenState extends State<MainScreen>
         setState(() {});
       }
     });
-
-    _widgetOptions = <Widget>[
-      const HomeScreen(),
-      TalentleiheScreen(
-        tabController: _tabController!,
-        ausgelieheneTalente: _ausgelieheneTalente,
-      ),
-      const KartenScreen(),
-      const InfoScreen(),
-      KontoScreen(
-        profil: _profil,
-        onProfilUpdated: _updateProfil,
-        onProfilDeleted: _deleteProfil,
-        meineAngebote: _meineAngebote,
-      ),
-    ];
   }
 
   @override
@@ -99,18 +85,61 @@ class MainScreenState extends State<MainScreen>
   void _updateProfil(Profil profil) {
     setState(() {
       _profil = profil;
-      _selectedIndex = 4; // Navigate to Konto screen
+      if (profil.profilTyp == 'Unternehmen') {
+        _loggedInBetrieb = Betrieb(
+          name: profil.betrieb ?? '',
+          branche: profil.gewerk ?? '',
+          ort: profil.stadt ?? '',
+          logo: profil.profilbild ?? '',
+          beschreibung: profil.spezialisierung ?? '',
+          aufgabenbereiche: [],
+          webseite: '',
+          adresse:
+              '${profil.strasse} ${profil.hausnummer}, ${profil.plz} ${profil.stadt}',
+          ansprechpartner: profil.ansprechperson ?? '',
+          email: '',
+          telefon: '',
+          handwerkskammerId: profil.handwerkskammer ?? '',
+        );
+      } else {
+        _loggedInBetrieb = null;
+      }
+      _selectedIndex = 4;
     });
   }
 
   void _deleteProfil() {
     setState(() {
       _profil = null;
+      _loggedInBetrieb = null;
       _meineAngebote.clear();
+      _meinePraxiseinsaetze.clear();
     });
   }
 
   void _handleNewTalentOffer() async {
+    if (_profil?.profilTyp == 'Unternehmen') {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Funktion nicht verfügbar'),
+            content: const Text(
+                'Als Unternehmen können Sie keine Talentleihe erstellen. Diese Funktion ist für Azubis und Talente vorgesehen, um ihre Fähigkeiten anzubieten.'),
+            actions: <Widget>[
+              TextButton(
+                child: const Text('Verstanden'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        },
+      );
+      return;
+    }
+
     if (_profil != null) {
       final neuesAngebot = await Navigator.of(context).push(
         MaterialPageRoute(
@@ -130,16 +159,35 @@ class MainScreenState extends State<MainScreen>
         );
       }
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Bitte zuerst ein Profil anlegen.')),
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Profil erforderlich'),
+            content: const Text(
+                'Bitte erstellen Sie zuerst ein Profil, um eine Talentleihe anzubieten.'),
+            actions: <Widget>[
+              TextButton(
+                child: const Text('Abbrechen'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+              FilledButton(
+                child: const Text('Zum Profil'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  _onItemTapped(4);
+                },
+              ),
+            ],
+          );
+        },
       );
-      setState(() {
-        _selectedIndex = 4; // Redirect to account screen
-      });
     }
   }
 
-  void _handleNewPraxiseinsatz() {
+  void _handleNewPraxiseinsatz() async {
     if (_loggedInBetrieb == null) {
       showDialog(
         context: context,
@@ -159,7 +207,7 @@ class MainScreenState extends State<MainScreen>
                 child: const Text('Zum Profil'),
                 onPressed: () {
                   Navigator.of(context).pop();
-                  _onItemTapped(4); // Navigate to Konto screen
+                  _onItemTapped(4);
                 },
               ),
             ],
@@ -167,18 +215,48 @@ class MainScreenState extends State<MainScreen>
         },
       );
     } else {
-      Navigator.of(context).push(
+      final neuerEinsatz = await Navigator.of(context).push(
         MaterialPageRoute(
           builder: (context) => NeuerPraxiseinsatzScreen(
             betriebProfile: _loggedInBetrieb,
           ),
         ),
       );
+
+      if (!mounted) return;
+
+      if (neuerEinsatz != null && neuerEinsatz is Betrieb) {
+        setState(() {
+          _praxiseinsaetze.add(neuerEinsatz);
+          _meinePraxiseinsaetze.add(neuerEinsatz);
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Neuer Praxiseinsatz wurde erstellt!')),
+        );
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final List<Widget> _widgetOptions = <Widget>[
+      const HomeScreen(),
+      TalentleiheScreen(
+        tabController: _tabController!,
+        ausgelieheneTalente: _ausgelieheneTalente,
+        praxiseinsaetze: _praxiseinsaetze,
+      ),
+      const KartenScreen(),
+      const InfoScreen(),
+      KontoScreen(
+        profil: _profil,
+        onProfilUpdated: _updateProfil,
+        onProfilDeleted: _deleteProfil,
+        meineAngebote: _meineAngebote,
+        meinePraxiseinsaetze: _meinePraxiseinsaetze,
+      ),
+    ];
+
     return Scaffold(
       appBar: _selectedIndex != 1
           ? AppBar(

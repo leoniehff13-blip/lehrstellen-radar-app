@@ -5,14 +5,16 @@ import 'betrieb_detail_screen.dart';
 import 'package:intl/intl.dart';
 
 class BetriebListeScreen extends StatefulWidget {
-  const BetriebListeScreen({super.key});
+  final List<Betrieb> betriebe;
+
+  const BetriebListeScreen({super.key, required this.betriebe});
 
   @override
   BetriebListeScreenState createState() => BetriebListeScreenState();
 }
 
 class BetriebListeScreenState extends State<BetriebListeScreen> {
-  final List<Betrieb> _allBetriebe = [
+  final List<Betrieb> _dummyBetriebe = [
     Betrieb(
       name: 'Tietz GmbH & Co. KG',
       branche: 'Zimmerei',
@@ -99,6 +101,7 @@ class BetriebListeScreenState extends State<BetriebListeScreen> {
     ),
   ];
 
+  List<Betrieb> _allBetriebe = [];
   List<Betrieb> _filteredBetriebe = [];
 
   String? _selectedGewerk;
@@ -113,9 +116,23 @@ class BetriebListeScreenState extends State<BetriebListeScreen> {
   @override
   void initState() {
     super.initState();
+    _initializeLists();
+  }
+
+  @override
+  void didUpdateWidget(BetriebListeScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.betriebe != oldWidget.betriebe) {
+      _initializeLists();
+    }
+  }
+
+  void _initializeLists() {
+    _allBetriebe = [..._dummyBetriebe, ...widget.betriebe];
     _filteredBetriebe = _allBetriebe;
     _allGewerke = _allBetriebe.map((b) => b.branche).toSet().toList()..sort();
     _allOrte = _allBetriebe.map((b) => b.ort).toSet().toList()..sort();
+    _applyFilters();
   }
 
   void _applyFilters() {
@@ -320,15 +337,24 @@ class BetriebListeScreenState extends State<BetriebListeScreen> {
                 children: [
                   const Icon(Icons.search_off, size: 80, color: Colors.grey),
                   const SizedBox(height: 16),
-                  const Text(
-                    'Keine Betriebe gefunden',
-                    style: TextStyle(fontSize: 18, color: Colors.grey),
-                  ),
+                  if (_allBetriebe.isEmpty)
+                    const Text(
+                      'Aktuell sind keine Praxiseinsätze verfügbar.',
+                      style: TextStyle(fontSize: 18, color: Colors.grey),
+                      textAlign: TextAlign.center,
+                    )
+                  else
+                    const Text(
+                      'Keine Betriebe entsprechen deinen Filterkriterien.',
+                      style: TextStyle(fontSize: 18, color: Colors.grey),
+                      textAlign: TextAlign.center,
+                    ),
                   const SizedBox(height: 8),
-                  ElevatedButton(
-                    onPressed: _resetFilters,
-                    child: const Text('Alle Filter zurücksetzen'),
-                  ),
+                  if (_allBetriebe.isNotEmpty)
+                    ElevatedButton(
+                      onPressed: _resetFilters,
+                      child: const Text('Filter zurücksetzen'),
+                    ),
                 ],
               ),
             )
@@ -355,8 +381,12 @@ class BetriebListeScreenState extends State<BetriebListeScreen> {
                     contentPadding: const EdgeInsets.all(12),
                     leading: CircleAvatar(
                       radius: 30,
-                      backgroundImage: NetworkImage(betrieb.logo),
-                      backgroundColor: Colors.grey[200],
+                      backgroundImage: betrieb.logo.startsWith('http')
+                          ? NetworkImage(betrieb.logo)
+                          : null,
+                      child: !betrieb.logo.startsWith('http')
+                          ? const Icon(Icons.business, size: 30)
+                          : null,
                     ),
                     title: Text(betrieb.name,
                         style: const TextStyle(fontWeight: FontWeight.bold)),
@@ -376,25 +406,14 @@ class BetriebListeScreenState extends State<BetriebListeScreen> {
                 );
               },
             ),
-      floatingActionButton: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          FloatingActionButton(
-            onPressed: _showFilterDialog,
-            heroTag: 'filter',
-            child: const Icon(Icons.filter_list),
-          ),
-          const SizedBox(height: 16),
-          FloatingActionButton(
-            onPressed: () {
-              // TODO: Implement add functionality
-            },
-            heroTag: 'add',
-            backgroundColor: const Color(0xFF002C59),
-            child: const Icon(Icons.add, color: Colors.white),
-          ),
-        ],
+       floatingActionButton: Padding(
+         padding: const EdgeInsets.only(bottom: 72.0), // Move button up
+         child: FloatingActionButton(
+          onPressed: _showFilterDialog,
+          heroTag: 'filter_betriebe', 
+          child: const Icon(Icons.filter_list),
       ),
+       ),
     );
   }
 }

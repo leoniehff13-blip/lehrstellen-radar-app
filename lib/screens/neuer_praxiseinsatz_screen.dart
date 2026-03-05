@@ -34,12 +34,14 @@ class NeuerPraxiseinsatzScreenState extends State<NeuerPraxiseinsatzScreen> {
     if (widget.betriebProfile != null) {
       _nameController.text = widget.betriebProfile!.name;
       _ansprechpartnerController.text = widget.betriebProfile!.ansprechpartner;
-       _handwerkskammerController.text = widget.betriebProfile!.handwerkskammerId; // Assuming this is the correct field
-       if (_gewerke.contains(widget.betriebProfile!.branche)) {
+      _handwerkskammerController.text = widget.betriebProfile!
+          .handwerkskammerId; // Assuming this is the correct field
+      if (_gewerke.contains(widget.betriebProfile!.branche)) {
         _selectedGewerk = widget.betriebProfile!.branche;
         _updateAufgaben(isInit: true);
       }
-      _selectedAufgabenbereiche = List<String>.from(widget.betriebProfile!.aufgabenbereiche);
+      _selectedAufgabenbereiche =
+          List<String>.from(widget.betriebProfile!.aufgabenbereiche);
     }
   }
 
@@ -91,7 +93,7 @@ class NeuerPraxiseinsatzScreenState extends State<NeuerPraxiseinsatzScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Neuer Praxiseinsatz'),
-         backgroundColor: const Color(0xFFD6DCE5),
+        backgroundColor: const Color(0xFFD6DCE5),
         titleTextStyle: const TextStyle(
           color: Color(0xFF002C59),
           fontSize: 22,
@@ -106,7 +108,8 @@ class NeuerPraxiseinsatzScreenState extends State<NeuerPraxiseinsatzScreen> {
             children: [
               TextFormField(
                 controller: _nameController,
-                decoration: const InputDecoration(labelText: 'Name des Betriebs'),
+                decoration:
+                    const InputDecoration(labelText: 'Name des Betriebs'),
               ),
               const SizedBox(height: 16),
               DropdownButtonFormField<String>(
@@ -131,15 +134,16 @@ class NeuerPraxiseinsatzScreenState extends State<NeuerPraxiseinsatzScreen> {
                     value == null ? 'Bitte ein Gewerk auswählen' : null,
                 isExpanded: true,
               ),
-               const SizedBox(height: 16),
+              const SizedBox(height: 16),
               TextFormField(
                 controller: _ansprechpartnerController,
                 decoration: const InputDecoration(labelText: 'Ansprechpartner'),
               ),
               const SizedBox(height: 16),
-               TextFormField(
+              TextFormField(
                 controller: _handwerkskammerController,
-                decoration: const InputDecoration(labelText: 'Zuständige Handwerkskammer'),
+                decoration: const InputDecoration(
+                    labelText: 'Zuständige Handwerkskammer'),
               ),
               const SizedBox(height: 16),
               Row(
@@ -167,7 +171,9 @@ class NeuerPraxiseinsatzScreenState extends State<NeuerPraxiseinsatzScreen> {
               const SizedBox(height: 24),
               if (_selectedGewerk != null)
                 MultiSelectDialogField(
-                  items: _aufgabenbereiche.map((e) => MultiSelectItem(e, e)).toList(),
+                  items: _aufgabenbereiche
+                      .map((e) => MultiSelectItem(e, e))
+                      .toList(),
                   title: const Text("Aufgabenbereiche/Anforderungen"),
                   selectedColor: Theme.of(context).primaryColor,
                   initialValue: _selectedAufgabenbereiche,
