@@ -70,122 +70,73 @@ class _BetriebListeScreenState extends State<BetriebListeScreen> {
 
   final List<Betrieb> _allBetriebe = [
     Betrieb(
-        name: 'Muster GmbH & Co. KG',
-        branche: 'Maschinenbau',
-        ort: 'Stuttgart',
-        logo:
-            'https://images.unsplash.com/photo-1556761175-5973dc0f32e7?q=80&w=100&auto=format&fit=crop',
-        beschreibung:
-            'Wir sind ein führender Hersteller von Spezialmaschinen und bieten eine erstklassige Ausbildung in einem innovativen Umfeld.',
-        aufgabenbereiche: [
-          'Montage von Baugruppen',
-          'Wartung und Instandhaltung',
-          'Qualitätssicherung'
-        ],
-        webseite: 'www.muster-gmbh.de',
-        adresse: 'Mercedesstraße 137, 70327 Stuttgart',
-        ansprechpartner: 'Frau Dr. Schneider',
-        email: 'bewerbung@muster-gmbh.de',
-        telefon: '+49 711 123456',
-        handwerkskammerId: 'stuttgart'),
+      name: 'Tietz GmbH & Co. KG',
+      branche: 'Zimmerei',
+      ort: 'Pinneberg',
+      logo:
+          'https://images.unsplash.com/photo-1556761175-5973dc0f32e7?q=80&w=100&auto=format&fit=crop',
+      beschreibung:
+          'Wir lieben Holz.',
+      aufgabenbereiche: [
+        'Fachwerkrestaurierung historischer Gebäude', 'Holzbrückenbau', 'Flechtwerkfassaden & Skulpturales Holzdesign'
+      ],
+      webseite: 'www.muster-gmbh.de',
+      adresse: 'Ossenpadd 8, 25421 Pinneberg',
+      ansprechpartner: 'Frau Dr. Tietz',
+      email: 'bewerbung@muster-gmbh.de',
+      telefon: '+49 711 123456',
+      handwerkskammerId: 'hamburg'), // Assuming Hamburg chamber is closest
     Betrieb(
-        name: 'Holzbau Schmidt',
-        branche: 'Handwerk & Bau',
-        ort: 'Freiburg',
-        logo:
-            'https://images.unsplash.com/photo-1497366811353-6870744d04b2?q=80&w=100&auto=format&fit=crop',
-        beschreibung:
-            'Traditionelles Handwerk trifft auf moderne Technik. Bei uns lernst du den Umgang mit dem Werkstoff Holz von Grund auf.',
-        aufgabenbereiche: [
-          'Herstellung von Möbeln',
-          'Innenausbau',
-          'Montage vor Ort'
-        ],
-        webseite: 'www.holzbau-schmidt.de',
-        adresse: 'Hans-Bunte-Straße 8, 79108 Freiburg',
-        ansprechpartner: 'Herr Meier',
-        email: 'info@holzbau-schmidt.de',
-        telefon: '+49 761 987654',
-        handwerkskammerId: 'freiburg'),
+      name: 'Holzbau Bötzelen',
+      branche: 'Zimmerei',
+      ort: 'Sittensen',
+      logo:
+          'https://images.unsplash.com/photo-1497366811353-6870744d04b2?q=80&w=100&auto=format&fit=crop',
+      beschreibung:
+          'Traditionelles Handwerk trifft auf moderne Technik. Bei uns lernst du den Umgang mit dem Werkstoff Holz von Grund auf.',
+      aufgabenbereiche: [
+        'Schiffsinnenausbau in Holz', 'Sakralbau (Kirchendächer, Glockentürme)', 'Baumhausbau & Hochseilgärten'
+      ],
+      webseite: 'www.holzbau-schmidt.de',
+      adresse: 'Appeler Weg 60, 27419 Sittensen',
+      ansprechpartner: 'Frau Bötzelen',
+      email: 'info@holzbau-schmidt.de',
+      telefon: '+49 761 987654',
+      handwerkskammerId: 'braunschweig_lueneburg_stade'), // Assuming this chamber covers Sittensen
     Betrieb(
-        name: 'Kreativ-Software AG',
-        branche: 'IT & Softwareentwicklung',
-        ort: 'Berlin',
-        logo:
-            'https://images.unsplash.com/photo-1552664730-d307ca884978?q=80&w=100&auto=format&fit=crop',
-        beschreibung:
-            'Wir entwickeln die Apps von morgen. Werde Teil unseres agilen Teams und gestalte die digitale Zukunft mit.',
-        aufgabenbereiche: [
-          'App-Entwicklung mit Flutter',
-          'Backend-Anbindung mit Firebase',
-          'UI/UX-Design'
-        ],
-        webseite: 'www.kreativ-ag.de',
-        adresse: 'Friedrichstraße 100, 10117 Berlin',
-        ansprechpartner: 'Herr Schulze',
-        email: 'karriere@kreativ-ag.de',
-        telefon: '+49 30 1122334',
-        handwerkskammerId: 'berlin'),
+      name: 'Trieschmann AG',
+      branche: 'Elektriker',
+      ort: 'Bielefeld',
+      logo:
+          'https://images.unsplash.com/photo-1552664730-d307ca884978?q=80&w=100&auto=format&fit=crop',
+      beschreibung:
+          'Wir verlegen den Strom von morgen. Werde Teil unseres agilen Teams und gestalte die digitale Zukunft mit.',
+      aufgabenbereiche: [
+        'Schaltschrankverkabelung', 'SPS-Programmierung', 'Fehlerdiagnose unter Spannung'
+      ],
+      webseite: 'www.kreativ-ag.de',
+      adresse: 'Schillerstraße 68, 33609 Bielefeld',
+      ansprechpartner: 'Herr Trieschmann ',
+      email: 'karriere@kreativ-ag.de',
+      telefon: '+49 30 1122334',
+      handwerkskammerId: 'bielefeld'),
     Betrieb(
-        name: 'Bäckerei Knete Kross',
-        branche: 'Lebensmittelhandwerk',
-        ort: 'Köln',
-        logo:
-            'https://images.unsplash.com/photo-1598373182133-52452f7691ef?q=80&w=100&auto=format&fit=crop',
-        beschreibung:
-            'Frische Backwaren mit Tradition und Leidenschaft. Lerne das Bäckerhandwerk in einem Familienbetrieb.',
-        aufgabenbereiche: [
-          'Teigherstellung',
-          'Backen von Brot und Brötchen',
-          'Kundenberatung'
-        ],
-        webseite: 'www.knete-kross.de',
-        adresse: 'Musterstraße 1, 50667 Köln',
-        ansprechpartner: 'Herr Kross',
-        email: 'info@knete-kross.de',
-        telefon: '+49 221 555667',
-        handwerkskammerId: 'koeln'),
-     Betrieb(
-        name: 'Innovatec GmbH',
-        branche: 'IT & Hardware',
-        ort: 'München',
-        logo:'https://images.unsplash.com/photo-1556761175-5973dc0f32e7?q=80&w=100&auto=format&fit=crop',
-        beschreibung: 'Hardware-Lösungen für die Industrie.',
-        aufgabenbereiche: ['Systemintegration', 'Netzwerktechnik'],
-        webseite: 'www.example.com',
-        adresse: 'Balanstraße 73, 81541 München, Deutschland',
-        ansprechpartner: 'Frau Huber',
-        email: 'jobs@example.com',
-        telefon: '+49 89 123456',
-        handwerkskammerId: 'muenchen_oberbayern'),
-    Betrieb(
-        name: 'Hafen-Logistik AG',
-        branche: 'Logistik',
-        ort: 'Hamburg',
-        logo:'https://images.unsplash.com/photo-1556761175-5973dc0f32e7?q=80&w=100&auto=format&fit=crop',
-        beschreibung: 'Ihr Partner für weltweite Logistik.',
-        aufgabenbereiche: ['Spedition', 'Lagerlogistik'],
-        webseite: 'www.example.com',
-        adresse: 'Bei St. Annen 1, 20457 Hamburg, Deutschland',
-        ansprechpartner: 'Herr Jansen',
-        email: 'contact@example.com',
-        telefon: '+49 40 987654',
-        handwerkskammerId: 'hamburg'),
-    Betrieb(
-        name: 'HSBA',
-        branche: 'Bildung',
-        ort: 'Hamburg',
-        logo:
-            'https://images.unsplash.com/photo-1556761175-5973dc0f32e7?q=80&w=100&auto=format&fit=crop',
-        beschreibung:
-            'Die Business School in Hamburg. Wir bieten duale Studiengänge und Weiterbildungen an.',
-        aufgabenbereiche: ['Duales Studium BWL', 'Master in Global Management'],
-        webseite: 'www.hsba.de',
-        adresse: 'Willy-Brandt-Straße 75, 20459 Hamburg, Deutschland',
-        ansprechpartner: 'Studienberatung',
-        email: 'info@hsba.de',
-        telefon: '+49 40 361380',
-        handwerkskammerId: 'hamburg'),
+      name: 'Elektriker Knete Kross',
+      branche: 'Elektriker',
+      ort: 'Wolfsburg',
+      logo:
+          'https://images.unsplash.com/photo-1598373182133-52452f7691ef?q=80&w=100&auto=format&fit=crop',
+      beschreibung:
+          'Abfahrt',
+      aufgabenbereiche: [
+        'Motorenprüfung', 'Frequenzumrichter einstellen', 'Notstromanlagen warten'
+      ],
+      webseite: 'www.knete-kross.de',
+      adresse: 'Rundling 4, 38448 Wolfsburg',
+      ansprechpartner: 'Herr Kross',
+      email: 'info@knete-kross.de',
+      telefon: '+49 221 555667',
+      handwerkskammerId: 'braunschweig_lueneburg_stade'), // Assuming this chamber covers Wolfsburg
   ];
 
   String? _selectedKammerId;
