@@ -49,6 +49,7 @@ class MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
   Profil? _profil;
   final List<Profil> _ausgelieheneTalente = [];
+  final List<Profil> _meineAngebote = [];
 
   void _onItemTapped(int index) {
     setState(() {
@@ -63,6 +64,12 @@ class MainScreenState extends State<MainScreen> {
     });
   }
 
+  void _deleteProfil() {
+    setState(() {
+      _profil = null;
+    });
+  }
+
   void _handleNewTalentOffer(BuildContext context) async {
     if (_profil != null) {
       final neuesAngebot = await Navigator.of(context).push(
@@ -74,6 +81,7 @@ class MainScreenState extends State<MainScreen> {
       if (neuesAngebot != null && neuesAngebot is Profil) {
         setState(() {
           _ausgelieheneTalente.add(neuesAngebot);
+          _meineAngebote.add(neuesAngebot);
         });
       }
     } else {
@@ -107,11 +115,16 @@ class MainScreenState extends State<MainScreen> {
       ),
       const KartenScreen(),
       const InfoScreen(),
-      KontoScreen(profil: _profil, onProfilUpdated: _updateProfil),
+      KontoScreen(
+        profil: _profil,
+        onProfilUpdated: _updateProfil,
+        onProfilDeleted: _deleteProfil,
+        meineAngebote: _meineAngebote,
+      ),
     ];
 
     return Scaffold(
-      appBar: _selectedIndex == 0 || _selectedIndex == 1
+      appBar: _selectedIndex == 0 || _selectedIndex == 1 || _selectedIndex == 4
           ? null
           : AppBar(
               title: const Text('Talentleihe'),

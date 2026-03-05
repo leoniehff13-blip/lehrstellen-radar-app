@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:country_picker/country_picker.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:multi_select_flutter/multi_select_flutter.dart';
 import 'package:myapp/data/skills_data.dart';
 import 'package:myapp/models/profil.dart';
@@ -21,6 +24,7 @@ class NeuesProfilScreenState extends State<NeuesProfilScreen> {
   String? _selectedProfilTyp;
   int? _selectedLehrjahr;
   String? _selectedHandwerkskammer;
+  String? _profilbildPath;
 
   final List<String> _countries = ['Deutschland'];
   final List<String> _gewerke = ['Elektriker', 'Zimmerer'];
@@ -70,6 +74,7 @@ class NeuesProfilScreenState extends State<NeuesProfilScreen> {
     _selectedHandwerkskammer = p.handwerkskammer;
     _spezialisierungController.text = p.spezialisierung ?? '';
     _selectedLehrjahr = p.lehrjahr;
+    _profilbildPath = p.profilbild;
 
     if (p.gewerk != null) {
       _faehigkeiten = skillsByGewerk[p.gewerk!] ?? [];
@@ -92,6 +97,15 @@ class NeuesProfilScreenState extends State<NeuesProfilScreen> {
     _spezialisierungController.dispose();
     _ansprechpersonController.dispose();
     super.dispose();
+  }
+
+  Future<void> _pickImage() async {
+    final pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      setState(() {
+        _profilbildPath = pickedFile.path;
+      });
+    }
   }
 
   void _updateFaehigkeiten() {
@@ -120,9 +134,33 @@ class NeuesProfilScreenState extends State<NeuesProfilScreen> {
         spezialisierung: _spezialisierungController.text,
         lehrjahr: _selectedLehrjahr,
         faehigkeiten: _selectedFaehigkeiten,
+        profilbild: _profilbildPath,
       );
       Navigator.of(context).pop(updatedProfile);
     }
+  }
+
+  void _deleteProfile() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Profil löschen'),
+        content: const Text('Möchtest du dein Profil wirklich löschen?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Abbrechen'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop(); // Close the dialog
+              Navigator.of(context).pop('delete'); // Pop the screen and return 'delete'
+            },
+            child: const Text('Löschen'),
+          ),
+        ],
+      ),
+    );
   }
 
   void _checkLand() {
@@ -146,9 +184,10 @@ class NeuesProfilScreenState extends State<NeuesProfilScreen> {
 
   String _getAppBarTitle() {
     if (widget.profil != null) {
-      if (widget.profil?.profilTyp == 'Azubi') {
-        return 'Talent';
-      } else if (widget.profil?.profilTyp == 'Unternehmen') {
+      final profilTyp = widget.profil?.profilTyp;
+      if (profilTyp == 'Azubi' || profilTyp == 'Talent') {
+        return 'Azubi-Profil bearbeiten';
+      } else if (profilTyp == 'Unternehmen') {
         return 'Unternehmensprofil bearbeiten';
       }
       return 'Profil bearbeiten';
@@ -164,6 +203,7 @@ class NeuesProfilScreenState extends State<NeuesProfilScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(_getAppBarTitle()),
+        backgroundColor: Colors.grey[200],
       ),
       body: Form(
         key: _formKey,
@@ -189,6 +229,31 @@ class NeuesProfilScreenState extends State<NeuesProfilScreen> {
                 const SizedBox(height: 24),
               ],
               if (_selectedProfilTyp != null) ...[
+                Center(
+                  child: Stack(
+                    children: [
+                      CircleAvatar(
+                        radius: 50,
+                        backgroundImage: _profilbildPath != null
+                            ? FileImage(File(_profilbildPath!))
+                            : null,
+                        child: _profilbildPath == null
+                            ? const Icon(Icons.person, size: 50)
+                            : null,
+                      ),
+                      Positioned(
+                        bottom: 0,
+                        right: 0,
+                        child: IconButton(
+                          icon: const Icon(Icons.camera_alt),
+                          onPressed: _pickImage,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 24),
+
                 // UNTERNEHMEN-FELDER
                 if (_selectedProfilTyp == 'Unternehmen') ...[
                   Padding(
@@ -349,7 +414,7 @@ class NeuesProfilScreenState extends State<NeuesProfilScreen> {
                 ],
 
                 // AZUBI-FELDER
-                if (_selectedProfilTyp == 'Azubi') ...[
+                if (_selectedProfilTyp == 'Azubi' || _selectedProfilTyp == 'Talent') ...[
                   Row(children: [
                     Expanded(
                         child: TextFormField(
@@ -535,6 +600,17 @@ class NeuesProfilScreenState extends State<NeuesProfilScreen> {
                   child: const Text('Profil speichern',
                       style: TextStyle(fontSize: 16)),
                 ),
+                if (isEditing) ...[
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red,
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                    ),
+                    onPressed: _deleteProfile,
+                    child: const Text('Profil löschen', style: TextStyle(fontSize: 16)),
+                  ),
+                ],
               ]
             ],
           ),

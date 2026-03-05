@@ -241,7 +241,7 @@ class _KartenScreenState extends State<KartenScreen> {
               ),
               if (_isLoading)
                 Container(
-                  color: Colors.black.withAlpha(128),
+                  color: Colors.black.withOpacity(0.5),
                   child: const Center(child: CircularProgressIndicator()),
                 ),
             ],
@@ -276,7 +276,7 @@ class _KartenScreenState extends State<KartenScreen> {
               value: kammer.id,
               child: Text(kammer.shortName),
             );
-          }),
+          }).toList(), // Add .toList() here
         ],
       ),
     );
@@ -378,7 +378,7 @@ class _BetriebsDetailSheet extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(icon, color: theme.primaryColor.withAlpha(204), size: 22),
+        Icon(icon, color: theme.primaryColor.withOpacity(0.8), size: 22),
         const SizedBox(width: 16),
         Expanded(
             child: Text(text,
