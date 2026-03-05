@@ -20,9 +20,7 @@ class NeuerPraxiseinsatzScreenState extends State<NeuerPraxiseinsatzScreen> {
 
   final _nameController = TextEditingController();
   final _ansprechpartnerController = TextEditingController();
-  final _unternehmenController = TextEditingController();
   final _handwerkskammerController = TextEditingController();
-  final _faehigkeitenController = TextEditingController();
 
   String? _selectedGewerk;
   final List<String> _gewerke = ['Elektriker', 'Zimmerer'];
@@ -55,16 +53,14 @@ class NeuerPraxiseinsatzScreenState extends State<NeuerPraxiseinsatzScreen> {
   }
 
   void _createPraxiseinsatz() {
+    if (!mounted) return;
     if (_formKey.currentState!.validate()) {
-      // Create a new Betrieb object or a specific Praxiseinsatz object
-      // For now, let's assume we are creating a new Betrieb instance for the offer
       final neuerEinsatz = Betrieb(
         name: _nameController.text,
         ansprechpartner: _ansprechpartnerController.text,
         branche: _selectedGewerk!,
         handwerkskammerId: _handwerkskammerController.text,
         aufgabenbereiche: _selectedAufgabenbereiche,
-        // Dummy data for other required fields, adjust as needed
         ort: widget.betriebProfile?.ort ?? '',
         logo: widget.betriebProfile?.logo ?? '',
         beschreibung: widget.betriebProfile?.beschreibung ?? '',
@@ -118,7 +114,7 @@ class NeuerPraxiseinsatzScreenState extends State<NeuerPraxiseinsatzScreen> {
                   labelText: 'Gewerk/Branche',
                   border: OutlineInputBorder(),
                 ),
-                value: _selectedGewerk,
+                initialValue: _selectedGewerk,
                 items: _gewerke.map((String gewerk) {
                   return DropdownMenuItem<String>(
                     value: gewerk,

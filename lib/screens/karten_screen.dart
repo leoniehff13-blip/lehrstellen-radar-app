@@ -89,7 +89,9 @@ class _KartenScreenState extends State<KartenScreen> {
       beschreibung:
           'Wir lieben Holz.',
       aufgabenbereiche: [
-        'Fachwerkrestaurierung historischer Gebäude', 'Holzbrückenbau', 'Flechtwerkfassaden & Skulpturales Holzdesign'
+        'Fachwerkrestaurierung historischer Gebäude',
+        'Holzbrückenbau',
+        'Flechtwerkfassaden & Skulpturales Holzdesign'
       ],
       webseite: 'www.muster-gmbh.de',
       adresse: 'Ossenpadd 8, 25421 Pinneberg',
@@ -106,7 +108,9 @@ class _KartenScreenState extends State<KartenScreen> {
       beschreibung:
           'Traditionelles Handwerk trifft auf moderne Technik. Bei uns lernst du den Umgang mit dem Werkstoff Holz von Grund auf.',
       aufgabenbereiche: [
-        'Schiffsinnenausbau in Holz', 'Sakralbau (Kirchendächer, Glockentürme)', 'Baumhausbau & Hochseilgärten'
+        'Schiffsinnenausbau in Holz',
+        'Sakralbau (Kirchendächer, Glockentürme)',
+        'Baumhausbau & Hochseilgärten'
       ],
       webseite: 'www.holzbau-schmidt.de',
       adresse: 'Appeler Weg 60, 27419 Sittensen',
@@ -123,7 +127,9 @@ class _KartenScreenState extends State<KartenScreen> {
       beschreibung:
           'Wir verlegen den Strom von morgen. Werde Teil unseres agilen Teams und gestalte die digitale Zukunft mit.',
       aufgabenbereiche: [
-        'Schaltschrankverkabelung', 'SPS-Programmierung', 'Fehlerdiagnose unter Spannung'
+        'Schaltschrankverkabelung',
+        'SPS-Programmierung',
+        'Fehlerdiagnose unter Spannung'
       ],
       webseite: 'www.kreativ-ag.de',
       adresse: 'Schillerstraße 68, 33609 Bielefeld',
@@ -140,7 +146,9 @@ class _KartenScreenState extends State<KartenScreen> {
       beschreibung:
           'Abfahrt',
       aufgabenbereiche: [
-        'Motorenprüfung', 'Frequenzumrichter einstellen', 'Notstromanlagen warten'
+        'Motorenprüfung',
+        'Frequenzumrichter einstellen',
+        'Notstromanlagen warten'
       ],
       webseite: 'www.knete-kross.de',
       adresse: 'Rundling 4, 38448 Wolfsburg',

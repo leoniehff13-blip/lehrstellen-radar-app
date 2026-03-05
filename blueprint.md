@@ -28,38 +28,33 @@ Talentleihe ist eine mobile Anwendung, die entwickelt wird, um Talente im Handwe
     *   **Farbpalette:** Blautöne (#D6DCE5, #002C59), Grau und Weiß.
     *   **Stil:** Modern, klar und benutzerfreundlich.
 
-## Aktuelle Änderung: Tab-Navigation im Kontobildschirm
+## Aktuelle Änderung: Fehlerbehebung auf dem Betriebslisten-Bildschirm
 
 ### Übersicht
 
-Der Kontobildschirm wurde grundlegend überarbeitet und mit einer Tab-Navigation ausgestattet. Dies ermöglicht eine klare Trennung und eine intuitive Benutzerführung zwischen den persönlichen Profildetails und den eigenen Angeboten im Rahmen der Talentleihe.
+Ein Syntaxfehler in der Datei `lib/screens/betrieb_liste_screen.dart` wurde behoben. Der Fehler war identisch mit einem zuvor auf dem Karten-Bildschirm behobenen Problem und verhinderte die korrekte Ausführung der App.
 
 ### Implementierungsschritte
 
-1.  **Umbau zu `StatefulWidget`:**
-    *   Der `KontoScreen` wurde von einem `StatelessWidget` in ein `StatefulWidget` umgewandelt, um den Zustand des `TabController` verwalten zu können.
-2.  **Implementierung der `TabBar`:**
-    *   Eine `TabBar` mit den beiden Tabs "Mein Profil" und "Meine Angebote" wurde in die `AppBar` des `KontoScreen` integriert.
-    *   Ein `TabController` wurde hinzugefügt, um die Synchronisation zwischen den Tabs und den zugehörigen Inhalten zu steuern.
-3.  **Erstellung der `TabBarView`:**
-    *   Die Inhalte für das Profil und die Angebote wurden in eine `TabBarView` verschoben.
-    *   Der erste Tab zeigt die bekannten Profildetails an.
-    *   Der zweite Tab enthält einen Platzhalter, der in Zukunft die Liste der Angebote des Nutzers anzeigen wird.
-4.  **Optimierung der UI:**
-    *   Der Titel der `AppBar` wurde zu "Mein Konto" geändert, um die neue, umfassendere Funktionalität widerzuspiegeln.
-    *   Die Logik zur Anzeige des "Profil erstellen"-Zustands bleibt erhalten, wenn noch kein Profil vorhanden ist. In diesem Fall wird die `TabBar` ausgeblendet.
+1.  **Fehleranalyse:** Das Problem lag in den Testdaten für die `Betrieb`-Objekte. In den `aufgabenbereiche`-Listen fehlten die Kommas zur Trennung der einzelnen String-Einträge.
+2.  **Fehlerbehebung:** Die fehlenden Kommas wurden in den `aufgabenbereiche`-Listen der `_allBetriebe`-Liste in `lib/screens/betrieb_liste_screen.dart` ergänzt, wodurch die Dart-Syntax wieder korrekt ist.
+
 
 ## Vorherige Änderungen
 
-### Überarbeitung des Kontobildschirms
+### Fehlerbehebung auf dem Karten-Bildschirm
 
-*   **UI-Anpassung des `KontoScreen`:**
-    *   Die Datei `lib/screens/konto_screen.dart` wurde so angepasst, dass sie unterhalb der Profildetails einen neuen Bereich "Meine Angebote" anzeigt.
+*   **Behebung eines Syntaxfehlers** in `lib/screens/karten_screen.dart` durch Ergänzen fehlender Kommas in den Testdaten.
 
-### Hinzufügen von Profilbildern
+### Fehlerbehebung in der Hauptansicht
 
-*   **Installation des `image_picker` Pakets.**
-*   **Konfiguration für iOS.**
-*   **Erweiterung des Datenmodells.**
-*   **Implementierung der Bildauswahl.**
-*   **Anzeige des Profilbilds.**
+*   **Korrektur der FAB-Logik:** Die Steuerung des Filter-Buttons wurde aus der zentralen `main.dart` entfernt und vollständig an die jeweiligen Listen-Bildschirme (`talent_liste_screen.dart` und `betrieb_liste_screen.dart`) übergeben.
+
+### Erweiterte Filterfunktion für Betriebe
+
+*   **Implementierung einer kombinierten Filterung** nach Gewerk, Ort, Handwerkskammer, Zeitraum und Aufgabenbeschreibung im "Betriebe"-Bildschirm.
+
+### Erweiterte Filterfunktion für Talente
+
+*   **Implementierung einer kombinierten Filterung** nach Fähigkeiten, Lehrjahr, Gewerk, Ort und Handwerkskammer im "Talente"-Bildschirm.
+

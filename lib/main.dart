@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:myapp/models/betrieb.dart';
 import 'package:myapp/models/profil.dart';
-import 'package:myapp/screens/betrieb_liste_screen.dart';
 
 // Screens
 import 'screens/home_screen.dart';
@@ -53,7 +52,6 @@ class MainScreenState extends State<MainScreen> with SingleTickerProviderStateMi
   final List<Profil> _ausgelieheneTalente = [];
   final List<Profil> _meineAngebote = [];
   TabController? _tabController;
-  final GlobalKey<BetriebListeScreenState> _betriebListeKey = GlobalKey<BetriebListeScreenState>();
   late final List<Widget> _widgetOptions;
 
   final Betrieb _loggedInBetrieb = Betrieb(
@@ -80,7 +78,8 @@ class MainScreenState extends State<MainScreen> with SingleTickerProviderStateMi
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
-    _tabController!.addListener(() {
+     _tabController!.addListener(() {
+      // This is to ensure the FAB updates when the tab changes
       if (mounted) {
         setState(() {});
       }
@@ -91,7 +90,7 @@ class MainScreenState extends State<MainScreen> with SingleTickerProviderStateMi
       TalentleiheScreen(
         tabController: _tabController!,
         ausgelieheneTalente: _ausgelieheneTalente,
-        betriebListeKey: _betriebListeKey,
+        // The key is removed, as it's not the correct approach
       ),
       const KartenScreen(),
       const InfoScreen(),
@@ -130,6 +129,10 @@ class MainScreenState extends State<MainScreen> with SingleTickerProviderStateMi
     });
   }
 
+  // This function is no longer needed here
+  // void _showBetriebFilter() {
+  //   _betriebListeKey.currentState?.showFilterDialog();
+  // }
 
   void _handleNewTalentOffer() async {
     if (_profil != null) {
@@ -138,6 +141,8 @@ class MainScreenState extends State<MainScreen> with SingleTickerProviderStateMi
           builder: (context) => NeueTalentleiheScreen(userProfile: _profil),
         ),
       );
+
+      if (!mounted) return;
 
       if (neuesAngebot != null && neuesAngebot is Profil) {
         setState(() {
@@ -167,15 +172,13 @@ class MainScreenState extends State<MainScreen> with SingleTickerProviderStateMi
       ),
     );
 
+    if (!mounted) return;
+
     if (neuerEinsatz != null && neuerEinsatz is Betrieb) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Neuer Praxiseinsatz wurde erstellt!')),
       );
     }
-  }
-  
-  void _showBetriebFilter() {
-    _betriebListeKey.currentState?.showFilterDialog();
   }
 
   @override
@@ -211,33 +214,22 @@ class MainScreenState extends State<MainScreen> with SingleTickerProviderStateMi
         onTap: _onItemTapped,
         type: BottomNavigationBarType.fixed,
       ),
-       floatingActionButton: _selectedIndex == 1
-          ? Column(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              if (_tabController?.index == 1)
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 8.0),
-                  child: FloatingActionButton(
-                    onPressed: _showBetriebFilter,
-                    heroTag: 'filter',
-                    backgroundColor: Theme.of(context).colorScheme.secondary,
-                    child: const Icon(Icons.filter_list, color: Color(0xFF002C59)),
-                  ),
-                ),
-              FloatingActionButton(
-                onPressed: () {
-                  if (_tabController?.index == 0) {
-                    _handleNewTalentOffer();
-                  } else if (_tabController?.index == 1) {
-                    _handleNewPraxiseinsatz();
-                  }
-                },
-                heroTag: 'add',
-                backgroundColor: Theme.of(context).primaryColor,
-                child: const Icon(Icons.add, color: Colors.white),
-              ),
-            ],)
+      // The FloatingActionButton logic is now managed by the individual screens
+      // in the TabBarView (TalentListeScreen and BetriebListeScreen).
+      // This central FAB is only for the add action.
+      floatingActionButton: _selectedIndex == 1
+          ? FloatingActionButton(
+              onPressed: () {
+                if (_tabController?.index == 0) {
+                  _handleNewTalentOffer();
+                } else if (_tabController?.index == 1) {
+                  _handleNewPraxiseinsatz();
+                }
+              },
+              heroTag: 'add',
+              backgroundColor: Theme.of(context).primaryColor,
+              child: const Icon(Icons.add, color: Colors.white),
+            )
           : null,
     );
   }

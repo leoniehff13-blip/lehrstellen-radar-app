@@ -6,13 +6,11 @@ import 'package:myapp/screens/talent_liste_screen.dart';
 class TalentleiheScreen extends StatelessWidget {
   final TabController tabController;
   final List<Profil> ausgelieheneTalente;
-  final GlobalKey<BetriebListeScreenState> betriebListeKey;
 
   const TalentleiheScreen({
     super.key,
     required this.tabController,
     required this.ausgelieheneTalente,
-    required this.betriebListeKey,
   });
 
   @override
@@ -42,7 +40,7 @@ class TalentleiheScreen extends StatelessWidget {
         controller: tabController,
         children: [
           TalentListeScreen(talente: ausgelieheneTalente),
-          BetriebListeScreen(key: betriebListeKey),
+          const BetriebListeScreen(),
         ],
       ),
     );
