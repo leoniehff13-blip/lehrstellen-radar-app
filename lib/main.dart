@@ -76,7 +76,7 @@ class MainScreenState extends State<MainScreen> {
       ),
       const KartenScreen(),
       const InfoScreen(),
-      KontoScreen(profil: _profil),
+      KontoScreen(profil: _profil, onProfilUpdated: _updateProfil),
     ];
   }
 
@@ -89,7 +89,7 @@ class MainScreenState extends State<MainScreen> {
   void _updateProfil(Profil profil) {
     setState(() {
       _profil = profil;
-      _widgetOptions[4] = KontoScreen(profil: _profil);
+      _widgetOptions[4] = KontoScreen(profil: _profil, onProfilUpdated: _updateProfil);
       _selectedIndex = 4;
     });
   }
