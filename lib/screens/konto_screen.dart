@@ -1,6 +1,8 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:myapp/models/anfrage.dart';
 import 'package:myapp/models/betrieb.dart';
 import 'package:myapp/models/profil.dart';
 import 'package:myapp/screens/betrieb_detail_screen.dart';
@@ -12,6 +14,7 @@ class KontoScreen extends StatefulWidget {
   final Function() onProfilDeleted;
   final List<Profil> meineAngebote;
   final List<Betrieb> meinePraxiseinsaetze;
+  final List<Anfrage> meineAnfragen;
 
   const KontoScreen({
     super.key,
@@ -20,6 +23,7 @@ class KontoScreen extends StatefulWidget {
     required this.onProfilDeleted,
     required this.meineAngebote,
     required this.meinePraxiseinsaetze,
+    required this.meineAnfragen,
   });
 
   @override
@@ -32,7 +36,7 @@ class _KontoScreenState extends State<KontoScreen> with SingleTickerProviderStat
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this);
+    _tabController = TabController(length: 3, vsync: this); 
   }
 
   @override
@@ -75,6 +79,7 @@ class _KontoScreenState extends State<KontoScreen> with SingleTickerProviderStat
                 tabs: const [
                   Tab(text: 'Mein Profil'),
                   Tab(text: 'Meine Angebote'),
+                  Tab(text: 'Meine Anfragen'), 
                 ],
                  labelColor: const Color(0xFF002C59),
                 unselectedLabelColor: Colors.black54,
@@ -98,6 +103,7 @@ class _KontoScreenState extends State<KontoScreen> with SingleTickerProviderStat
               children: [
                 _buildProfilDetails(context),
                 _buildAngeboteView(context),
+                _buildAnfragenView(context), 
               ],
             ),
       floatingActionButton: widget.profil == null
@@ -143,6 +149,67 @@ class _KontoScreenState extends State<KontoScreen> with SingleTickerProviderStat
       ),
     );
   }
+  
+  Widget _buildAnfragenView(BuildContext context) {
+    if (widget.meineAnfragen.isEmpty) {
+      return const Center(
+        child: Padding(
+          padding: EdgeInsets.all(16.0),
+          child: Text(
+            'Du hast noch keine Anfragen erhalten.',
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 16, color: Colors.grey),
+          ),
+        ),
+      );
+    }
+
+    return ListView.builder(
+      itemCount: widget.meineAnfragen.length,
+      itemBuilder: (context, index) {
+        final anfrage = widget.meineAnfragen[index];
+        return Card(
+          margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+          child: ListTile(
+            leading: CircleAvatar(
+              backgroundImage: anfrage.anfragenderBetrieb.profilbild != null && anfrage.anfragenderBetrieb.profilbild!.isNotEmpty
+                  ? FileImage(File(anfrage.anfragenderBetrieb.profilbild!))
+                  : null,
+              child: anfrage.anfragenderBetrieb.profilbild == null || anfrage.anfragenderBetrieb.profilbild!.isEmpty
+                  ? const Icon(Icons.business)
+                  : null,
+            ),
+            title: Text(anfrage.anfragenderBetrieb.betrieb ?? 'Unbekannter Betrieb'),
+            subtitle: Text('Angefragt am: ${DateFormat('dd.MM.yyyy').format(anfrage.anfrageDatum)}'),
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.check_circle, color: Colors.green),
+                  onPressed: () {
+                    // TODO: Implement accept logic
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Anfrage angenommen (Funktion in Entwicklung)')),
+                    );
+                  },
+                ),
+                IconButton(
+                  icon: const Icon(Icons.cancel, color: Colors.red),
+                  onPressed: () {
+                    // TODO: Implement decline logic
+                     ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Anfrage abgelehnt (Funktion in Entwicklung)')),
+                    );
+                  },
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
 
   Widget _buildAngeboteView(BuildContext context) {
     final isCompany = widget.profil?.profilTyp == 'Unternehmen';
@@ -198,6 +265,13 @@ class _KontoScreenState extends State<KontoScreen> with SingleTickerProviderStat
       itemCount: angebote.length,
       itemBuilder: (context, index) {
         final betrieb = angebote[index];
+        
+        String zeitraum = 'Kein Zeitraum angegeben';
+        if (betrieb.startDatum != null && betrieb.endDatum != null) {
+          final format = DateFormat('dd.MM.yy');
+          zeitraum = '${format.format(betrieb.startDatum!)} - ${format.format(betrieb.endDatum!)}';
+        }
+
         return Card(
           margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
           child: ListTile(
@@ -206,7 +280,7 @@ class _KontoScreenState extends State<KontoScreen> with SingleTickerProviderStat
                child: !betrieb.logo.startsWith('http') ? const Icon(Icons.business) : null,
             ),
             title: Text(betrieb.name),
-            subtitle: Text(betrieb.branche),
+            subtitle: Text('${betrieb.branche}\n$zeitraum'), // Display date range here
              trailing: const Icon(Icons.chevron_right),
             onTap: () {
               Navigator.push(

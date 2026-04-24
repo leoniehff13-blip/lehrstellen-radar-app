@@ -1,8 +1,8 @@
-# Projekt: Talentleihe - Vermittlungsplattform für Handwerks-Talente
+# Projekt: Win / Win - Vermittlungsplattform für Handwerks-Talente
 
 ## Übersicht
 
-Talentleihe ist eine mobile Anwendung, die entwickelt wird, um Talente im Handwerk mit passenden Betrieben zusammenzubringen. Die Plattform soll es Talenten ermöglichen, ihre Fähigkeiten und Lernfortschritte zu präsentieren, während Betriebe ihre Spezialisierungen und angebotenen Tätigkeiten darstellen können. Eine Kartenansicht soll die geografische Suche erleichtern.
+Win / Win ist eine mobile Anwendung, die entwickelt wird, um Talente im Handwerk mit passenden Betrieben zusammenzubringen. Die Plattform soll es Talenten ermöglichen, ihre Fähigkeiten und Lernfortschritte zu präsentieren, während Betriebe ihre Spezialisierungen und angebotenen Tätigkeiten darstellen können. Eine Kartenansicht soll die geografische Suche erleichtern.
 
 ## Stil, Design und Features
 
@@ -15,11 +15,15 @@ Talentleihe ist eine mobile Anwendung, die entwickelt wird, um Talente im Handwe
     *   Auflistung von Spezialisierungen.
     *   Angabe der Handwerkskammer.
     *   Möglichkeit, ein Firmenlogo oder ein Bild des Betriebs hochzuladen.
+*   **Anfragen-Funktionalität:**
+    *   Betriebe können Talenten eine Anfrage senden.
+    *   Talente sehen die erhaltenen Anfragen in ihrem Konto-Bereich.
+    *   Möglichkeit, Anfragen anzunehmen oder abzulehnen (in Entwicklung).
 *   **Konto-Bildschirm:**
-    *   Zentrale Anlaufstelle für das eigene Profil und die eigenen Angebote.
-    *   Tab-Navigation zwischen "Mein Profil" und "Meine Angebote".
+    *   Zentrale Anlaufstelle für das eigene Profil, die eigenen Angebote und erhaltene Anfragen.
+    *   Tab-Navigation zwischen "Mein Profil", "Meine Angebote" und "Meine Anfragen".
 *   **Darstellungsoptionen:**
-    *   Listenansicht für Talente und Betriebe.
+    *   Listenansicht für Talente und Betriebe mit Filterfunktionen.
     *   Kartenansicht zur geografischen Orientierung.
 *   **Informationsseite:**
     *   Informationen zu den Handwerkskammern und dem ZDH.
@@ -28,27 +32,37 @@ Talentleihe ist eine mobile Anwendung, die entwickelt wird, um Talente im Handwe
     *   **Farbpalette:** Blautöne (#D6DCE5, #002C59), Grau und Weiß.
     *   **Stil:** Modern, klar und benutzerfreundlich.
 
-## Aktuelle Änderung: Profil-Prüfung für 'Neuer Praxiseinsatz'
+## Aktuelle Änderung: Implementierung der Anfragen-Funktionalität
 
 ### Übersicht
 
-Es wurde eine Prüfung implementiert, die sicherstellt, dass nur Betriebe mit einem angelegten Profil einen neuen Praxiseinsatz erstellen können. Ist kein Profil vorhanden, wird der Nutzer aufgefordert, eines zu erstellen, und wird direkt zur Profil-Erstellungsseite geleitet.
+Eine Kernfunktion wurde implementiert, die es einem als **Unternehmen** registrierten Nutzer ermöglicht, eine Anfrage an ein **Talent** zu senden. Die Anfrage erscheint anschließend im Konto des Talents unter dem Reiter "Meine Anfragen".
 
 ### Implementierungsschritte
 
-1.  **Prüflogik hinzugefügt:** In der Methode `_handleNewPraxiseinsatz` in `lib/main.dart` wird nun überprüft, ob die Variable `_loggedInBetrieb` `null` ist.
-2.  **Dialogfenster implementiert:** Wenn `_loggedInBetrieb` `null` ist, wird ein `AlertDialog` angezeigt.
-3.  **Benutzerführung im Dialog:** Der Dialog informiert den Nutzer über das fehlende Profil und bietet zwei Optionen:
-    *   **"Zum Profil":** Leitet den Nutzer zum "Konto"-Tab weiter, damit er sein Profil anlegen kann.
-    *   **"Abbrechen":** Schließt den Dialog.
-4.  **Bestehende Funktionalität beibehalten:** Ist ein Profil vorhanden, wird der Nutzer wie gewohnt zum Erstellungsformular für einen neuen Praxiseinsatz weitergeleitet.
+1.  **Datenmodell `Anfrage.dart` erstellt:** Ein neues Modell wurde unter `lib/models/anfrage.dart` angelegt, das den anfragenden Betrieb, das angefragte Talent und das Datum der Anfrage speichert.
+2.  **Zentrales Anfragen-Management in `main.dart`:**
+    *   Eine zentrale Liste `_anfragen` wurde hinzugefügt, um alle Anfragen zu verwalten.
+    *   Die Funktion `_handleAnfrage` wurde erstellt. Sie fügt eine neue Anfrage hinzu und wird an die untergeordneten Widgets weitergereicht.
+3.  **"Jetzt anfragen"-Button im `TalentDetailScreen.dart`:**
+    *   Ein gelber `ElevatedButton` wurde zur Detailansicht eines Talents hinzugefügt.
+    *   **Bedingte Anzeige:** Dieser Button ist **nur sichtbar**, wenn der angemeldete Nutzer ein Unternehmensprofil hat.
+    *   Bei Klick wird die `_handleAnfrage`-Funktion aufgerufen und die Anfrage ausgelöst.
+4.  **Anzeige der Anfragen im `KontoScreen.dart`:**
+    *   Der "Konto"-Bildschirm wurde um den Reiter "Meine Anfragen" erweitert.
+    *   Die `_buildAnfragenView`-Methode wurde implementiert, um eine Liste der erhaltenen Anfragen anzuzeigen. Jedes Element zeigt den Namen des anfragenden Betriebs und das Anfragedatum.
+    *   Platzhalter-Buttons für "Annehmen" und "Ablehnen" wurden hinzugefügt.
 
 
 ## Vorherige Änderungen
 
+### Profil-Prüfung für 'Neuer Praxiseinsatz'
+
+*   **Prüflogik hinzugefügt:** In der Methode `_handleNewPraxiseinsatz` in `lib/main.dart` wird nun überprüft, ob die Variable `_loggedInBetrieb` `null` ist.
+
 ### Fehlerbehebung auf dem Betriebslisten-Bildschirm
 
-*   **Korrektur des `orElse`-Fallback:** In `lib/screens/betrieb_liste_screen.dart` wurde die `orElse`-Klausel korrigiert, um einen Absturz zu verhindern, wenn eine `handwerkskammerId` nicht gefunden wird. Es wird nun ein gültiges Fallback-Objekt erstellt.
+*   **Korrektur des `orElse`-Fallback:** In `lib/screens/betrieb_liste_screen.dart` wurde die `orElse`-Klausel korrigiert, um einen Absturz zu verhindern, wenn eine `handwerkskammerId` nicht gefunden wird.
 
 ### Fehlerbehebung auf dem Karten-Bildschirm
 

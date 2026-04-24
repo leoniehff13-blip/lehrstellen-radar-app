@@ -4,7 +4,15 @@ import 'talent_detail_screen.dart';
 
 class TalentListeScreen extends StatefulWidget {
   final List<Profil> talente;
-  const TalentListeScreen({super.key, required this.talente});
+  final Function(Profil) onAnfrage;
+  final Profil? profil;
+
+  const TalentListeScreen({
+    super.key,
+    required this.talente,
+    required this.onAnfrage,
+    required this.profil,
+  });
 
   @override
   State<TalentListeScreen> createState() => _TalentListeScreenState();
@@ -71,10 +79,20 @@ class _TalentListeScreenState extends State<TalentListeScreen> {
   @override
   void initState() {
     super.initState();
-    _allTalents = [..._initialTalentAngebote, ...widget.talente];
-    _filteredTalents = _allTalents;
+    _initializeLists();
+  }
 
-    // Populate filter lists with unique, non-null values
+  @override
+  void didUpdateWidget(TalentListeScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.talente != oldWidget.talente) {
+      _initializeLists();
+    }
+  }
+
+  void _initializeLists() {
+    _allTalents = [..._initialTalentAngebote, ...widget.talente];
+    
     _allSkills = _allTalents
         .expand<String>((talent) => talent.faehigkeiten ?? [])
         .toSet()
@@ -90,6 +108,7 @@ class _TalentListeScreenState extends State<TalentListeScreen> {
         .whereType<String>()
         .toSet()
         .toList()..sort();
+    _applyFilters(); 
   }
 
   void _applyFilters() {
@@ -144,15 +163,17 @@ class _TalentListeScreenState extends State<TalentListeScreen> {
                           Tab(text: 'Ort'),
                           Tab(text: 'Kammer'),
                         ],
+                        labelColor: Color(0xFF002C59),
+                        unselectedLabelColor: Colors.grey,
                       ),
                       Expanded(
                         child: TabBarView(
                           children: [
-                            _buildFilterList(_allSkills, _selectedSkill, (val) => setState(() => _selectedSkill = val)),
-                            _buildFilterList(_allLehrjahre, _selectedLehrjahr, (val) => setState(() => _selectedLehrjahr = val)),
-                            _buildFilterList(_allGewerke, _selectedGewerk, (val) => setState(() => _selectedGewerk = val)),
-                            _buildFilterList(_allOrte, _selectedOrt, (val) => setState(() => _selectedOrt = val)),
-                            _buildFilterList(_allKammern, _selectedKammer, (val) => setState(() => _selectedKammer = val)),
+                            _buildFilterList(_allSkills, _selectedSkill, (val) => setState(() => _selectedSkill = val as String?)),
+                            _buildFilterList(_allLehrjahre, _selectedLehrjahr, (val) => setState(() => _selectedLehrjahr = val as int?)),
+                            _buildFilterList(_allGewerke, _selectedGewerk, (val) => setState(() => _selectedGewerk = val as String?)),
+                            _buildFilterList(_allOrte, _selectedOrt, (val) => setState(() => _selectedOrt = val as String?)),
+                            _buildFilterList(_allKammern, _selectedKammer, (val) => setState(() => _selectedKammer = val as String?)),
                           ],
                         ),
                       ),
@@ -173,6 +194,8 @@ class _TalentListeScreenState extends State<TalentListeScreen> {
                   child: const Text('Abbrechen'),
                 ),
                 FilledButton(
+                   style: FilledButton.styleFrom(
+                      backgroundColor: const Color(0xFF002C59)),
                   onPressed: () {
                     _applyFilters();
                     Navigator.pop(context);
@@ -196,14 +219,14 @@ class _TalentListeScreenState extends State<TalentListeScreen> {
         if (index == 0) {
           return ListTile(
             title: const Text('Alle anzeigen'),
-            trailing: selectedItem == null ? const Icon(Icons.check) : null,
+            trailing: selectedItem == null ? const Icon(Icons.check, color: Color(0xFF002C59)) : null,
             onTap: () => onChanged(null),
           );
         }
         final item = items[index - 1];
         return ListTile(
           title: Text(item.toString()),
-          trailing: selectedItem == item ? const Icon(Icons.check) : null,
+          trailing: selectedItem == item ? const Icon(Icons.check, color: Color(0xFF002C59)) : null,
           onTap: () => onChanged(item),
         );
       },
@@ -240,7 +263,11 @@ class _TalentListeScreenState extends State<TalentListeScreen> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => TalentDetailScreen(talent: talent),
+                    builder: (context) => TalentDetailScreen(
+                      talent: talent,
+                      onAnfrage: widget.onAnfrage,
+                      profil: widget.profil,
+                    ),
                   ),
                 );
               },
@@ -248,22 +275,13 @@ class _TalentListeScreenState extends State<TalentListeScreen> {
           );
         },
       ),
-      floatingActionButton: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          FloatingActionButton(
-            onPressed: _showFilterDialog,
-            heroTag: 'filter',
-            child: const Icon(Icons.filter_list),
-          ),
-          const SizedBox(height: 16),
-          FloatingActionButton(
-            onPressed: () {},
-            heroTag: 'add',
-            backgroundColor: const Color(0xFF002C59),
-            child: const Icon(Icons.add),
-          ),
-        ],
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.only(bottom: 72.0),
+        child: FloatingActionButton(
+          onPressed: _showFilterDialog,
+          heroTag: 'filter_talente',
+          child: const Icon(Icons.filter_list),
+        ),
       ),
     );
   }

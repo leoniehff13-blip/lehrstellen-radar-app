@@ -21,6 +21,7 @@ class NeuerPraxiseinsatzScreenState extends State<NeuerPraxiseinsatzScreen> {
   final _nameController = TextEditingController();
   final _ansprechpartnerController = TextEditingController();
   final _handwerkskammerController = TextEditingController();
+  final _einsatzortController = TextEditingController();
 
   String? _selectedGewerk;
   final List<String> _gewerke = ['Elektriker', 'Zimmerer'];
@@ -36,6 +37,7 @@ class NeuerPraxiseinsatzScreenState extends State<NeuerPraxiseinsatzScreen> {
       _ansprechpartnerController.text = widget.betriebProfile!.ansprechpartner;
       _handwerkskammerController.text = widget.betriebProfile!
           .handwerkskammerId; // Assuming this is the correct field
+      _einsatzortController.text = widget.betriebProfile!.ort;
       if (_gewerke.contains(widget.betriebProfile!.branche)) {
         _selectedGewerk = widget.betriebProfile!.branche;
         _updateAufgaben(isInit: true);
@@ -63,13 +65,15 @@ class NeuerPraxiseinsatzScreenState extends State<NeuerPraxiseinsatzScreen> {
         branche: _selectedGewerk!,
         handwerkskammerId: _handwerkskammerController.text,
         aufgabenbereiche: _selectedAufgabenbereiche,
-        ort: widget.betriebProfile?.ort ?? '',
+        ort: _einsatzortController.text,
         logo: widget.betriebProfile?.logo ?? '',
         beschreibung: widget.betriebProfile?.beschreibung ?? '',
         webseite: widget.betriebProfile?.webseite ?? '',
         adresse: widget.betriebProfile?.adresse ?? '',
         email: widget.betriebProfile?.email ?? '',
         telefon: widget.betriebProfile?.telefon ?? '',
+        startDatum: _selectedDateRange?.start,
+        endDatum: _selectedDateRange?.end,
       );
       Navigator.of(context).pop(neuerEinsatz);
     }
@@ -78,8 +82,9 @@ class NeuerPraxiseinsatzScreenState extends State<NeuerPraxiseinsatzScreen> {
   Future<void> _selectDateRange(BuildContext context) async {
     final DateTimeRange? picked = await showDateRangePicker(
       context: context,
-      firstDate: DateTime(2023),
-      lastDate: DateTime(2025),
+      firstDate: DateTime(2026),
+      lastDate: DateTime(2030),
+      initialDateRange: _selectedDateRange,
     );
     if (picked != null && picked != _selectedDateRange) {
       setState(() {
@@ -110,6 +115,9 @@ class NeuerPraxiseinsatzScreenState extends State<NeuerPraxiseinsatzScreen> {
                 controller: _nameController,
                 decoration:
                     const InputDecoration(labelText: 'Name des Betriebs'),
+                validator: (value) => value == null || value.isEmpty
+                    ? 'Bitte Namen eingeben'
+                    : null,
               ),
               const SizedBox(height: 16),
               DropdownButtonFormField<String>(
@@ -117,7 +125,7 @@ class NeuerPraxiseinsatzScreenState extends State<NeuerPraxiseinsatzScreen> {
                   labelText: 'Gewerk/Branche',
                   border: OutlineInputBorder(),
                 ),
-                initialValue: _selectedGewerk,
+                value: _selectedGewerk,
                 items: _gewerke.map((String gewerk) {
                   return DropdownMenuItem<String>(
                     value: gewerk,
@@ -138,34 +146,57 @@ class NeuerPraxiseinsatzScreenState extends State<NeuerPraxiseinsatzScreen> {
               TextFormField(
                 controller: _ansprechpartnerController,
                 decoration: const InputDecoration(labelText: 'Ansprechpartner'),
+                validator: (value) => value == null || value.isEmpty
+                    ? 'Bitte Ansprechpartner eingeben'
+                    : null,
               ),
               const SizedBox(height: 16),
               TextFormField(
                 controller: _handwerkskammerController,
                 decoration: const InputDecoration(
                     labelText: 'Zuständige Handwerkskammer'),
-              ),
-              const SizedBox(height: 16),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    _selectedDateRange == null
-                        ? 'Einsatzzeitraum'
-                        : '${DateFormat('dd.MM.yyyy').format(_selectedDateRange!.start)} - ${DateFormat('dd.MM.yyyy').format(_selectedDateRange!.end)}',
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
-                  TextButton(
-                    onPressed: () => _selectDateRange(context),
-                    child: const Text('Auswählen'),
-                  ),
-                ],
+                validator: (value) => value == null || value.isEmpty
+                    ? 'Bitte Handwerkskammer eingeben'
+                    : null,
               ),
               const SizedBox(height: 16),
               TextFormField(
+                controller: _einsatzortController,
                 decoration: const InputDecoration(
                   labelText: 'Einsatzort',
                   border: OutlineInputBorder(),
+                ),
+                validator: (value) => value == null || value.isEmpty
+                    ? 'Bitte Einsatzort eingeben'
+                    : null,
+              ),
+              const SizedBox(height: 16),
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey),
+                  borderRadius: BorderRadius.circular(4),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      _selectedDateRange == null
+                          ? 'Einsatzzeitraum auswählen'
+                          : '${DateFormat('dd.MM.yyyy').format(_selectedDateRange!.start)} - ${DateFormat('dd.MM.yyyy').format(_selectedDateRange!.end)}',
+                      style: Theme.of(context)
+                          .textTheme
+                          .titleMedium
+                          ?.copyWith(fontSize: 16),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.calendar_today,
+                          color: Color(0xFF002C59)),
+                      onPressed: () => _selectDateRange(context),
+                      tooltip: 'Datum auswählen',
+                    ),
+                  ],
                 ),
               ),
               const SizedBox(height: 24),
@@ -174,7 +205,7 @@ class NeuerPraxiseinsatzScreenState extends State<NeuerPraxiseinsatzScreen> {
                   items: _aufgabenbereiche
                       .map((e) => MultiSelectItem(e, e))
                       .toList(),
-                  title: const Text("Aufgabenbereiche/Anforderungen"),
+                  title: const Text("Aufgabenbereiche"),
                   selectedColor: Theme.of(context).primaryColor,
                   initialValue: _selectedAufgabenbereiche,
                   decoration: BoxDecoration(
@@ -190,13 +221,19 @@ class NeuerPraxiseinsatzScreenState extends State<NeuerPraxiseinsatzScreen> {
                     color: Colors.grey,
                   ),
                   buttonText: Text(
-                    "Aufgabenbereiche auswählen",
+                    "Aufgabenbereiche/Anforderungen auswählen",
                     style: TextStyle(color: Colors.grey[700], fontSize: 16),
                   ),
                   onConfirm: (results) {
                     setState(() {
                       _selectedAufgabenbereiche = results.cast<String>();
                     });
+                  },
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Bitte mindestens einen Aufgabenbereich auswählen';
+                    }
+                    return null;
                   },
                   chipDisplay: MultiSelectChipDisplay(
                     onTap: (value) {
@@ -210,10 +247,22 @@ class NeuerPraxiseinsatzScreenState extends State<NeuerPraxiseinsatzScreen> {
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 16),
-                  backgroundColor: Theme.of(context).primaryColor,
+                  backgroundColor: const Color(0xFF002C59),
                   foregroundColor: Colors.white,
                 ),
-                onPressed: _createPraxiseinsatz,
+                onPressed: () {
+                  if (_formKey.currentState!.validate()) {
+                    if (_selectedDateRange == null) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                            content: Text(
+                                'Bitte wählen Sie einen Einsatzzeitraum aus.')),
+                      );
+                      return;
+                    }
+                    _createPraxiseinsatz();
+                  }
+                },
                 child: const Text('PRAXISEINSATZ ERSTELLEN'),
               ),
             ],

@@ -8,12 +8,16 @@ class TalentleiheScreen extends StatelessWidget {
   final TabController tabController;
   final List<Profil> ausgelieheneTalente;
   final List<Betrieb> praxiseinsaetze;
+  final Function(Profil) onAnfrage;
+  final Profil? profil;
 
   const TalentleiheScreen({
     super.key,
     required this.tabController,
     required this.ausgelieheneTalente,
     required this.praxiseinsaetze,
+    required this.onAnfrage,
+    required this.profil,
   });
 
   @override
@@ -42,7 +46,11 @@ class TalentleiheScreen extends StatelessWidget {
       body: TabBarView(
         controller: tabController,
         children: [
-          TalentListeScreen(talente: ausgelieheneTalente),
+          TalentListeScreen(
+            talente: ausgelieheneTalente,
+            onAnfrage: onAnfrage, // Pass the function
+            profil: profil, // Pass the profile
+          ),
           BetriebListeScreen(betriebe: praxiseinsaetze),
         ],
       ),

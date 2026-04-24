@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:myapp/models/anfrage.dart';
 import 'package:myapp/models/betrieb.dart';
 import 'package:myapp/models/profil.dart';
 
@@ -22,7 +23,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Talentleihe',
+      title: 'Win / Win',
       theme: ThemeData(
         primaryColor: const Color(0xFF002C59),
         colorScheme: ColorScheme.fromSeed(
@@ -54,6 +55,7 @@ class MainScreenState extends State<MainScreen>
   final List<Profil> _meineAngebote = [];
   final List<Betrieb> _praxiseinsaetze = [];
   final List<Betrieb> _meinePraxiseinsaetze = [];
+  final List<Anfrage> _anfragen = [];
 
   TabController? _tabController;
 
@@ -115,6 +117,23 @@ class MainScreenState extends State<MainScreen>
       _meineAngebote.clear();
       _meinePraxiseinsaetze.clear();
     });
+  }
+
+  void _handleAnfrage(Profil angefragtesTalent) {
+    if (_profil != null && _profil!.profilTyp == 'Unternehmen') {
+      setState(() {
+        _anfragen.add(Anfrage(
+          anfragenderBetrieb: _profil!,
+          angefragtesTalent: angefragtesTalent,
+          anfrageDatum: DateTime.now(),
+        ));
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Anfrage wurde erfolgreich gesendet!')),
+      );
+    } else {
+      // Optional: Handle case where user is not a company
+    }
   }
 
   void _handleNewTalentOffer() async {
@@ -245,6 +264,8 @@ class MainScreenState extends State<MainScreen>
         tabController: _tabController!,
         ausgelieheneTalente: _ausgelieheneTalente,
         praxiseinsaetze: _praxiseinsaetze,
+        onAnfrage: _handleAnfrage,
+        profil: _profil,
       ),
       const KartenScreen(),
       const InfoScreen(),
@@ -254,6 +275,9 @@ class MainScreenState extends State<MainScreen>
         onProfilDeleted: _deleteProfil,
         meineAngebote: _meineAngebote,
         meinePraxiseinsaetze: _meinePraxiseinsaetze,
+        meineAnfragen: _anfragen
+            .where((a) => a.angefragtesTalent.name == _profil?.name)
+            .toList(),
       ),
     ];
 

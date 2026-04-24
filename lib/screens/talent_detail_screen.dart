@@ -3,12 +3,19 @@ import '../models/profil.dart';
 
 class TalentDetailScreen extends StatelessWidget {
   final Profil talent;
+  final Function(Profil) onAnfrage;
+  final Profil? profil;
 
-  const TalentDetailScreen({super.key, required this.talent});
+  const TalentDetailScreen({
+    super.key,
+    required this.talent,
+    required this.onAnfrage,
+    required this.profil,
+  });
 
   @override
   Widget build(BuildContext context) {
-    // Placeholder for profile image, as it's not in the Profil model yet
+    final isCompany = profil?.profilTyp == 'Unternehmen';
     const profilbildPlaceholder =
         'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=100&auto=format&fit=crop';
 
@@ -94,6 +101,26 @@ class TalentDetailScreen extends StatelessWidget {
           ],
         ),
       ),
+       bottomNavigationBar: isCompany
+          ? Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: ElevatedButton(
+                onPressed: () {
+                  onAnfrage(talent);
+                  Navigator.pop(context);
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFFFFB900), 
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  textStyle: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                child: const Text('Jetzt anfragen', style: TextStyle(color: Colors.black)),
+              ),
+            )
+          : null,
     );
   }
 }

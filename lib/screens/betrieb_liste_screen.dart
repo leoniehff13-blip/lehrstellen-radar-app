@@ -191,57 +191,64 @@ class BetriebListeScreenState extends State<BetriebListeScreen> {
             return AlertDialog(
               title: const Text('Betriebe filtern'),
               content: DefaultTabController(
-                length: 3,
+                length: 5, // Now 5 tabs
                 child: SizedBox(
                   width: double.maxFinite,
-                  height: 450,
+                  height: 300, 
                   child: Column(
                     children: [
-                      TextField(
-                        controller: _aufgabenController,
-                        decoration: const InputDecoration(
-                          labelText: 'Aufgaben oder Stichworte',
-                          prefixIcon: Icon(Icons.search),
-                          border: OutlineInputBorder(),
-                        ),
-                        onChanged: (value) => setState(() {}),
-                      ),
-                      const SizedBox(height: 16),
-                      ElevatedButton.icon(
-                        onPressed: () async {
-                          final picked = await showDateRangePicker(
-                            context: context,
-                            firstDate: DateTime(2024),
-                            lastDate: DateTime(2030),
-                            initialDateRange: _selectedDateRange,
-                          );
-                          if (picked != null) {
-                            setState(() => _selectedDateRange = picked);
-                          }
-                        },
-                        icon: const Icon(Icons.calendar_today),
-                        label: Text(_selectedDateRange == null
-                            ? 'Zeitraum auswählen'
-                            : '${DateFormat.yMEd().format(_selectedDateRange!.start)} - ${DateFormat.yMd().format(_selectedDateRange!.end)}'),
-                      ),
-                      const SizedBox(height: 16),
                       const TabBar(
                         isScrollable: true,
-                        labelColor: Color(0xFF002C59),
-                        unselectedLabelColor: Colors.grey,
                         tabs: [
+                          Tab(text: 'Aufgaben'),
+                          Tab(text: 'Zeitraum'),
                           Tab(text: 'Gewerk'),
                           Tab(text: 'Ort'),
                           Tab(text: 'Kammer'),
                         ],
+                         labelColor: Color(0xFF002C59),
+                        unselectedLabelColor: Colors.grey,
                       ),
                       Expanded(
                         child: TabBarView(
                           children: [
+                            // 1. Aufgaben Filter
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: TextField(
+                                controller: _aufgabenController,
+                                decoration: const InputDecoration(
+                                  labelText: 'Aufgaben oder Stichworte',
+                                  prefixIcon: Icon(Icons.search),
+                                  border: OutlineInputBorder(),
+                                ),
+                                onChanged: (value) => setState(() {}),
+                              ),
+                            ),
+                            // 2. Zeitraum Filter
+                            Center(
+                              child: ElevatedButton.icon(
+                                onPressed: () async {
+                                  final picked = await showDateRangePicker(
+                                    context: context,
+                                    firstDate: DateTime(2024),
+                                    lastDate: DateTime(2030),
+                                    initialDateRange: _selectedDateRange,
+                                  );
+                                  if (picked != null) {
+                                    setState(() => _selectedDateRange = picked);
+                                  }
+                                },
+                                icon: const Icon(Icons.calendar_today),
+                                label: Text(_selectedDateRange == null
+                                    ? 'Zeitraum auswählen'
+                                    : '${DateFormat.yMd().format(_selectedDateRange!.start)} - ${DateFormat.yMd().format(_selectedDateRange!.end)}'),
+                              ),
+                            ),
                             _buildFilterList(_allGewerke, _selectedGewerk,
-                                (val) => setState(() => _selectedGewerk = val)),
+                                (val) => setState(() => _selectedGewerk = val as String?)),
                             _buildFilterList(_allOrte, _selectedOrt,
-                                (val) => setState(() => _selectedOrt = val)),
+                                (val) => setState(() => _selectedOrt = val as String?)),
                             _buildKammerFilterList((val) =>
                                 setState(() => _selectedKammerId = val)),
                           ],
@@ -264,7 +271,7 @@ class BetriebListeScreenState extends State<BetriebListeScreen> {
                   child: const Text('Abbrechen'),
                 ),
                 FilledButton(
-                  style: FilledButton.styleFrom(
+                   style: FilledButton.styleFrom(
                       backgroundColor: const Color(0xFF002C59)),
                   onPressed: () {
                     _applyFilters();
@@ -280,48 +287,45 @@ class BetriebListeScreenState extends State<BetriebListeScreen> {
     );
   }
 
-  Widget _buildFilterList<T>(
-      List<T> items, T? selectedItem, ValueChanged<T?> onChanged) {
-    return ListView.builder(
-      itemCount: items.length + 1,
-      itemBuilder: (context, index) {
-        if (index == 0) {
-          return RadioListTile<T?>(
-            title: const Text('Alle anzeigen'),
-            value: null,
-            groupValue: selectedItem,
-            onChanged: onChanged,
-          );
-        }
-        final item = items[index - 1];
-        return RadioListTile<T?>(
-          title: Text(item.toString()),
-          value: item,
-          groupValue: selectedItem,
-          onChanged: onChanged,
+   Widget _buildFilterList<T>(
+    List<T> items, T? selectedItem, ValueChanged<T?> onChanged) {
+  return ListView.builder(
+    shrinkWrap: true,
+    itemCount: items.length + 1,
+    itemBuilder: (context, index) {
+      if (index == 0) {
+        return ListTile(
+          title: const Text('Alle anzeigen'),
+          trailing: selectedItem == null ? const Icon(Icons.check, color: Color(0xFF002C59)) : null,
+          onTap: () => onChanged(null),
         );
-      },
-    );
-  }
+      }
+      final item = items[index - 1];
+      return ListTile(
+        title: Text(item.toString()),
+        trailing: selectedItem == item ? const Icon(Icons.check, color: Color(0xFF002C59)) : null,
+        onTap: () => onChanged(item),
+      );
+    },
+  );
+}
 
   Widget _buildKammerFilterList(ValueChanged<String?> onChanged) {
     return ListView.builder(
       itemCount: alleHandwerkskammern.length + 1,
       itemBuilder: (context, index) {
         if (index == 0) {
-          return RadioListTile<String?>(
+          return ListTile(
             title: const Text('Alle anzeigen'),
-            value: null,
-            groupValue: _selectedKammerId,
-            onChanged: onChanged,
+            trailing: _selectedKammerId == null ? const Icon(Icons.check, color: Color(0xFF002C59)) : null,
+            onTap: () => onChanged(null),
           );
         }
         final kammer = alleHandwerkskammern[index - 1];
-        return RadioListTile<String?>(
+        return ListTile(
           title: Text(kammer.name),
-          value: kammer.id,
-          groupValue: _selectedKammerId,
-          onChanged: onChanged,
+           trailing: _selectedKammerId == kammer.id ? const Icon(Icons.check, color: Color(0xFF002C59)) : null,
+          onTap: () => onChanged(kammer.id),
         );
       },
     );
