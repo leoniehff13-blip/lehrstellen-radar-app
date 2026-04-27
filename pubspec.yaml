@@ -10,6 +10,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+    appwrite: ^13.0.0
 
   cupertino_icons: ^1.0.8
   provider: ^6.1.5+1
